@@ -101,51 +101,33 @@ message MetadataConfigProto {
   // If true, only calling codes in overrides are processed.
   bool exclude_by_default = 5;
 
-  // A range expression defining how to determine valid phone numbers based on the underlying data.
-  // See CustomValueProto#ranges for a more detailed description of range expression syntax.
-  //
-  // If omitted, the validation ranges from the underlying metadata will be used directly (this is
+  // A range expression defining valid phone numbers based on the underlying metadata. See
+  // CustomValueProto#ranges for a more detailed description of range expression syntax. If
+  // omitted, the validation ranges from the underlying metadata will be used directly (this is
   // a safe default).
   //
-  // This feature can be useful for ignoring specific phone number types in applications where they
-  // are never expected, and may help reduce data size in some cases.
+  // This feature can be useful for ignoring specific phone number types in use cases where they
+  // are never expected, and may reduce data size.
   //
-  // WARNING: Specifying a restricted set of validation ranges is NOT the same as simply removing
-  // those ranges from the underlying metadata. This can be illustrated by considering a reduced
-  // validation range which is then simplified.
+  // NOTE: Specifying a restricted set of validation ranges is NOT the same as removing ranges
+  // from the underlying metadata.
   //
-  // If we want to exclude PAGER numbers in our metadata, we could download and edit the underlying
-  // CSV files to remove rows for PAGER ranges. However if we do this, the metadata processor would
-  // these ranges like any other invalid number range.
+  // For example, if we want to exclude PAGER numbers from our metadata, we could download and edit
+  // the underlying CSV files to remove rows for PAGER ranges. However, if we do this, the metadata
+  // processor would treat these ranges like any other unspecified number range.
   //
   // In particular, simplifying metadata with PAGER ranges removed may result in "nearby" ranges
-  // being expanded to cover these ranges. This could well result in ranges which are assigned as
-  // PAGER in the underlying data being reassigned to some other type (e.g. MOBILE).
+  // being expanded to cover the removed PAGER ranges. This would likely result in ranges which were
+  // originally assigned to "PAGER" in the underlying data being reassigned to some other type (e.g.
+  // "MOBILE"). Using a `validation_ranges` expression will avoid this issue.
   //
-  // However using a restricted `validation_ranges` expression will not do this. By setting:
-  //
+  // By setting:
   //   validation_ranges: "ALL:RANGES - TYPE:PAGER"
   //
-  // We indicate that we don't want to include PAGER numbers as valid, and the metadata processor
+  // we indicate that we don't want to include PAGER numbers as valid. The metadata processor then
   // tracks the "removed" ranges internally to ensure they are never reassigned, even after
-  // simplification. The only slight downside to this is that it may result in slightly larger (but
+  // simplification. The only downside to this is that it may result in slightly larger (but
   // arguably more correct) metadata.
-  //
-  // Note: Using the `validation_ranges` field is essentially the same as making a custom binary
-  // classifier such as:
-  //
-  // classifier {
-  //   # ...
-  //   type_name: "CUSTOM:VALIDATION"
-  //   custom {
-  //     default_value: "VALID"
-  //     is_single_valued: true
-  //     value { name: "INVALID" ranges: "TYPE:PAGER" }
-  //   }
-  // }
-  //
-  // and then using this to classify numbers for validation (though it avoids the overhead of also
-  // storing the original validation ranges).
   string validation_ranges = 6;
 
   // Default maximum amount of false positive numbers to appear in simplified ranges. This value
