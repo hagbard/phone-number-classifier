@@ -103,47 +103,49 @@ message MetadataConfigProto {
 
   // A range expression defining how to determine valid phone numbers based on the underlying data.
   // See CustomValueProto#ranges for a more detailed description of range expression syntax.
-  // If omitted, the validation ranges from the underlying metadata will be used (this is a safe
-  // default).
+  //
+  // If omitted, the validation ranges from the underlying metadata will be used directly (this is
+  // a safe default).
   //
   // This feature can be useful for ignoring specific phone number types in applications where they
-  // are never expected, and may help reduce data size in some cases. However this feature comes
-  // with important caveats.
+  // are never expected, and may help reduce data size in some cases.
   //
-  // WARNING: Specifying a restricted set of validation ranges can have unexpected consequences and
-  // care should be taken to ensure that this is behaving as desired. In particular, if the
-  // validation range is restricted but then also simplified, it is possible that the new simplified
-  // range will extend to encompass some of the numbers removed by the original restriction.
+  // WARNING: Specifying a restricted set of validation ranges is NOT the same as simply removing
+  // those ranges from the underlying metadata. This can be illustrated by considering a reduced
+  // validation range which is then simplified.
   //
-  // However in the simplified range mapping, they may be assigned a different type to the original
-  // metadata. This is a result of the same mechanism which can create false positives for otherwise
-  // invalid numbers during simplification, but is surprising because now it appears to "overwrite"
-  // an existing mapping.
+  // If we want to exclude PAGER numbers in our metadata, we could download and edit the underlying
+  // CSV files to remove rows for PAGER ranges. However if we do this, the metadata processor would
+  // these ranges like any other invalid number range.
   //
-  // For example, if we remove the (largely unused) number types from our validation ranges:
-  //   validation_ranges: "ALL:RANGES - (TYPE:PAGER + TYPE:UAN)"
-  // but also apply range simplification, we may end up with numbers which were assigned one of the
-  // removed types in the original metadata (e.g. PAGER) now being assigned a different type in the
-  // new data (e.g. MOBILE).
+  // In particular, simplifying metadata with PAGER ranges removed may result in "nearby" ranges
+  // being expanded to cover these ranges. This could well result in ranges which are assigned as
+  // PAGER in the underlying data being reassigned to some other type (e.g. MOBILE).
   //
-  // To avoid this sort problem, it is recommended to leave the validation ranges untouched and
-  // create a new custom type which encapsulates your semantics:
+  // However using a restricted `validation_ranges` expression will not do this. By setting:
+  //
+  //   validation_ranges: "ALL:RANGES - TYPE:PAGER"
+  //
+  // We indicate that we don't want to include PAGER numbers as valid, and the metadata processor
+  // tracks the "removed" ranges internally to ensure they are never reassigned, even after
+  // simplification. The only slight downside to this is that it may result in slightly larger (but
+  // arguably more correct) metadata.
+  //
+  // Note: Using the `validation_ranges` field is essentially the same as making a custom binary
+  // classifier such as:
   //
   // classifier {
   //   # ...
-  //   type_name: "CUSTOM:TYPE"
+  //   type_name: "CUSTOM:VALIDATION"
   //   custom {
-  //     default_value: "ALLOW"
+  //     default_value: "VALID"
   //     is_single_valued: true
-  //     value {
-  //       name: "DISALLOW"
-  //       ranges: "TYPE:PAGER + TYPE:UAN"
-  //     }
+  //     value { name: "INVALID" ranges: "TYPE:PAGER" }
   //   }
   // }
   //
-  // It is also not obvious that restricting validation ranges will make the metadata smaller, and
-  // could make range data much larger, so should be considered quite carefully.
+  // and then using this to classify numbers for validation (though it avoids the overhead of also
+  // storing the original validation ranges).
   string validation_ranges = 6;
 
   // Default maximum amount of false positive numbers to appear in simplified ranges. This value
