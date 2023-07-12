@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
+
+  This program and the accompanying materials are made available under the terms of the
+  Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
+  Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
+
+  SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.goui.phone-numbers</groupId>
+    <artifactId>phone-numbers</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>client-api</module>
+        <module>metadata-proto</module>
+        <module>metadata-loader</module>
+        <module>offline-tools</module>
+        <module>examples</module>
+        <module>testing</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
+        <pluginManagement>
+            <plugins>
+                <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>com.google.auto.value</groupId>
+                                <artifactId>auto-value</artifactId>
+                                <version>1.10.1</version>
+                            </path>
+                            <path>
+                                <groupId>com.google.auto.service</groupId>
+                                <artifactId>auto-service</artifactId>
+                                <version>1.0.1</version>
+                            </path>
+                        </annotationProcessorPaths>
+                        <generatedSourcesDirectory>
+                            ${project.build.directory}/generated-sources
+                        </generatedSourcesDirectory>
+                        <generatedTestSourcesDirectory>
+                            ${project.build.directory}/generated-test-sources
+                        </generatedTestSourcesDirectory>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.9.1</version>
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <id>add-generated-sources</id>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>${project.build.directory}/generated-sources</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <id>add-generated-test-sources</id>
+                            <goals>
+                                <goal>add-test-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>${project.build.directory}/generated-test-sources</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.os72</groupId>
+                    <artifactId>protoc-jar-maven-plugin</artifactId>
+                    <version>3.11.4</version>
+                    <executions>
+                        <execution>
+                            <id>generate-proto</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <configuration>
+                                <addSources>main</addSources>
+                                <includeMavenTypes>direct</includeMavenTypes>
+                                <inputDirectories>
+                                    <include>src/main/protobuf</include>
+                                </inputDirectories>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>generate-test-proto</id>
+                            <phase>generate-test-sources</phase>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <configuration>
+                                <addSources>test</addSources>
+                                <includeMavenTypes>direct</includeMavenTypes>
+                                <inputDirectories>
+                                    <include>src/test/protobuf</include>
+                                </inputDirectories>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+                <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.7.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>3.4.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
