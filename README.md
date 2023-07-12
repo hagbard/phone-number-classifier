@@ -2,7 +2,7 @@
 
 This is an in-development tool and should not be used by anyone yet.
 
-## To build/install Java code (from <root>/ directory):
+## To build/install Java code (from `<root>/` directory):
 
 ### With Bazel installed:
 
@@ -18,7 +18,7 @@ $ mvn package
 $ mvn test
 ```
 
-## To build JavaScript code (from <root>/javascript/ directory)
+## To build JavaScript code (from `<root>/javascript/` directory)
 
 ### First time only:
 
