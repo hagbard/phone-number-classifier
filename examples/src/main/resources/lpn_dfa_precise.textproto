@@ -1,0 +1,48 @@
+# proto-file:
+# proto-message: MetadataConfigProto
+
+# A configuration for classifiers which matches the semantics of libphonenumber's TYPE and
+# REGION information.
+version {
+  # The data version is tied to how the metadata is packaged. This will change as the
+  # metadata encoding changes, but that should be rare.
+  major_version: 1
+  minor_version: 0
+  # The schema version defines the semantics of the data. This is chosen by the data provider
+  # and must be explicitly understood by any library using it. Many alternative schema versions
+  # can exist any it is expected that anyone providing a fundamentally new schema will also
+  # provide client code to handle it.
+  data_schema_uri: "goui.net/libphonenumber/dfa/precise"
+  data_schema_version: 1
+}
+# Encode metadata for use by the finite state "digit sequence matcher". This is smaller and
+# faster than using regular expressions, but may not be supported on all platforms.
+matcher_type: DIGIT_SEQUENCE_MATCHER
+# With no allowance for false positives, this data is not simplified in any way.
+default_maximum_false_positive_percent: 0
+# Create a custom number classifier which matches the semantics of the libphonenumber library.
+classifier {
+  type_name: "LPN:TYPE"
+  custom {
+    # The "number type" classifier produces a single "best guess" value for a number of prefix.
+    is_single_valued: true
+    # Value ranges are defined in order, and earlier ranges take priority during matching
+    # (e.g. a fixed line toll-free number will be classified as "TOLL_FREE").
+    value { name: "PREMIUM_RATE" ranges: "TARIFF:PREMIUM_RATE" }
+    value { name: "TOLL_FREE" ranges: "TARIFF:TOLL_FREE" }
+    value { name: "SHARED_COST" ranges: "TARIFF:SHARED_COST" }
+    value { name: "FIXED_LINE" ranges: "TYPE:FIXED_LINE" }
+    value { name: "MOBILE" ranges: "TYPE:MOBILE" }
+    value { name: "FIXED_LINE_OR_MOBILE" ranges: "TYPE:FIXED_LINE_OR_MOBILE" }
+    value { name: "PAGER" ranges: "TYPE:PAGER" }
+    value { name: "PERSONAL_NUMBER" ranges: "TYPE:PERSONAL_NUMBER" }
+    value { name: "VOIP" ranges: "TYPE:VOIP" }
+    value { name: "UAN" ranges: "TYPE:UAN" }
+    value { name: "VOICEMAIL" ranges: "TYPE:VOICEMAIL" }
+  }
+}
+classifier {
+  # We cope the region information directly from the underlying metadata. This is a multi
+  # valued classifier (e.g. a number or prefix can be associated with several regions).
+  type_name: "REGION"
+}

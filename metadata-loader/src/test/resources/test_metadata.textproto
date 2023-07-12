@@ -1,0 +1,20 @@
+# proto-file:
+# proto-message: MetadataConfigProto
+
+version {
+  major_version: 1
+  minor_version: 0
+  data_schema_uri: "goui.net/test_metadata/dfa"
+  data_schema_version: 1
+}
+calling_codes: "1,44"
+exclude_by_default: true
+matcher_type: DIGIT_SEQUENCE_MATCHER
+default_maximum_false_positive_percent: 100
+default_minimum_prefix_length: 2
+classifier {
+  type_name: "TYPE"
+}
+classifier {
+  type_name: "REGION"
+}
