@@ -43,6 +43,7 @@ build/
 
 ### Bazel ###
 /bazel-*
+/.ijwb/
 
 ### Compiled class files ###
 *.class
