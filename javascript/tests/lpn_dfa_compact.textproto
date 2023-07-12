@@ -1,0 +1,40 @@
+# proto-file:
+# proto-message: MetadataConfigProto
+
+# A configuration for classifiers which matches the semantics of libphonenumber's TYPE and
+# REGION information, with simplified (smaller) data.
+version {
+  # The data version is tied to how the metadata is packaged. This will change as the
+  # metadata encoding changes, but that should be rare.
+  major_version: 1
+  minor_version: 0
+  # The schema version defines the semantics of the data. This is chosen by the data provider
+  # and must be explicitly understood by any library using it. Many alternative schema versions
+  # can exist any it is expected that anyone providing a fundamentally new schema will also
+  # provide client code to handle it.
+  data_schema_uri: "goui.net/libphonenumber/dfa/compact"
+  data_schema_version: 1
+}
+matcher_type: DIGIT_SEQUENCE_MATCHER
+default_maximum_false_positive_percent: 100
+default_minimum_prefix_length: 3
+classifier {
+  type_name: "LPN:TYPE"
+  custom {
+    is_single_valued: true
+    value { name: "PREMIUM_RATE" ranges: "TARIFF:PREMIUM_RATE" }
+    value { name: "TOLL_FREE" ranges: "TARIFF:TOLL_FREE" }
+    value { name: "SHARED_COST" ranges: "TARIFF:SHARED_COST" }
+    value { name: "FIXED_LINE" ranges: "TYPE:FIXED_LINE" }
+    value { name: "MOBILE" ranges: "TYPE:MOBILE" }
+    value { name: "FIXED_LINE_OR_MOBILE" ranges: "TYPE:FIXED_LINE_OR_MOBILE" }
+    value { name: "PAGER" ranges: "TYPE:PAGER" }
+    value { name: "PERSONAL_NUMBER" ranges: "TYPE:PERSONAL_NUMBER" }
+    value { name: "VOIP" ranges: "TYPE:VOIP" }
+    value { name: "UAN" ranges: "TYPE:UAN" }
+    value { name: "VOICEMAIL" ranges: "TYPE:VOICEMAIL" }
+  }
+}
+classifier {
+  type_name: "REGION"
+}

@@ -1,0 +1,5267 @@
+{
+  "testdata": [
+    {
+      "cc": "1",
+      "number": "8026630640",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE_OR_MOBILE"]},
+        {"type": "REGION", "values": ["US"]}
+      ]
+    },
+    {
+      "cc": "1",
+      "number": "8887373563",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {
+          "type": "REGION",
+          "values": [
+            "AG",
+            "AI",
+            "AS",
+            "BB",
+            "BM",
+            "BS",
+            "CA",
+            "DM",
+            "DO",
+            "GD",
+            "GU",
+            "JM",
+            "KN",
+            "KY",
+            "LC",
+            "MP",
+            "MS",
+            "PR",
+            "SX",
+            "TC",
+            "TT",
+            "US",
+            "VC",
+            "VG",
+            "VI"
+          ]
+        }
+      ]
+    },
+    {
+      "cc": "1",
+      "number": "4289043273",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE_OR_MOBILE"]},
+        {"type": "REGION", "values": ["CA"]}
+      ]
+    },
+    {
+      "cc": "1",
+      "number": "5443407010",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {
+          "type": "REGION",
+          "values": [
+            "AG",
+            "AI",
+            "AS",
+            "BB",
+            "BM",
+            "BS",
+            "CA",
+            "DM",
+            "DO",
+            "GD",
+            "GU",
+            "JM",
+            "KN",
+            "KY",
+            "LC",
+            "MP",
+            "MS",
+            "PR",
+            "SX",
+            "TC",
+            "TT",
+            "US",
+            "VC",
+            "VG",
+            "VI"
+          ]
+        }
+      ]
+    },
+    {
+      "cc": "1",
+      "number": "6003915774",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["CA"]}
+      ]
+    },
+    {
+      "cc": "1",
+      "number": "8494585260",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE_OR_MOBILE"]},
+        {"type": "REGION", "values": ["DO"]}
+      ]
+    },
+    {
+      "cc": "1",
+      "number": "9003698587",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {
+          "type": "REGION",
+          "values": [
+            "AG",
+            "AI",
+            "AS",
+            "BB",
+            "BM",
+            "BS",
+            "CA",
+            "DM",
+            "DO",
+            "GD",
+            "GU",
+            "JM",
+            "KN",
+            "KY",
+            "LC",
+            "MP",
+            "MS",
+            "PR",
+            "SX",
+            "TC",
+            "TT",
+            "US",
+            "VC",
+            "VG",
+            "VI"
+          ]
+        }
+      ]
+    },
+    {
+      "cc": "20",
+      "number": "152198541",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["EG"]}
+      ]
+    },
+    {
+      "cc": "20",
+      "number": "1244876650",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["EG"]}
+      ]
+    },
+    {
+      "cc": "20",
+      "number": "8009986745",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["EG"]}
+      ]
+    },
+    {
+      "cc": "211",
+      "number": "957781394",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SS"]}
+      ]
+    },
+    {
+      "cc": "211",
+      "number": "189215365",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SS"]}
+      ]
+    },
+    {
+      "cc": "212",
+      "number": "607020774",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["EH", "MA"]}
+      ]
+    },
+    {
+      "cc": "212",
+      "number": "807273109",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["EH", "MA"]}
+      ]
+    },
+    {
+      "cc": "212",
+      "number": "893110803",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["EH", "MA"]}
+      ]
+    },
+    {
+      "cc": "212",
+      "number": "526360394",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MA"]}
+      ]
+    },
+    {
+      "cc": "213",
+      "number": "559476995",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["DZ"]}
+      ]
+    },
+    {
+      "cc": "213",
+      "number": "48452512",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["DZ"]}
+      ]
+    },
+    {
+      "cc": "213",
+      "number": "982181461",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["DZ"]}
+      ]
+    },
+    {
+      "cc": "216",
+      "number": "92867130",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TN"]}
+      ]
+    },
+    {
+      "cc": "216",
+      "number": "70604636",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["TN"]}
+      ]
+    },
+    {
+      "cc": "216",
+      "number": "88027623",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["TN"]}
+      ]
+    },
+    {
+      "cc": "218",
+      "number": "423718186",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["LY"]}
+      ]
+    },
+    {
+      "cc": "218",
+      "number": "928046352",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["LY"]}
+      ]
+    },
+    {
+      "cc": "220",
+      "number": "6035020",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GM"]}
+      ]
+    },
+    {
+      "cc": "220",
+      "number": "8778069",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GM"]}
+      ]
+    },
+    {
+      "cc": "221",
+      "number": "783928606",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SN"]}
+      ]
+    },
+    {
+      "cc": "221",
+      "number": "888055930",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["SN"]}
+      ]
+    },
+    {
+      "cc": "221",
+      "number": "818774908",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["SN"]}
+      ]
+    },
+    {
+      "cc": "221",
+      "number": "338788177",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SN"]}
+      ]
+    },
+    {
+      "cc": "222",
+      "number": "42512564",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MR"]}
+      ]
+    },
+    {
+      "cc": "222",
+      "number": "35599780",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MR"]}
+      ]
+    },
+    {
+      "cc": "223",
+      "number": "76868482",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["ML"]}
+      ]
+    },
+    {
+      "cc": "223",
+      "number": "21262508",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["ML"]}
+      ]
+    },
+    {
+      "cc": "224",
+      "number": "667905349",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GN"]}
+      ]
+    },
+    {
+      "cc": "224",
+      "number": "31737377",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GN"]}
+      ]
+    },
+    {
+      "cc": "225",
+      "number": "0578579759",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CI"]}
+      ]
+    },
+    {
+      "cc": "225",
+      "number": "2546142056",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CI"]}
+      ]
+    },
+    {
+      "cc": "226",
+      "number": "75971781",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BF"]}
+      ]
+    },
+    {
+      "cc": "227",
+      "number": "96054060",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["NE"]}
+      ]
+    },
+    {
+      "cc": "227",
+      "number": "09328904",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["NE"]}
+      ]
+    },
+    {
+      "cc": "227",
+      "number": "08684107",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["NE"]}
+      ]
+    },
+    {
+      "cc": "227",
+      "number": "20653334",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["NE"]}
+      ]
+    },
+    {
+      "cc": "228",
+      "number": "71321150",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TG"]}
+      ]
+    },
+    {
+      "cc": "228",
+      "number": "23310464",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["TG"]}
+      ]
+    },
+    {
+      "cc": "229",
+      "number": "58969272",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BJ"]}
+      ]
+    },
+    {
+      "cc": "229",
+      "number": "81915288",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["BJ"]}
+      ]
+    },
+    {
+      "cc": "230",
+      "number": "8021901641",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["MU"]}
+      ]
+    },
+    {
+      "cc": "230",
+      "number": "73072991",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MU"]}
+      ]
+    },
+    {
+      "cc": "230",
+      "number": "6019478",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MU"]}
+      ]
+    },
+    {
+      "cc": "231",
+      "number": "771856425",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["LR"]}
+      ]
+    },
+    {
+      "cc": "231",
+      "number": "25780220",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["LR"]}
+      ]
+    },
+    {
+      "cc": "232",
+      "number": "72581391",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SL"]}
+      ]
+    },
+    {
+      "cc": "233",
+      "number": "277475204",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GH"]}
+      ]
+    },
+    {
+      "cc": "233",
+      "number": "362069568",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GH"]}
+      ]
+    },
+    {
+      "cc": "234",
+      "number": "80034496469737",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["NG"]}
+      ]
+    },
+    {
+      "cc": "234",
+      "number": "70065506889340",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["NG"]}
+      ]
+    },
+    {
+      "cc": "235",
+      "number": "62981494",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TD"]}
+      ]
+    },
+    {
+      "cc": "236",
+      "number": "76647284",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CF"]}
+      ]
+    },
+    {
+      "cc": "236",
+      "number": "21663666",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CF"]}
+      ]
+    },
+    {
+      "cc": "237",
+      "number": "691529138",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CM"]}
+      ]
+    },
+    {
+      "cc": "237",
+      "number": "88520308",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["CM"]}
+      ]
+    },
+    {
+      "cc": "237",
+      "number": "233374350",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CM"]}
+      ]
+    },
+    {
+      "cc": "238",
+      "number": "4629328",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["CV"]}
+      ]
+    },
+    {
+      "cc": "238",
+      "number": "5818821",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CV"]}
+      ]
+    },
+    {
+      "cc": "238",
+      "number": "2613548",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CV"]}
+      ]
+    },
+    {
+      "cc": "239",
+      "number": "9877323",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["ST"]}
+      ]
+    },
+    {
+      "cc": "239",
+      "number": "2215076",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["ST"]}
+      ]
+    },
+    {
+      "cc": "240",
+      "number": "802175001",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["GQ"]}
+      ]
+    },
+    {
+      "cc": "240",
+      "number": "222287200",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GQ"]}
+      ]
+    },
+    {
+      "cc": "240",
+      "number": "350471858",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GQ"]}
+      ]
+    },
+    {
+      "cc": "240",
+      "number": "904944978",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["GQ"]}
+      ]
+    },
+    {
+      "cc": "241",
+      "number": "02667147",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GA"]}
+      ]
+    },
+    {
+      "cc": "241",
+      "number": "01659095",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GA"]}
+      ]
+    },
+    {
+      "cc": "242",
+      "number": "065793923",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CG"]}
+      ]
+    },
+    {
+      "cc": "242",
+      "number": "800004121",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["CG"]}
+      ]
+    },
+    {
+      "cc": "242",
+      "number": "222355929",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CG"]}
+      ]
+    },
+    {
+      "cc": "243",
+      "number": "809278950",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CD"]}
+      ]
+    },
+    {
+      "cc": "243",
+      "number": "121039111",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CD"]}
+      ]
+    },
+    {
+      "cc": "244",
+      "number": "207707441",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["AO"]}
+      ]
+    },
+    {
+      "cc": "244",
+      "number": "941385891",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["AO"]}
+      ]
+    },
+    {
+      "cc": "245",
+      "number": "957918858",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GW"]}
+      ]
+    },
+    {
+      "cc": "245",
+      "number": "443641094",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GW"]}
+      ]
+    },
+    {
+      "cc": "245",
+      "number": "4084468",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["GW"]}
+      ]
+    },
+    {
+      "cc": "246",
+      "number": "3855665",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["IO"]}
+      ]
+    },
+    {
+      "cc": "246",
+      "number": "3756106",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["IO"]}
+      ]
+    },
+    {
+      "cc": "247",
+      "number": "984991",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["AC"]}
+      ]
+    },
+    {
+      "cc": "247",
+      "number": "67696",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["AC"]}
+      ]
+    },
+    {
+      "cc": "248",
+      "number": "4381801",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SC"]}
+      ]
+    },
+    {
+      "cc": "248",
+      "number": "2604689",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SC"]}
+      ]
+    },
+    {
+      "cc": "248",
+      "number": "6402867",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["SC"]}
+      ]
+    },
+    {
+      "cc": "249",
+      "number": "106980269",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SD"]}
+      ]
+    },
+    {
+      "cc": "249",
+      "number": "151200490",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SD"]}
+      ]
+    },
+    {
+      "cc": "250",
+      "number": "289237392",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["RW"]}
+      ]
+    },
+    {
+      "cc": "250",
+      "number": "796748515",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["RW"]}
+      ]
+    },
+    {
+      "cc": "250",
+      "number": "900809353",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["RW"]}
+      ]
+    },
+    {
+      "cc": "251",
+      "number": "960085188",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["ET"]}
+      ]
+    },
+    {
+      "cc": "251",
+      "number": "468819848",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["ET"]}
+      ]
+    },
+    {
+      "cc": "252",
+      "number": "60203580",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SO"]}
+      ]
+    },
+    {
+      "cc": "253",
+      "number": "77357113",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["DJ"]}
+      ]
+    },
+    {
+      "cc": "253",
+      "number": "21430782",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["DJ"]}
+      ]
+    },
+    {
+      "cc": "254",
+      "number": "618771191",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["KE"]}
+      ]
+    },
+    {
+      "cc": "254",
+      "number": "759248904",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["KE"]}
+      ]
+    },
+    {
+      "cc": "254",
+      "number": "8004436752",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["KE"]}
+      ]
+    },
+    {
+      "cc": "255",
+      "number": "628491449",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TZ"]}
+      ]
+    },
+    {
+      "cc": "255",
+      "number": "253615209",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["TZ"]}
+      ]
+    },
+    {
+      "cc": "255",
+      "number": "512768092",
+      "result": [
+        {"type": "LPN:TYPE", "values": []},
+        {"type": "REGION", "values": ["TZ"]}
+      ]
+    },
+    {
+      "cc": "255",
+      "number": "415461274",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["TZ"]}
+      ]
+    },
+    {
+      "cc": "256",
+      "number": "440391951",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["UG"]}
+      ]
+    },
+    {
+      "cc": "256",
+      "number": "798820395",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["UG"]}
+      ]
+    },
+    {
+      "cc": "257",
+      "number": "65270330",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BI"]}
+      ]
+    },
+    {
+      "cc": "257",
+      "number": "22457849",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BI"]}
+      ]
+    },
+    {
+      "cc": "258",
+      "number": "891298015",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MZ"]}
+      ]
+    },
+    {
+      "cc": "258",
+      "number": "26020551",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MZ"]}
+      ]
+    },
+    {
+      "cc": "258",
+      "number": "800173289",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["MZ"]}
+      ]
+    },
+    {
+      "cc": "260",
+      "number": "975912816",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["ZM"]}
+      ]
+    },
+    {
+      "cc": "260",
+      "number": "630158161",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["ZM"]}
+      ]
+    },
+    {
+      "cc": "260",
+      "number": "800000181",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["ZM"]}
+      ]
+    },
+    {
+      "cc": "260",
+      "number": "214916292",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["ZM"]}
+      ]
+    },
+    {
+      "cc": "261",
+      "number": "395734704",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MG"]}
+      ]
+    },
+    {
+      "cc": "261",
+      "number": "205634250",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MG"]}
+      ]
+    },
+    {
+      "cc": "261",
+      "number": "220527091",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["MG"]}
+      ]
+    },
+    {
+      "cc": "262",
+      "number": "806597805",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["RE", "YT"]}
+      ]
+    },
+    {
+      "cc": "262",
+      "number": "897334562",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["RE"]}
+      ]
+    },
+    {
+      "cc": "262",
+      "number": "821971761",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["RE"]}
+      ]
+    },
+    {
+      "cc": "262",
+      "number": "262605711",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["RE"]}
+      ]
+    },
+    {
+      "cc": "262",
+      "number": "639586571",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["YT"]}
+      ]
+    },
+    {
+      "cc": "262",
+      "number": "692875773",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["RE"]}
+      ]
+    },
+    {
+      "cc": "263",
+      "number": "2255579586",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["ZW"]}
+      ]
+    },
+    {
+      "cc": "263",
+      "number": "739871229",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["ZW"]}
+      ]
+    },
+    {
+      "cc": "264",
+      "number": "846788635",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["NA"]}
+      ]
+    },
+    {
+      "cc": "264",
+      "number": "809037540",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["NA"]}
+      ]
+    },
+    {
+      "cc": "264",
+      "number": "838743231",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["NA"]}
+      ]
+    },
+    {
+      "cc": "264",
+      "number": "614198235",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["NA"]}
+      ]
+    },
+    {
+      "cc": "265",
+      "number": "214231402",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MW"]}
+      ]
+    },
+    {
+      "cc": "265",
+      "number": "986625781",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MW"]}
+      ]
+    },
+    {
+      "cc": "266",
+      "number": "52177301",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["LS"]}
+      ]
+    },
+    {
+      "cc": "266",
+      "number": "29309213",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["LS"]}
+      ]
+    },
+    {
+      "cc": "267",
+      "number": "8009155389",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["BW"]}
+      ]
+    },
+    {
+      "cc": "267",
+      "number": "74099889",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BW"]}
+      ]
+    },
+    {
+      "cc": "267",
+      "number": "2975361",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BW"]}
+      ]
+    },
+    {
+      "cc": "268",
+      "number": "32821883",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SZ"]}
+      ]
+    },
+    {
+      "cc": "268",
+      "number": "900193794",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["SZ"]}
+      ]
+    },
+    {
+      "cc": "268",
+      "number": "70688920",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["SZ"]}
+      ]
+    },
+    {
+      "cc": "268",
+      "number": "79938788",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SZ"]}
+      ]
+    },
+    {
+      "cc": "269",
+      "number": "7680789",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["KM"]}
+      ]
+    },
+    {
+      "cc": "269",
+      "number": "4698007",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["KM"]}
+      ]
+    },
+    {
+      "cc": "269",
+      "number": "8192810",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["KM"]}
+      ]
+    },
+    {
+      "cc": "27",
+      "number": "734219036",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["ZA"]}
+      ]
+    },
+    {
+      "cc": "27",
+      "number": "443788846",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["ZA"]}
+      ]
+    },
+    {
+      "cc": "27",
+      "number": "866019204",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["ZA"]}
+      ]
+    },
+    {
+      "cc": "27",
+      "number": "870222356",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["ZA"]}
+      ]
+    },
+    {
+      "cc": "290",
+      "number": "54755",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SH"]}
+      ]
+    },
+    {
+      "cc": "290",
+      "number": "21259",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SH"]}
+      ]
+    },
+    {
+      "cc": "291",
+      "number": "7036541",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["ER"]}
+      ]
+    },
+    {
+      "cc": "291",
+      "number": "8173592",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["ER"]}
+      ]
+    },
+    {
+      "cc": "297",
+      "number": "6687434",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["AW"]}
+      ]
+    },
+    {
+      "cc": "297",
+      "number": "5833927",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["AW"]}
+      ]
+    },
+    {
+      "cc": "297",
+      "number": "2828884",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["AW"]}
+      ]
+    },
+    {
+      "cc": "298",
+      "number": "372446",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["FO"]}
+      ]
+    },
+    {
+      "cc": "298",
+      "number": "561439",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["FO"]}
+      ]
+    },
+    {
+      "cc": "298",
+      "number": "885230",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["FO"]}
+      ]
+    },
+    {
+      "cc": "299",
+      "number": "191615",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GL"]}
+      ]
+    },
+    {
+      "cc": "299",
+      "number": "550066",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GL"]}
+      ]
+    },
+    {
+      "cc": "299",
+      "number": "803919",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["GL"]}
+      ]
+    },
+    {
+      "cc": "30",
+      "number": "2424225055",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GR"]}
+      ]
+    },
+    {
+      "cc": "30",
+      "number": "9402167328",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GR"]}
+      ]
+    },
+    {
+      "cc": "30",
+      "number": "800981011381",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["GR"]}
+      ]
+    },
+    {
+      "cc": "30",
+      "number": "9094269926",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["GR"]}
+      ]
+    },
+    {
+      "cc": "30",
+      "number": "7036691660",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {"type": "REGION", "values": ["GR"]}
+      ]
+    },
+    {
+      "cc": "30",
+      "number": "8011266802",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["GR"]}
+      ]
+    },
+    {
+      "cc": "31",
+      "number": "150753141",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["NL"]}
+      ]
+    },
+    {
+      "cc": "31",
+      "number": "9064257237",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["NL"]}
+      ]
+    },
+    {
+      "cc": "31",
+      "number": "688894138",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["NL"]}
+      ]
+    },
+    {
+      "cc": "31",
+      "number": "874969826",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["NL"]}
+      ]
+    },
+    {
+      "cc": "31",
+      "number": "859872618",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["NL"]}
+      ]
+    },
+    {
+      "cc": "31",
+      "number": "666126981",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PAGER"]},
+        {"type": "REGION", "values": ["NL"]}
+      ]
+    },
+    {
+      "cc": "32",
+      "number": "477022672",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BE"]}
+      ]
+    },
+    {
+      "cc": "32",
+      "number": "90726564",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["BE"]}
+      ]
+    },
+    {
+      "cc": "32",
+      "number": "69295978",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BE"]}
+      ]
+    },
+    {
+      "cc": "32",
+      "number": "80043438",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["BE"]}
+      ]
+    },
+    {
+      "cc": "33",
+      "number": "811432017",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["FR"]}
+      ]
+    },
+    {
+      "cc": "33",
+      "number": "763546353",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["FR"]}
+      ]
+    },
+    {
+      "cc": "33",
+      "number": "112945175",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["FR"]}
+      ]
+    },
+    {
+      "cc": "33",
+      "number": "961061284",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["FR"]}
+      ]
+    },
+    {
+      "cc": "33",
+      "number": "809488983",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["FR"]}
+      ]
+    },
+    {
+      "cc": "33",
+      "number": "836039335",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["FR"]}
+      ]
+    },
+    {
+      "cc": "33",
+      "number": "805329104",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["FR"]}
+      ]
+    },
+    {
+      "cc": "34",
+      "number": "822763798",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["ES"]}
+      ]
+    },
+    {
+      "cc": "34",
+      "number": "701387306",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {"type": "REGION", "values": ["ES"]}
+      ]
+    },
+    {
+      "cc": "34",
+      "number": "675697987",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["ES"]}
+      ]
+    },
+    {
+      "cc": "34",
+      "number": "510240191",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["ES"]}
+      ]
+    },
+    {
+      "cc": "350",
+      "number": "51842434",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GI"]}
+      ]
+    },
+    {
+      "cc": "350",
+      "number": "20275586",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GI"]}
+      ]
+    },
+    {
+      "cc": "351",
+      "number": "760352756",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["PT"]}
+      ]
+    },
+    {
+      "cc": "351",
+      "number": "808952190",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["PT"]}
+      ]
+    },
+    {
+      "cc": "351",
+      "number": "938063589",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PT"]}
+      ]
+    },
+    {
+      "cc": "351",
+      "number": "243835640",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["PT"]}
+      ]
+    },
+    {
+      "cc": "351",
+      "number": "674557360",
+      "result": [
+        {"type": "LPN:TYPE", "values": []},
+        {"type": "REGION", "values": ["PT"]}
+      ]
+    },
+    {
+      "cc": "351",
+      "number": "307174653",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["PT"]}
+      ]
+    },
+    {
+      "cc": "351",
+      "number": "600627909",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOICEMAIL"]},
+        {"type": "REGION", "values": ["PT"]}
+      ]
+    },
+    {
+      "cc": "351",
+      "number": "707185210",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["PT"]}
+      ]
+    },
+    {
+      "cc": "352",
+      "number": "59648544981",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["LU"]}
+      ]
+    },
+    {
+      "cc": "353",
+      "number": "167722380",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["IE"]}
+      ]
+    },
+    {
+      "cc": "353",
+      "number": "761783743",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["IE"]}
+      ]
+    },
+    {
+      "cc": "353",
+      "number": "8894473317",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOICEMAIL"]},
+        {"type": "REGION", "values": ["IE"]}
+      ]
+    },
+    {
+      "cc": "353",
+      "number": "860338866",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["IE"]}
+      ]
+    },
+    {
+      "cc": "353",
+      "number": "1580028218",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["IE"]}
+      ]
+    },
+    {
+      "cc": "354",
+      "number": "7887929",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["IS"]}
+      ]
+    },
+    {
+      "cc": "354",
+      "number": "8806502",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOICEMAIL"]},
+        {"type": "REGION", "values": ["IS"]}
+      ]
+    },
+    {
+      "cc": "354",
+      "number": "5720836",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["IS"]}
+      ]
+    },
+    {
+      "cc": "354",
+      "number": "8066007",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["IS"]}
+      ]
+    },
+    {
+      "cc": "355",
+      "number": "677257919",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["AL"]}
+      ]
+    },
+    {
+      "cc": "355",
+      "number": "25840967",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["AL"]}
+      ]
+    },
+    {
+      "cc": "356",
+      "number": "92016774",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MT"]}
+      ]
+    },
+    {
+      "cc": "356",
+      "number": "21965225",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MT"]}
+      ]
+    },
+    {
+      "cc": "356",
+      "number": "50911272",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["MT"]}
+      ]
+    },
+    {
+      "cc": "356",
+      "number": "50195532",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["MT"]}
+      ]
+    },
+    {
+      "cc": "357",
+      "number": "80067121",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["CY"]}
+      ]
+    },
+    {
+      "cc": "357",
+      "number": "77892909",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["CY"]}
+      ]
+    },
+    {
+      "cc": "357",
+      "number": "94639713",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CY"]}
+      ]
+    },
+    {
+      "cc": "357",
+      "number": "24364934",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CY"]}
+      ]
+    },
+    {
+      "cc": "357",
+      "number": "80304415",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["CY"]}
+      ]
+    },
+    {
+      "cc": "357",
+      "number": "70040882",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {"type": "REGION", "values": ["CY"]}
+      ]
+    },
+    {
+      "cc": "357",
+      "number": "90928469",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["CY"]}
+      ]
+    },
+    {
+      "cc": "358",
+      "number": "704727128717",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["AX", "FI"]}
+      ]
+    },
+    {
+      "cc": "358",
+      "number": "831536900",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["FI"]}
+      ]
+    },
+    {
+      "cc": "358",
+      "number": "4130294839",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["AX", "FI"]}
+      ]
+    },
+    {
+      "cc": "359",
+      "number": "85160285",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BG"]}
+      ]
+    },
+    {
+      "cc": "359",
+      "number": "879302493",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BG"]}
+      ]
+    },
+    {
+      "cc": "359",
+      "number": "008004168524",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["BG"]}
+      ]
+    },
+    {
+      "cc": "359",
+      "number": "90948307",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["BG"]}
+      ]
+    },
+    {
+      "cc": "36",
+      "number": "314227331",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["HU"]}
+      ]
+    },
+    {
+      "cc": "36",
+      "number": "34794543",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["HU"]}
+      ]
+    },
+    {
+      "cc": "36",
+      "number": "385425290",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["HU"]}
+      ]
+    },
+    {
+      "cc": "36",
+      "number": "215469325",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["HU"]}
+      ]
+    },
+    {
+      "cc": "36",
+      "number": "90142773",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["HU"]}
+      ]
+    },
+    {
+      "cc": "36",
+      "number": "40438802",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["HU"]}
+      ]
+    },
+    {
+      "cc": "370",
+      "number": "34108257",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["LT"]}
+      ]
+    },
+    {
+      "cc": "370",
+      "number": "62191014",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["LT"]}
+      ]
+    },
+    {
+      "cc": "370",
+      "number": "80233781",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["LT"]}
+      ]
+    },
+    {
+      "cc": "370",
+      "number": "90095312",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["LT"]}
+      ]
+    },
+    {
+      "cc": "370",
+      "number": "70086212",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {"type": "REGION", "values": ["LT"]}
+      ]
+    },
+    {
+      "cc": "371",
+      "number": "80516939",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["LV"]}
+      ]
+    },
+    {
+      "cc": "371",
+      "number": "68811279",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["LV"]}
+      ]
+    },
+    {
+      "cc": "371",
+      "number": "28968146",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["LV"]}
+      ]
+    },
+    {
+      "cc": "371",
+      "number": "90572784",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["LV"]}
+      ]
+    },
+    {
+      "cc": "372",
+      "number": "82842606",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["EE"]}
+      ]
+    },
+    {
+      "cc": "372",
+      "number": "3535363",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["EE"]}
+      ]
+    },
+    {
+      "cc": "372",
+      "number": "8000085678",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["EE"]}
+      ]
+    },
+    {
+      "cc": "373",
+      "number": "71210166",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MD"]}
+      ]
+    },
+    {
+      "cc": "373",
+      "number": "22628601",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MD"]}
+      ]
+    },
+    {
+      "cc": "373",
+      "number": "30183606",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["MD"]}
+      ]
+    },
+    {
+      "cc": "373",
+      "number": "80048124",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["MD"]}
+      ]
+    },
+    {
+      "cc": "374",
+      "number": "11731001",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["AM"]}
+      ]
+    },
+    {
+      "cc": "374",
+      "number": "90153938",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["AM"]}
+      ]
+    },
+    {
+      "cc": "374",
+      "number": "96157702",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["AM"]}
+      ]
+    },
+    {
+      "cc": "375",
+      "number": "8005218236",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["BY"]}
+      ]
+    },
+    {
+      "cc": "375",
+      "number": "441916482",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BY"]}
+      ]
+    },
+    {
+      "cc": "375",
+      "number": "224353740",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BY"]}
+      ]
+    },
+    {
+      "cc": "375",
+      "number": "9024831211",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["BY"]}
+      ]
+    },
+    {
+      "cc": "376",
+      "number": "962663",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["AD"]}
+      ]
+    },
+    {
+      "cc": "376",
+      "number": "690625306",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["AD"]}
+      ]
+    },
+    {
+      "cc": "376",
+      "number": "712412",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["AD"]}
+      ]
+    },
+    {
+      "cc": "376",
+      "number": "18008833",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["AD"]}
+      ]
+    },
+    {
+      "cc": "377",
+      "number": "97406222",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MC"]}
+      ]
+    },
+    {
+      "cc": "377",
+      "number": "654529711",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MC"]}
+      ]
+    },
+    {
+      "cc": "378",
+      "number": "51337246",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["SM"]}
+      ]
+    },
+    {
+      "cc": "378",
+      "number": "77587199",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["SM"]}
+      ]
+    },
+    {
+      "cc": "378",
+      "number": "66657177",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SM"]}
+      ]
+    },
+    {
+      "cc": "380",
+      "number": "695707191",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["UA"]}
+      ]
+    },
+    {
+      "cc": "380",
+      "number": "8001099913",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["UA"]}
+      ]
+    },
+    {
+      "cc": "380",
+      "number": "665190421",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["UA"]}
+      ]
+    },
+    {
+      "cc": "381",
+      "number": "353192698772",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["RS"]}
+      ]
+    },
+    {
+      "cc": "381",
+      "number": "768934924550",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["RS"]}
+      ]
+    },
+    {
+      "cc": "382",
+      "number": "67248966",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["ME"]}
+      ]
+    },
+    {
+      "cc": "382",
+      "number": "809271894",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["ME"]}
+      ]
+    },
+    {
+      "cc": "382",
+      "number": "33415878",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["ME"]}
+      ]
+    },
+    {
+      "cc": "382",
+      "number": "78238590",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["ME"]}
+      ]
+    },
+    {
+      "cc": "382",
+      "number": "77688233",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["ME"]}
+      ]
+    },
+    {
+      "cc": "382",
+      "number": "94656683",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["ME"]}
+      ]
+    },
+    {
+      "cc": "383",
+      "number": "48189036",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["XK"]}
+      ]
+    },
+    {
+      "cc": "383",
+      "number": "38638138",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["XK"]}
+      ]
+    },
+    {
+      "cc": "385",
+      "number": "926125943",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["HR"]}
+      ]
+    },
+    {
+      "cc": "385",
+      "number": "513245581",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["HR"]}
+      ]
+    },
+    {
+      "cc": "385",
+      "number": "75411264",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {"type": "REGION", "values": ["HR"]}
+      ]
+    },
+    {
+      "cc": "385",
+      "number": "621743369",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["HR"]}
+      ]
+    },
+    {
+      "cc": "386",
+      "number": "48636738",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SI"]}
+      ]
+    },
+    {
+      "cc": "386",
+      "number": "90971699",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["SI"]}
+      ]
+    },
+    {
+      "cc": "386",
+      "number": "80586374",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["SI"]}
+      ]
+    },
+    {
+      "cc": "386",
+      "number": "51413764",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SI"]}
+      ]
+    },
+    {
+      "cc": "386",
+      "number": "81893940",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["SI"]}
+      ]
+    },
+    {
+      "cc": "387",
+      "number": "671192702",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BA"]}
+      ]
+    },
+    {
+      "cc": "387",
+      "number": "82626702",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["BA"]}
+      ]
+    },
+    {
+      "cc": "387",
+      "number": "94701009",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["BA"]}
+      ]
+    },
+    {
+      "cc": "387",
+      "number": "33266449",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BA"]}
+      ]
+    },
+    {
+      "cc": "387",
+      "number": "80087842",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["BA"]}
+      ]
+    },
+    {
+      "cc": "389",
+      "number": "47260349",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MK"]}
+      ]
+    },
+    {
+      "cc": "389",
+      "number": "52650329",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["MK"]}
+      ]
+    },
+    {
+      "cc": "389",
+      "number": "72371130",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MK"]}
+      ]
+    },
+    {
+      "cc": "389",
+      "number": "81522003",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["MK"]}
+      ]
+    },
+    {
+      "cc": "39",
+      "number": "08118580766",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["IT"]}
+      ]
+    },
+    {
+      "cc": "39",
+      "number": "386065729741",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOICEMAIL"]},
+        {"type": "REGION", "values": ["IT", "VA"]}
+      ]
+    },
+    {
+      "cc": "40",
+      "number": "215798458",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["RO"]}
+      ]
+    },
+    {
+      "cc": "40",
+      "number": "763964359",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["RO"]}
+      ]
+    },
+    {
+      "cc": "40",
+      "number": "870658897",
+      "result": [
+        {"type": "LPN:TYPE", "values": []},
+        {"type": "REGION", "values": ["RO"]}
+      ]
+    },
+    {
+      "cc": "40",
+      "number": "903213687",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["RO"]}
+      ]
+    },
+    {
+      "cc": "40",
+      "number": "377011744",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["RO"]}
+      ]
+    },
+    {
+      "cc": "40",
+      "number": "801741990",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["RO"]}
+      ]
+    },
+    {
+      "cc": "40",
+      "number": "800414091",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["RO"]}
+      ]
+    },
+    {
+      "cc": "41",
+      "number": "860729268870",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOICEMAIL"]},
+        {"type": "REGION", "values": ["CH"]}
+      ]
+    },
+    {
+      "cc": "41",
+      "number": "772662511",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CH"]}
+      ]
+    },
+    {
+      "cc": "41",
+      "number": "229185493",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CH"]}
+      ]
+    },
+    {
+      "cc": "420",
+      "number": "963879950243",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOICEMAIL"]},
+        {"type": "REGION", "values": ["CZ"]}
+      ]
+    },
+    {
+      "cc": "420",
+      "number": "277778445",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CZ"]}
+      ]
+    },
+    {
+      "cc": "421",
+      "number": "475612963",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SK"]}
+      ]
+    },
+    {
+      "cc": "421",
+      "number": "867034631",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["SK"]}
+      ]
+    },
+    {
+      "cc": "421",
+      "number": "905573273",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SK"]}
+      ]
+    },
+    {
+      "cc": "421",
+      "number": "982785531",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["SK"]}
+      ]
+    },
+    {
+      "cc": "421",
+      "number": "968228175",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["SK"]}
+      ]
+    },
+    {
+      "cc": "423",
+      "number": "654068402",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["LI"]}
+      ]
+    },
+    {
+      "cc": "43",
+      "number": "5045391142317",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["AT"]}
+      ]
+    },
+    {
+      "cc": "43",
+      "number": "1603305351666",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["AT"]}
+      ]
+    },
+    {
+      "cc": "43",
+      "number": "8685479794160",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["AT"]}
+      ]
+    },
+    {
+      "cc": "43",
+      "number": "6953998009640",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["AT"]}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "1946534185",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GB"]}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "9808398651",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["GG"]}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "9011686576",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["GB", "GG"]}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "7663706416",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PAGER"]},
+        {"type": "REGION", "values": ["GB", "GG", "JE"]}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "7315844451",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GB"]}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "5699900965",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["GB", "GG", "IM", "JE"]}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "3497017450",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["GB", "GG"]}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "3382614756",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["GB", "GG", "IM", "JE"]}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "7031194688",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {"type": "REGION", "values": ["GB", "GG", "IM"]}
+      ]
+    },
+    {
+      "cc": "45",
+      "number": "44951983",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE_OR_MOBILE"]},
+        {"type": "REGION", "values": ["DK"]}
+      ]
+    },
+    {
+      "cc": "45",
+      "number": "90485100",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["DK"]}
+      ]
+    },
+    {
+      "cc": "45",
+      "number": "80539679",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["DK"]}
+      ]
+    },
+    {
+      "cc": "46",
+      "number": "255491000620",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOICEMAIL"]},
+        {"type": "REGION", "values": ["SE"]}
+      ]
+    },
+    {
+      "cc": "46",
+      "number": "469420399",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SE"]}
+      ]
+    },
+    {
+      "cc": "46",
+      "number": "749180080",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PAGER"]},
+        {"type": "REGION", "values": ["SE"]}
+      ]
+    },
+    {
+      "cc": "47",
+      "number": "99447022",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["NO", "SJ"]}
+      ]
+    },
+    {
+      "cc": "47",
+      "number": "73384761",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["NO"]}
+      ]
+    },
+    {
+      "cc": "47",
+      "number": "79962630",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SJ"]}
+      ]
+    },
+    {
+      "cc": "48",
+      "number": "294929572",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["PL"]}
+      ]
+    },
+    {
+      "cc": "48",
+      "number": "397630270",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["PL"]}
+      ]
+    },
+    {
+      "cc": "48",
+      "number": "579484860",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PL"]}
+      ]
+    },
+    {
+      "cc": "48",
+      "number": "64945557",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PAGER"]},
+        {"type": "REGION", "values": ["PL"]}
+      ]
+    },
+    {
+      "cc": "48",
+      "number": "801126532",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["PL"]}
+      ]
+    },
+    {
+      "cc": "48",
+      "number": "703103407",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["PL"]}
+      ]
+    },
+    {
+      "cc": "48",
+      "number": "8004370595",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["PL"]}
+      ]
+    },
+    {
+      "cc": "49",
+      "number": "400950478015888",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["DE"]}
+      ]
+    },
+    {
+      "cc": "500",
+      "number": "70992",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["FK"]}
+      ]
+    },
+    {
+      "cc": "500",
+      "number": "67878",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["FK"]}
+      ]
+    },
+    {
+      "cc": "501",
+      "number": "08008020831",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["BZ"]}
+      ]
+    },
+    {
+      "cc": "501",
+      "number": "6179263",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BZ"]}
+      ]
+    },
+    {
+      "cc": "501",
+      "number": "8255178",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BZ"]}
+      ]
+    },
+    {
+      "cc": "502",
+      "number": "19589794937",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["GT"]}
+      ]
+    },
+    {
+      "cc": "502",
+      "number": "18100557078",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["GT"]}
+      ]
+    },
+    {
+      "cc": "502",
+      "number": "40763173",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GT"]}
+      ]
+    },
+    {
+      "cc": "503",
+      "number": "90063956621",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["SV"]}
+      ]
+    },
+    {
+      "cc": "503",
+      "number": "64967418",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SV"]}
+      ]
+    },
+    {
+      "cc": "503",
+      "number": "80041687719",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["SV"]}
+      ]
+    },
+    {
+      "cc": "504",
+      "number": "39344837",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["HN"]}
+      ]
+    },
+    {
+      "cc": "504",
+      "number": "80020661818",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["HN"]}
+      ]
+    },
+    {
+      "cc": "504",
+      "number": "27914682",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["HN"]}
+      ]
+    },
+    {
+      "cc": "505",
+      "number": "88656551",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["NI"]}
+      ]
+    },
+    {
+      "cc": "505",
+      "number": "25734876",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["NI"]}
+      ]
+    },
+    {
+      "cc": "506",
+      "number": "9096204150",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["CR"]}
+      ]
+    },
+    {
+      "cc": "506",
+      "number": "49810753",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["CR"]}
+      ]
+    },
+    {
+      "cc": "506",
+      "number": "86769597",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CR"]}
+      ]
+    },
+    {
+      "cc": "506",
+      "number": "26449791",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CR"]}
+      ]
+    },
+    {
+      "cc": "506",
+      "number": "8000982256",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["CR"]}
+      ]
+    },
+    {
+      "cc": "507",
+      "number": "8489838",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["PA"]}
+      ]
+    },
+    {
+      "cc": "507",
+      "number": "00800646211",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["PA"]}
+      ]
+    },
+    {
+      "cc": "507",
+      "number": "65068776",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PA"]}
+      ]
+    },
+    {
+      "cc": "508",
+      "number": "802661072",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["PM"]}
+      ]
+    },
+    {
+      "cc": "508",
+      "number": "708538216",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PM"]}
+      ]
+    },
+    {
+      "cc": "509",
+      "number": "88011015",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["HT"]}
+      ]
+    },
+    {
+      "cc": "509",
+      "number": "47854382",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["HT"]}
+      ]
+    },
+    {
+      "cc": "509",
+      "number": "99860998",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["HT"]}
+      ]
+    },
+    {
+      "cc": "509",
+      "number": "29104385",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["HT"]}
+      ]
+    },
+    {
+      "cc": "51",
+      "number": "927176096",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PE"]}
+      ]
+    },
+    {
+      "cc": "51",
+      "number": "52928266",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["PE"]}
+      ]
+    },
+    {
+      "cc": "52",
+      "number": "4926270482",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE_OR_MOBILE"]},
+        {"type": "REGION", "values": ["MX"]}
+      ]
+    },
+    {
+      "cc": "52",
+      "number": "13361990394",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MX"]}
+      ]
+    },
+    {
+      "cc": "53",
+      "number": "48552105",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CU"]}
+      ]
+    },
+    {
+      "cc": "53",
+      "number": "8005283431",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["CU"]}
+      ]
+    },
+    {
+      "cc": "53",
+      "number": "58296352",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CU"]}
+      ]
+    },
+    {
+      "cc": "53",
+      "number": "8077976175",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["CU"]}
+      ]
+    },
+    {
+      "cc": "54",
+      "number": "3867632217",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE_OR_MOBILE"]},
+        {"type": "REGION", "values": ["AR"]}
+      ]
+    },
+    {
+      "cc": "54",
+      "number": "80018003207",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["AR"]}
+      ]
+    },
+    {
+      "cc": "54",
+      "number": "6055570230",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["AR"]}
+      ]
+    },
+    {
+      "cc": "55",
+      "number": "15986381787",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BR"]}
+      ]
+    },
+    {
+      "cc": "55",
+      "number": "6535815911",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BR"]}
+      ]
+    },
+    {
+      "cc": "56",
+      "number": "811056637",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE_OR_MOBILE"]},
+        {"type": "REGION", "values": ["CL"]}
+      ]
+    },
+    {
+      "cc": "56",
+      "number": "60078236784",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["CL"]}
+      ]
+    },
+    {
+      "cc": "56",
+      "number": "444431261",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["CL"]}
+      ]
+    },
+    {
+      "cc": "56",
+      "number": "12300989954",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["CL"]}
+      ]
+    },
+    {
+      "cc": "57",
+      "number": "19014655441",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["CO"]}
+      ]
+    },
+    {
+      "cc": "57",
+      "number": "3152079577",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CO"]}
+      ]
+    },
+    {
+      "cc": "57",
+      "number": "6045943170",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CO"]}
+      ]
+    },
+    {
+      "cc": "58",
+      "number": "4001361010",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["VE"]}
+      ]
+    },
+    {
+      "cc": "58",
+      "number": "4160100599",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["VE"]}
+      ]
+    },
+    {
+      "cc": "58",
+      "number": "8003551518",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["VE"]}
+      ]
+    },
+    {
+      "cc": "58",
+      "number": "9006663032",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["VE"]}
+      ]
+    },
+    {
+      "cc": "590",
+      "number": "802313964",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["BL", "GP", "MF"]}
+      ]
+    },
+    {
+      "cc": "590",
+      "number": "590581777",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MF"]}
+      ]
+    },
+    {
+      "cc": "590",
+      "number": "590141483",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GP"]}
+      ]
+    },
+    {
+      "cc": "590",
+      "number": "690283704",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BL", "GP", "MF"]}
+      ]
+    },
+    {
+      "cc": "590",
+      "number": "939589887",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["BL", "GP", "MF"]}
+      ]
+    },
+    {
+      "cc": "590",
+      "number": "590514906",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BL", "MF"]}
+      ]
+    },
+    {
+      "cc": "590",
+      "number": "590281424",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BL", "GP"]}
+      ]
+    },
+    {
+      "cc": "591",
+      "number": "46937320",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BO"]}
+      ]
+    },
+    {
+      "cc": "591",
+      "number": "65530287",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BO"]}
+      ]
+    },
+    {
+      "cc": "592",
+      "number": "6013313",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GY"]}
+      ]
+    },
+    {
+      "cc": "592",
+      "number": "3392697",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GY"]}
+      ]
+    },
+    {
+      "cc": "592",
+      "number": "2897525",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["GY"]}
+      ]
+    },
+    {
+      "cc": "593",
+      "number": "18002058309",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["EC"]}
+      ]
+    },
+    {
+      "cc": "593",
+      "number": "979690912",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["EC"]}
+      ]
+    },
+    {
+      "cc": "593",
+      "number": "75226296",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["EC"]}
+      ]
+    },
+    {
+      "cc": "594",
+      "number": "803334985",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["GF"]}
+      ]
+    },
+    {
+      "cc": "594",
+      "number": "976188702",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["GF"]}
+      ]
+    },
+    {
+      "cc": "594",
+      "number": "694119755",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GF"]}
+      ]
+    },
+    {
+      "cc": "594",
+      "number": "594061265",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GF"]}
+      ]
+    },
+    {
+      "cc": "595",
+      "number": "961067323",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PY"]}
+      ]
+    },
+    {
+      "cc": "595",
+      "number": "508191659",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["PY"]}
+      ]
+    },
+    {
+      "cc": "595",
+      "number": "47600842",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["PY"]}
+      ]
+    },
+    {
+      "cc": "595",
+      "number": "9800573555",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["PY"]}
+      ]
+    },
+    {
+      "cc": "596",
+      "number": "804994823",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["MQ"]}
+      ]
+    },
+    {
+      "cc": "596",
+      "number": "696801470",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MQ"]}
+      ]
+    },
+    {
+      "cc": "596",
+      "number": "596752001",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MQ"]}
+      ]
+    },
+    {
+      "cc": "596",
+      "number": "976652002",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["MQ"]}
+      ]
+    },
+    {
+      "cc": "597",
+      "number": "7700311",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SR"]}
+      ]
+    },
+    {
+      "cc": "597",
+      "number": "6885018",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SR"]}
+      ]
+    },
+    {
+      "cc": "598",
+      "number": "4901626661",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["UY"]}
+      ]
+    },
+    {
+      "cc": "598",
+      "number": "22650769",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["UY"]}
+      ]
+    },
+    {
+      "cc": "599",
+      "number": "97344946",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CW"]}
+      ]
+    },
+    {
+      "cc": "599",
+      "number": "95775993",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CW"]}
+      ]
+    },
+    {
+      "cc": "599",
+      "number": "7009620",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BQ"]}
+      ]
+    },
+    {
+      "cc": "599",
+      "number": "95502920",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PAGER"]},
+        {"type": "REGION", "values": ["CW"]}
+      ]
+    },
+    {
+      "cc": "60",
+      "number": "394242410",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MY"]}
+      ]
+    },
+    {
+      "cc": "60",
+      "number": "1139360804",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MY"]}
+      ]
+    },
+    {
+      "cc": "61",
+      "number": "130040767153",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["AU", "CC", "CX"]}
+      ]
+    },
+    {
+      "cc": "61",
+      "number": "790264760",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["AU"]}
+      ]
+    },
+    {
+      "cc": "61",
+      "number": "422185104",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["AU", "CC", "CX"]}
+      ]
+    },
+    {
+      "cc": "61",
+      "number": "1800222037",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["AU", "CC", "CX"]}
+      ]
+    },
+    {
+      "cc": "62",
+      "number": "76809363034",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["ID"]}
+      ]
+    },
+    {
+      "cc": "62",
+      "number": "86020833836",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["ID"]}
+      ]
+    },
+    {
+      "cc": "63",
+      "number": "8962350325",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PH"]}
+      ]
+    },
+    {
+      "cc": "63",
+      "number": "1800636545794",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["PH"]}
+      ]
+    },
+    {
+      "cc": "63",
+      "number": "437811621",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["PH"]}
+      ]
+    },
+    {
+      "cc": "64",
+      "number": "2199374738",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["NZ"]}
+      ]
+    },
+    {
+      "cc": "64",
+      "number": "9080667019",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["NZ"]}
+      ]
+    },
+    {
+      "cc": "64",
+      "number": "8557535243",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["NZ"]}
+      ]
+    },
+    {
+      "cc": "64",
+      "number": "8053077489",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["NZ"]}
+      ]
+    },
+    {
+      "cc": "64",
+      "number": "67379272",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["NZ"]}
+      ]
+    },
+    {
+      "cc": "64",
+      "number": "863292907",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PAGER"]},
+        {"type": "REGION", "values": ["NZ"]}
+      ]
+    },
+    {
+      "cc": "65",
+      "number": "86649194",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SG"]}
+      ]
+    },
+    {
+      "cc": "65",
+      "number": "18000068895",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["SG"]}
+      ]
+    },
+    {
+      "cc": "65",
+      "number": "64306693",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SG"]}
+      ]
+    },
+    {
+      "cc": "65",
+      "number": "19006000841",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["SG"]}
+      ]
+    },
+    {
+      "cc": "65",
+      "number": "70009636193",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["SG"]}
+      ]
+    },
+    {
+      "cc": "65",
+      "number": "32548898",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["SG"]}
+      ]
+    },
+    {
+      "cc": "66",
+      "number": "144151336",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TH"]}
+      ]
+    },
+    {
+      "cc": "66",
+      "number": "52868809",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["TH"]}
+      ]
+    },
+    {
+      "cc": "66",
+      "number": "0018000921051",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["TH"]}
+      ]
+    },
+    {
+      "cc": "66",
+      "number": "1900059634",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["TH"]}
+      ]
+    },
+    {
+      "cc": "670",
+      "number": "2597317",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["TL"]}
+      ]
+    },
+    {
+      "cc": "670",
+      "number": "75535047",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TL"]}
+      ]
+    },
+    {
+      "cc": "670",
+      "number": "7026483",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {"type": "REGION", "values": ["TL"]}
+      ]
+    },
+    {
+      "cc": "672",
+      "number": "321667",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["NF"]}
+      ]
+    },
+    {
+      "cc": "672",
+      "number": "356287",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["NF"]}
+      ]
+    },
+    {
+      "cc": "673",
+      "number": "2176374",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BN"]}
+      ]
+    },
+    {
+      "cc": "673",
+      "number": "7234840",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BN"]}
+      ]
+    },
+    {
+      "cc": "673",
+      "number": "5403415",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["BN"]}
+      ]
+    },
+    {
+      "cc": "674",
+      "number": "8501606",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["NR"]}
+      ]
+    },
+    {
+      "cc": "674",
+      "number": "4445201",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["NR"]}
+      ]
+    },
+    {
+      "cc": "675",
+      "number": "88176535",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PG"]}
+      ]
+    },
+    {
+      "cc": "675",
+      "number": "9760450",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["PG"]}
+      ]
+    },
+    {
+      "cc": "676",
+      "number": "6049343",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TO"]}
+      ]
+    },
+    {
+      "cc": "676",
+      "number": "5595554",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["TO"]}
+      ]
+    },
+    {
+      "cc": "677",
+      "number": "8978540",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SB"]}
+      ]
+    },
+    {
+      "cc": "677",
+      "number": "31021",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SB"]}
+      ]
+    },
+    {
+      "cc": "678",
+      "number": "5921294",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["VU"]}
+      ]
+    },
+    {
+      "cc": "678",
+      "number": "9046512",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["VU"]}
+      ]
+    },
+    {
+      "cc": "679",
+      "number": "08009050505",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["FJ"]}
+      ]
+    },
+    {
+      "cc": "679",
+      "number": "3498830",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["FJ"]}
+      ]
+    },
+    {
+      "cc": "679",
+      "number": "2425703",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["FJ"]}
+      ]
+    },
+    {
+      "cc": "680",
+      "number": "7778350",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PW"]}
+      ]
+    },
+    {
+      "cc": "680",
+      "number": "2557303",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["PW"]}
+      ]
+    },
+    {
+      "cc": "681",
+      "number": "805091719",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["WF"]}
+      ]
+    },
+    {
+      "cc": "681",
+      "number": "829538",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["WF"]}
+      ]
+    },
+    {
+      "cc": "682",
+      "number": "45183",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CK"]}
+      ]
+    },
+    {
+      "cc": "682",
+      "number": "56384",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CK"]}
+      ]
+    },
+    {
+      "cc": "683",
+      "number": "8886580",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["NU"]}
+      ]
+    },
+    {
+      "cc": "683",
+      "number": "4931",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["NU"]}
+      ]
+    },
+    {
+      "cc": "685",
+      "number": "8919298066",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["WS"]}
+      ]
+    },
+    {
+      "cc": "686",
+      "number": "72454274",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["KI"]}
+      ]
+    },
+    {
+      "cc": "687",
+      "number": "877215",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["NC"]}
+      ]
+    },
+    {
+      "cc": "687",
+      "number": "311608",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["NC"]}
+      ]
+    },
+    {
+      "cc": "688",
+      "number": "7185088",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TV"]}
+      ]
+    },
+    {
+      "cc": "688",
+      "number": "27753",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["TV"]}
+      ]
+    },
+    {
+      "cc": "689",
+      "number": "805534300",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["PF"]}
+      ]
+    },
+    {
+      "cc": "689",
+      "number": "49853117",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["PF"]}
+      ]
+    },
+    {
+      "cc": "689",
+      "number": "88739320",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PF"]}
+      ]
+    },
+    {
+      "cc": "689",
+      "number": "49995740",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["PF"]}
+      ]
+    },
+    {
+      "cc": "690",
+      "number": "7316059",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TK"]}
+      ]
+    },
+    {
+      "cc": "690",
+      "number": "4645444",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["TK"]}
+      ]
+    },
+    {
+      "cc": "691",
+      "number": "9294957",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE_OR_MOBILE"]},
+        {"type": "REGION", "values": ["FM"]}
+      ]
+    },
+    {
+      "cc": "691",
+      "number": "9787836",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["FM"]}
+      ]
+    },
+    {
+      "cc": "692",
+      "number": "4538821",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MH"]}
+      ]
+    },
+    {
+      "cc": "692",
+      "number": "6259541",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MH"]}
+      ]
+    },
+    {
+      "cc": "692",
+      "number": "6353932",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["MH"]}
+      ]
+    },
+    {
+      "cc": "7",
+      "number": "81087033524481",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["KZ", "RU"]}
+      ]
+    },
+    {
+      "cc": "7",
+      "number": "4998925167",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["RU"]}
+      ]
+    },
+    {
+      "cc": "7",
+      "number": "9143363734",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["RU"]}
+      ]
+    },
+    {
+      "cc": "7",
+      "number": "7717127702",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["KZ"]}
+      ]
+    },
+    {
+      "cc": "800",
+      "number": "39249115",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["001"]}
+      ]
+    },
+    {
+      "cc": "808",
+      "number": "37908840",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["001"]}
+      ]
+    },
+    {
+      "cc": "81",
+      "number": "00661916311371579",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["JP"]}
+      ]
+    },
+    {
+      "cc": "82",
+      "number": "50725966827",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {"type": "REGION", "values": ["KR"]}
+      ]
+    },
+    {
+      "cc": "82",
+      "number": "00798035814994",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["KR"]}
+      ]
+    },
+    {
+      "cc": "82",
+      "number": "4164911597",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["KR"]}
+      ]
+    },
+    {
+      "cc": "82",
+      "number": "1791595787",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["KR"]}
+      ]
+    },
+    {
+      "cc": "82",
+      "number": "7072204745",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["KR"]}
+      ]
+    },
+    {
+      "cc": "84",
+      "number": "359218089",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["VN"]}
+      ]
+    },
+    {
+      "cc": "84",
+      "number": "2205654060",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["VN"]}
+      ]
+    },
+    {
+      "cc": "850",
+      "number": "1912581681",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["KP"]}
+      ]
+    },
+    {
+      "cc": "850",
+      "number": "23406897",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["KP"]}
+      ]
+    },
+    {
+      "cc": "852",
+      "number": "90077044642",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["HK"]}
+      ]
+    },
+    {
+      "cc": "852",
+      "number": "54815909",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["HK"]}
+      ]
+    },
+    {
+      "cc": "852",
+      "number": "23414791",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["HK"]}
+      ]
+    },
+    {
+      "cc": "852",
+      "number": "81001857",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {"type": "REGION", "values": ["HK"]}
+      ]
+    },
+    {
+      "cc": "852",
+      "number": "800292361",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["HK"]}
+      ]
+    },
+    {
+      "cc": "853",
+      "number": "82603405",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MO"]}
+      ]
+    },
+    {
+      "cc": "853",
+      "number": "63488491",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MO"]}
+      ]
+    },
+    {
+      "cc": "855",
+      "number": "756058806",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["KH"]}
+      ]
+    },
+    {
+      "cc": "855",
+      "number": "384701085",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["KH"]}
+      ]
+    },
+    {
+      "cc": "856",
+      "number": "2078540870",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["LA"]}
+      ]
+    },
+    {
+      "cc": "856",
+      "number": "64692121",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["LA"]}
+      ]
+    },
+    {
+      "cc": "856",
+      "number": "303376312",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["LA"]}
+      ]
+    },
+    {
+      "cc": "86",
+      "number": "16730792250",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["CN"]}
+      ]
+    },
+    {
+      "cc": "86",
+      "number": "9512706871",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["CN"]}
+      ]
+    },
+    {
+      "cc": "86",
+      "number": "8003469669",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["CN"]}
+      ]
+    },
+    {
+      "cc": "870",
+      "number": "509259049",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["001"]}
+      ]
+    },
+    {
+      "cc": "878",
+      "number": "107521111324",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["001"]}
+      ]
+    },
+    {
+      "cc": "880",
+      "number": "3860258298",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BD"]}
+      ]
+    },
+    {
+      "cc": "880",
+      "number": "466246490",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BD"]}
+      ]
+    },
+    {
+      "cc": "880",
+      "number": "9666837580",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["BD"]}
+      ]
+    },
+    {
+      "cc": "880",
+      "number": "8034707847",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["BD"]}
+      ]
+    },
+    {
+      "cc": "881",
+      "number": "196077763",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["001"]}
+      ]
+    },
+    {
+      "cc": "882",
+      "number": "160529524428",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["001"]}
+      ]
+    },
+    {
+      "cc": "882",
+      "number": "377024126875",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["001"]}
+      ]
+    },
+    {
+      "cc": "883",
+      "number": "34067088394",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["001"]}
+      ]
+    },
+    {
+      "cc": "886",
+      "number": "7016967230",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOIP"]},
+        {"type": "REGION", "values": ["TW"]}
+      ]
+    },
+    {
+      "cc": "886",
+      "number": "236309809",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["TW"]}
+      ]
+    },
+    {
+      "cc": "886",
+      "number": "929067369",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TW"]}
+      ]
+    },
+    {
+      "cc": "886",
+      "number": "501216725",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["TW"]}
+      ]
+    },
+    {
+      "cc": "886",
+      "number": "998142928",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {"type": "REGION", "values": ["TW"]}
+      ]
+    },
+    {
+      "cc": "886",
+      "number": "208541683",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["TW"]}
+      ]
+    },
+    {
+      "cc": "888",
+      "number": "71652156696",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["001"]}
+      ]
+    },
+    {
+      "cc": "90",
+      "number": "8008475951451",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["TR"]}
+      ]
+    },
+    {
+      "cc": "90",
+      "number": "3243968088",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["TR"]}
+      ]
+    },
+    {
+      "cc": "91",
+      "number": "5717859844",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["IN"]}
+      ]
+    },
+    {
+      "cc": "91",
+      "number": "1861116468830",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["IN"]}
+      ]
+    },
+    {
+      "cc": "91",
+      "number": "6773263086",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["IN"]}
+      ]
+    },
+    {
+      "cc": "91",
+      "number": "1800467737621",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["IN"]}
+      ]
+    },
+    {
+      "cc": "91",
+      "number": "18603420162",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["IN"]}
+      ]
+    },
+    {
+      "cc": "91",
+      "number": "8379363511",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE_OR_MOBILE"]},
+        {"type": "REGION", "values": ["IN"]}
+      ]
+    },
+    {
+      "cc": "92",
+      "number": "6167271535",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["PK"]}
+      ]
+    },
+    {
+      "cc": "92",
+      "number": "3405662449",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PK"]}
+      ]
+    },
+    {
+      "cc": "92",
+      "number": "293111766027",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["PK"]}
+      ]
+    },
+    {
+      "cc": "93",
+      "number": "288615506",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["AF"]}
+      ]
+    },
+    {
+      "cc": "93",
+      "number": "764497473",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["AF"]}
+      ]
+    },
+    {
+      "cc": "94",
+      "number": "663002789",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["LK"]}
+      ]
+    },
+    {
+      "cc": "94",
+      "number": "709221759",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["LK"]}
+      ]
+    },
+    {
+      "cc": "95",
+      "number": "673642453",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MM"]}
+      ]
+    },
+    {
+      "cc": "95",
+      "number": "9790198744",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MM"]}
+      ]
+    },
+    {
+      "cc": "960",
+      "number": "9000467080",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["MV"]}
+      ]
+    },
+    {
+      "cc": "960",
+      "number": "8004954214",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["MV"]}
+      ]
+    },
+    {
+      "cc": "960",
+      "number": "9487073",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MV"]}
+      ]
+    },
+    {
+      "cc": "961",
+      "number": "21505604",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["LB"]}
+      ]
+    },
+    {
+      "cc": "961",
+      "number": "91384709",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["LB"]}
+      ]
+    },
+    {
+      "cc": "961",
+      "number": "76062785",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["LB"]}
+      ]
+    },
+    {
+      "cc": "961",
+      "number": "80698564",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["LB"]}
+      ]
+    },
+    {
+      "cc": "962",
+      "number": "779199538",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["JO"]}
+      ]
+    },
+    {
+      "cc": "962",
+      "number": "702302184",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PERSONAL_NUMBER"]},
+        {"type": "REGION", "values": ["JO"]}
+      ]
+    },
+    {
+      "cc": "962",
+      "number": "85310339",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["JO"]}
+      ]
+    },
+    {
+      "cc": "962",
+      "number": "96714407",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["JO"]}
+      ]
+    },
+    {
+      "cc": "962",
+      "number": "65358601",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["JO"]}
+      ]
+    },
+    {
+      "cc": "963",
+      "number": "51257334",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SY"]}
+      ]
+    },
+    {
+      "cc": "963",
+      "number": "919046489",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SY"]}
+      ]
+    },
+    {
+      "cc": "964",
+      "number": "7465022826",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["IQ"]}
+      ]
+    },
+    {
+      "cc": "964",
+      "number": "238755881",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["IQ"]}
+      ]
+    },
+    {
+      "cc": "965",
+      "number": "65692169",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["KW"]}
+      ]
+    },
+    {
+      "cc": "965",
+      "number": "24108616",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["KW"]}
+      ]
+    },
+    {
+      "cc": "966",
+      "number": "8118363442",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["UAN"]},
+        {"type": "REGION", "values": ["SA"]}
+      ]
+    },
+    {
+      "cc": "966",
+      "number": "515118413",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["SA"]}
+      ]
+    },
+    {
+      "cc": "966",
+      "number": "112049494",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["SA"]}
+      ]
+    },
+    {
+      "cc": "966",
+      "number": "8008013201",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["SA"]}
+      ]
+    },
+    {
+      "cc": "967",
+      "number": "716907449",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["YE"]}
+      ]
+    },
+    {
+      "cc": "967",
+      "number": "6433641",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["YE"]}
+      ]
+    },
+    {
+      "cc": "968",
+      "number": "24233484",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["OM"]}
+      ]
+    },
+    {
+      "cc": "968",
+      "number": "97720457",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["OM"]}
+      ]
+    },
+    {
+      "cc": "968",
+      "number": "5004696",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["OM"]}
+      ]
+    },
+    {
+      "cc": "970",
+      "number": "565762050",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["PS"]}
+      ]
+    },
+    {
+      "cc": "970",
+      "number": "1700711549",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["PS"]}
+      ]
+    },
+    {
+      "cc": "970",
+      "number": "42513392",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["PS"]}
+      ]
+    },
+    {
+      "cc": "970",
+      "number": "1800015389",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["PS"]}
+      ]
+    },
+    {
+      "cc": "971",
+      "number": "800802320002",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["AE"]}
+      ]
+    },
+    {
+      "cc": "971",
+      "number": "585860366",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["AE"]}
+      ]
+    },
+    {
+      "cc": "972",
+      "number": "151115962826",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["VOICEMAIL"]},
+        {"type": "REGION", "values": ["IL"]}
+      ]
+    },
+    {
+      "cc": "972",
+      "number": "153346220936",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["IL"]}
+      ]
+    },
+    {
+      "cc": "973",
+      "number": "77052372",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BH"]}
+      ]
+    },
+    {
+      "cc": "973",
+      "number": "98668985",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["BH"]}
+      ]
+    },
+    {
+      "cc": "973",
+      "number": "84233438",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["SHARED_COST"]},
+        {"type": "REGION", "values": ["BH"]}
+      ]
+    },
+    {
+      "cc": "973",
+      "number": "37152231",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BH"]}
+      ]
+    },
+    {
+      "cc": "973",
+      "number": "80494735",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["BH"]}
+      ]
+    },
+    {
+      "cc": "974",
+      "number": "68498399",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["QA"]}
+      ]
+    },
+    {
+      "cc": "974",
+      "number": "800724201",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["QA"]}
+      ]
+    },
+    {
+      "cc": "974",
+      "number": "2110661",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PAGER"]},
+        {"type": "REGION", "values": ["QA"]}
+      ]
+    },
+    {
+      "cc": "974",
+      "number": "40526832",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["QA"]}
+      ]
+    },
+    {
+      "cc": "975",
+      "number": "2302507",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["BT"]}
+      ]
+    },
+    {
+      "cc": "975",
+      "number": "77760316",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["BT"]}
+      ]
+    },
+    {
+      "cc": "976",
+      "number": "1420461666",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["MN"]}
+      ]
+    },
+    {
+      "cc": "976",
+      "number": "96421753",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["MN"]}
+      ]
+    },
+    {
+      "cc": "977",
+      "number": "9804974099",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["NP"]}
+      ]
+    },
+    {
+      "cc": "977",
+      "number": "66698496",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["NP"]}
+      ]
+    },
+    {
+      "cc": "977",
+      "number": "18006745451",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["NP"]}
+      ]
+    },
+    {
+      "cc": "979",
+      "number": "105139066",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["PREMIUM_RATE"]},
+        {"type": "REGION", "values": ["001"]}
+      ]
+    },
+    {
+      "cc": "98",
+      "number": "3590090281",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["IR"]}
+      ]
+    },
+    {
+      "cc": "98",
+      "number": "9392180380",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["IR"]}
+      ]
+    },
+    {
+      "cc": "992",
+      "number": "968315195",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TJ"]}
+      ]
+    },
+    {
+      "cc": "992",
+      "number": "344188511",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["TJ"]}
+      ]
+    },
+    {
+      "cc": "993",
+      "number": "68308035",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["TM"]}
+      ]
+    },
+    {
+      "cc": "993",
+      "number": "13491293",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["TM"]}
+      ]
+    },
+    {
+      "cc": "994",
+      "number": "188268231",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["AZ"]}
+      ]
+    },
+    {
+      "cc": "994",
+      "number": "555834170",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["AZ"]}
+      ]
+    },
+    {
+      "cc": "994",
+      "number": "880915842",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["AZ"]}
+      ]
+    },
+    {
+      "cc": "995",
+      "number": "323044332",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["GE"]}
+      ]
+    },
+    {
+      "cc": "995",
+      "number": "578409807",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["GE"]}
+      ]
+    },
+    {
+      "cc": "996",
+      "number": "202929896",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["KG"]}
+      ]
+    },
+    {
+      "cc": "996",
+      "number": "622911961",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["KG"]}
+      ]
+    },
+    {
+      "cc": "996",
+      "number": "8008388133",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["TOLL_FREE"]},
+        {"type": "REGION", "values": ["KG"]}
+      ]
+    },
+    {
+      "cc": "998",
+      "number": "667283536",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE"]},
+        {"type": "REGION", "values": ["UZ"]}
+      ]
+    },
+    {
+      "cc": "998",
+      "number": "627592111",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["MOBILE"]},
+        {"type": "REGION", "values": ["UZ"]}
+      ]
+    },
+    {
+      "cc": "998",
+      "number": "707529941",
+      "result": [
+        {"type": "LPN:TYPE", "values": ["FIXED_LINE_OR_MOBILE"]},
+        {"type": "REGION", "values": ["UZ"]}
+      ]
+    }
+  ]
+}
