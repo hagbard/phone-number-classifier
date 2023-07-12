@@ -24,6 +24,7 @@ java_library(
         "@maven//:com_google_protobuf_protobuf_java",
         "@maven//:com_ibm_icu_icu4j",
         "@maven//:io_grpc_grpc_context",
+        "@maven//:org_checkerframework_checker_qual",
         "@maven//:org_typemeta_funcj_core",
         "@maven//:org_typemeta_funcj_json",
     ],
