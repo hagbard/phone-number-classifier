@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package net.goui.phonenumber.proto;
+
+option java_package = "net.goui.phonenumber.proto";
+
+// This is a binary stable protocol buffer and must avoid backwards incompatible changes.
+message MetadataProto {
+  VersionInfo version = 1;
+  message VersionInfo {
+    // Data structure major version, increased when incompatible changes are made to the protocol
+    // buffer structure (e.g. removing fields). Code should test this version explicitly and reject
+    // any unsupported/unknown major versions.
+    //
+    // This relates only to the protocol buffer structure, and is unrelated to the semantic meaning
+    // of the data held by this message.
+    uint32 major_version = 1;
+
+    // Data structure minor version, increased when backwards compatible changes are made (e.g. adding
+    // new fields which are optional for existing code). Code may rely on a larger minor version than
+    // it was expecting, but not smaller.
+    //
+    // This relates only to the protocol buffer structure, and is unrelated to the semantic meaning
+    // of the data held by this message.
+    uint32 minor_version = 2;
+
+    // A URL/URI identifying the data schema. This defines the available data, such as the available
+    // classifiers and their semantic meaning, as well as which representation(s) the matcher data
+    // will be provided in.
+    //
+    // Within a schema, all classifiers have a local namespace and keys such as "FIXED_LINE" can mean
+    // semantically different things for different schemas.
+    //
+    // This value may or may not reference a real web page, but if it does, that page should explain
+    // the schema semantics.
+    //
+    // Once published, a data schema should always retain the same semantics for existing classifiers.
+    //
+    // Code may accept any one of multiple schemas if their meanings are sufficiently similar, but
+    // should not assume that the same classifier/key name(s) will imply the same semantics.
+    string data_schema_uri = 3;
+
+    // The data schema version defining which classifiers are present. This should be increased when
+    // new data is added to an existing schema. Code can rely on later versions of a schema being
+    // backwards compatible with earlier code.
+    uint32 data_schema_version = 4;
+  }
+
+  // Available matcher types. A supplier may choose to provide matcher data in one or more of these
+  // representations as specified by the data schema and version. Code using the data should only
+  // to examine the set of matcher types if the schema allows more than one representation.
+  repeated MatcherType matcher_type = 2;
+  enum MatcherType {
+    UNKNOWN = 0;
+    DIGIT_SEQUENCE_MATCHER = 1;
+    REGULAR_EXPRESSION = 2;
+  }
+
+  // List of tokenized type names shared by all calling codes.
+  repeated uint32 type = 3;
+
+  // List of indices for types which are defined to return single values.
+  //
+  // Note that being single valued DOES NOT imply that classifiers are disjoint, since allowing
+  // classifiers to overlap can reduce data size greatly. Classifiers are ordered such that the
+  // first matching matcher defines the result, even if later matchers would also match.
+  repeated uint32 single_valued_type = 4;
+
+  // List of indices for types which DO NOT support partial matcher functionality.
+  repeated uint32 classifier_only_type = 5;
+
+  // Ordered list of calling code specific range data. This is ordered by the digit sequence
+  // prefix, and not the numerical value of the calling code (e.g. 41, < 420 ... < 43).
+  // However, code processing the data should not assume any specific ordering.
+  repeated CallingCodeProto calling_code_data = 6;
+
+  // Indexed array of strings used in classifier types and range keys (in an arbitrary order).
+  // This exists to save space for repeated strings used in most/all regions.
+  // We do not attempt to assign enums for these values since they can be user defined.
+  repeated string token = 15;
+}
+
+message CallingCodeProto {
+  // Digit sequence 1 to 3 digits long as its integer value (not tokenized). This only works
+  // because calling codes never have leading zeros.
+  uint32 calling_code = 1;
+
+  // Index of range(s) which defined the set of valid numbers in this region. For "simplified"
+  // data, this may greatly exceed the original "raw" ranges, but must always be a superset.
+  // However, since the original data can often includes many ranges which are not associated with
+  // "active"/callable numbers, users should not treat false-positives with any great significance.
+  repeated uint32 validity_matcher_index = 2;
+
+  // Classifiers for different data types. The type corresponds to the entry with the same index in
+  // type_names.
+  repeated NationalNumberDataProto national_number_data = 3;
+
+  // List of matcher data, indexed for validity data and from national_number_data.
+  repeated MatcherDataProto matcher_data = 4;
+}
+
+message NationalNumberDataProto {
+  // The tokenized string index for the default value of this classifier.
+  //
+  // For single valued matchers, this is the value we assign if none of the other matchers match.
+  // This value does not apply for multi-valued matchers and should not be used.
+  //
+  // This need not be the default value specified from "custom" classifiers and may change
+  // arbitrarily as range data changes.
+  uint32 default_value = 1;
+
+  // Ordered list of matchers to test, with their corresponding values.
+  repeated MatcherFunctionProto matcher = 2;
+}
+
+message MatcherFunctionProto {
+  // The tokenized string index for the ranges value.
+  uint32 value = 1;
+
+  // Index(es) for range data to be merged (index is local per CallingCodeProto).
+  repeated uint32 matcher_index = 2;
+}
+
+message MatcherDataProto {
+  // A bit-mask of possible digit sequence lengths encoded in the matcher data.
+  // Use this as a fast rejection test before executing a full match.
+  uint32 possible_lengths_mask = 2;
+
+  // Byte data defining a `DigitSequenceMatcher`
+  bytes matcher_data = 3;
+  // A regular expression to match a finite length string of decimal digits.
+  string regex_data = 4;
+}

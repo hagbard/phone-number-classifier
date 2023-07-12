@@ -1,0 +1,63 @@
+# proto-file:
+# proto-message: MetadataConfigProto
+
+# A configuration for classifiers which matches the semantics of libphonenumber's TYPE and
+# REGION information, with simplified (smaller) data.
+version {
+  # The data version is tied to how the metadata is packaged. This will change as the
+  # metadata encoding changes, but that should be rare.
+  major_version: 1
+  minor_version: 0
+  # The schema version defines the semantics of the data. This is chosen by the data provider
+  # and must be explicitly understood by any library using it. Many alternative schema versions
+  # can exist any it is expected that anyone providing a fundamentally new schema will also
+  # provide client code to handle it.
+  data_schema_uri: "goui.net/libphonenumber/dfa/tiny"
+  data_schema_version: 1
+}
+# Encode metadata for use by the finite state "digit sequence matcher". This is smaller and
+# faster than using regular expressions, but may not be supported on all platforms.
+matcher_type: DIGIT_SEQUENCE_MATCHER
+
+# A 100% false positive allowance permits up to twice as many number being included as "valid" in
+# the simplified data. It is up to the user to decide which values give the best tradeoff between
+# accuracy and data size. If omitted this defaults to 0%, and no simplification occurs.
+#
+# This value can be any non-negative number (e.g. 1000%, 10000%), but it is expected that values
+# between 0% and 500% will be the most common.
+default_maximum_false_positive_percent: 500
+
+# When simplifying ranges, do not reduce range prefix length below this value (even if that means
+# not reaching the maximum false positive limit).
+# E.g. Do not simplify to "7xxx_xxx_xxx" if the ranges are really "7[2-6]xx_xxx_xxx".
+default_minimum_prefix_length: 1
+
+# Specific calling codes can be given overrides for simplification limits as needed.
+override {
+  # India (calling code 91) has very complex data, so be less aggressive about simplification.
+  calling_code: 91
+  maximum_false_positive_percent: 50
+  minimum_prefix_length: 3
+}
+
+# Create a custom number classifier which matches the semantics of the libphonenumber library.
+classifier {
+  type_name: "LPN:TYPE"
+  custom {
+    is_single_valued: true
+    value { name: "PREMIUM_RATE" ranges: "TARIFF:PREMIUM_RATE" }
+    value { name: "TOLL_FREE" ranges: "TARIFF:TOLL_FREE" }
+    value { name: "SHARED_COST" ranges: "TARIFF:SHARED_COST" }
+    value { name: "FIXED_LINE" ranges: "TYPE:FIXED_LINE" }
+    value { name: "MOBILE" ranges: "TYPE:MOBILE" }
+    value { name: "FIXED_LINE_OR_MOBILE" ranges: "TYPE:FIXED_LINE_OR_MOBILE" }
+    value { name: "PAGER" ranges: "TYPE:PAGER" }
+    value { name: "PERSONAL_NUMBER" ranges: "TYPE:PERSONAL_NUMBER" }
+    value { name: "VOIP" ranges: "TYPE:VOIP" }
+    value { name: "UAN" ranges: "TYPE:UAN" }
+    value { name: "VOICEMAIL" ranges: "TYPE:VOICEMAIL" }
+  }
+}
+classifier {
+  type_name: "REGION"
+}
