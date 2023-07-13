@@ -203,9 +203,7 @@ public abstract class AbstractPhoneNumberClassifier {
   }
 
   final <R> R withDecomposed(PhoneNumber number, BiFunction<DigitSequence, DigitSequence, R> fn) {
-    DigitSequence digits = number.getDigits();
-    DigitSequence cc = extractSupportedCallingCode(digits);
-    return fn.apply(cc, digits.getSuffix(digits.length() - cc.length()));
+    return fn.apply(number.getCallingCode(), number.getNationalNumber());
   }
 
   /**
@@ -240,21 +238,6 @@ public abstract class AbstractPhoneNumberClassifier {
    */
   public final MatchResult match(PhoneNumber phoneNumber) {
     return withDecomposed(phoneNumber, rawClassifier::match);
-  }
-
-  private DigitSequence extractSupportedCallingCode(DigitSequence digits) {
-    checkArgument(
-        digits.length() >= 3, "E.164 phone numbers must be at least 3 digits long: +%s", digits);
-    DigitSequence.Digits it = digits.iterate();
-    int intValue = it.next();
-    checkArgument(
-        intValue > 0, "E.164 phone numbers must not start with a leading zero: +%s", digits);
-    DigitSequence cc = null;
-    for (; cc == null && intValue < 100; intValue = (10 * intValue) + it.next()) {
-      cc = callingCodes.get(intValue);
-    }
-    checkArgument(cc != null, "invalid or unsupported calling code for E.164 number: +%s", digits);
-    return cc;
   }
 
   private static int intValueOf(DigitSequence cc) {

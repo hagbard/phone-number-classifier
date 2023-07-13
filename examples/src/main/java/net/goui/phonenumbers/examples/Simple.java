@@ -10,7 +10,7 @@
 
 package net.goui.phonenumbers.examples;
 
-import static net.goui.phonenumber.PhoneNumbers.parseE164;
+import static net.goui.phonenumber.PhoneNumbers.fromE164;
 
 import net.goui.phonenumber.AbstractPhoneNumberClassifier.SchemaVersion;
 import net.goui.phonenumber.PhoneNumber;
@@ -21,34 +21,34 @@ public class Simple {
     LibPhoneNumberClassifier compact = LibPhoneNumberClassifier.load(SchemaVersion.of("goui.net/libphonenumber/dfa/compact", 1));
     LibPhoneNumberClassifier precise = LibPhoneNumberClassifier.load(SchemaVersion.of("goui.net/libphonenumber/dfa/precise", 1));
 
-    PhoneNumber number = parseE164("+16502123456");
+    PhoneNumber number = fromE164("+16502123456");
     System.out.format("%s: %s\n", number, precise.forType().identify(number));
     System.out.format("%s: %s\n", number, compact.forType().identify(number));
     System.out.format("%s: %s\n", number, precise.testLength(number));
     System.out.format("%s: %s\n", number, compact.testLength(number));
 
-    PhoneNumber prefix = parseE164("+917678");
+    PhoneNumber prefix = fromE164("+917678");
     System.out.format("%s: %s\n", prefix, compact.forType().getPossibleValues(prefix));
-    prefix = parseE164("+9176781");
-    System.out.format("%s: %s\n", prefix, compact.forType().getPossibleValues(prefix));
-
-    prefix = parseE164("+9176782");
+    prefix = fromE164("+9176781");
     System.out.format("%s: %s\n", prefix, compact.forType().getPossibleValues(prefix));
 
-    prefix = parseE164("+917678");
+    prefix = fromE164("+9176782");
+    System.out.format("%s: %s\n", prefix, compact.forType().getPossibleValues(prefix));
+
+    prefix = fromE164("+917678");
     System.out.format("%s: %s\n", prefix, precise.forType().getPossibleValues(prefix));
-    prefix = parseE164("+9176781");
+    prefix = fromE164("+9176781");
     System.out.format("%s: %s\n", prefix, precise.forType().getPossibleValues(prefix));
-    prefix = parseE164("+9176782");
+    prefix = fromE164("+9176782");
     System.out.format("%s: %s\n", prefix, precise.forType().getPossibleValues(prefix));
 
-    prefix = parseE164("+15661");
+    prefix = fromE164("+15661");
     System.out.format("%s: %s\n", prefix, precise.forType().getPossibleValues(prefix));
     System.out.format("%s: %s\n", prefix, compact.forType().getPossibleValues(prefix));
     System.out.format("%s: %s\n", prefix, precise.forRegion().getPossibleValues(prefix));
     System.out.format("%s: %s\n", prefix, compact.forRegion().getPossibleValues(prefix));
 
-    prefix = parseE164("+15671");
+    prefix = fromE164("+15671");
     System.out.format("%s: %s\n", prefix, precise.match(prefix));
     System.out.format("%s: %s\n", prefix, compact.match(prefix));
 
@@ -57,7 +57,7 @@ public class Simple {
     System.out.format("%s: %s\n", prefix, precise.testLength(prefix));
     System.out.format("%s: %s\n", prefix, compact.testLength(prefix));
 
-    prefix = parseE164("+447700312345");
+    prefix = fromE164("+447700312345");
     System.out.format("%s: %s\n", prefix, compact.forRegion().getPossibleValues(prefix));
     System.out.format("%s: %s\n", prefix, precise.forRegion().getPossibleValues(prefix));
   }

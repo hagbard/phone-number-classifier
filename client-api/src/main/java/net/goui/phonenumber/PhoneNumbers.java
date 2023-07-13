@@ -1,16 +1,15 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
+Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
 
- This program and the accompanying materials are made available under the terms of the
- Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
- Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
+This program and the accompanying materials are made available under the terms of the
+Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
+Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
 
- SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 package net.goui.phonenumber;
 
-import static com.google.common.base.CharMatcher.whitespace;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.auto.value.AutoValue;
@@ -19,47 +18,76 @@ import com.google.common.base.CharMatcher;
 
 /** <a href="https://en.wikipedia.org/wiki/E.164">E.164 specification</a>. */
 public final class PhoneNumbers {
-  private static final CharMatcher SEPARATOR = CharMatcher.whitespace().or(CharMatcher.anyOf("-."));
-  private static final CharMatcher LENIENT_E164_DIGIT = CharMatcher.inRange('0', '9').or(SEPARATOR);
+  private static final CharMatcher ASCII_DIGIT = CharMatcher.inRange('0', '9');
 
-  public static PhoneNumber parseE164(String e164) {
+  // Obtained from running GenerateMetadata tool (encoded string is output to console).
+  private static final String CC_MASK =
+      "\u0082\uc810\ufb97\uf7fb\u0007\ufc56\u0004\u0000\u0000\u0000\u0000\u0000\u0000\uf538"
+      + "\uffff\uffff\u3ff7\u0000\u0e0c\u0000\u0000\uc000\u00ff\uf7fc\u002e\u0000\u00b0\u0000"
+      + "\u0000\u0000\u0000\u3ff0\u0000\u0000\u0000\u0000\uc000\u00ff\u0000\u0000\u0000\u4000"
+      + "\uefff\u001f\u0000\u0000\u0000\u0000\u0000\u0000\u0101\u0000\u0000\u01b4\u4040\u014f"
+      + "\u0000\u0000\u0000\u0000\ufdff\u000b\u005f";
+
+  public static PhoneNumber fromE164(String e164) {
     String toEncode = e164.startsWith("+") ? e164.substring(1) : e164;
     checkArgument(toEncode.length() >= 3, "E.164 numbers must have at least three digits");
     checkArgument(
-        LENIENT_E164_DIGIT.matchesAllOf(toEncode),
+        ASCII_DIGIT.matchesAllOf(toEncode),
         "E.164 numbers must contain only decimal digits and allowed separators: %s",
         e164);
-    return SimpleEncodedE164.of(whitespace().removeFrom(toEncode));
+    DigitSequence cc = extractSupportedCallingCode(toEncode);
+    return E164PhoneNumber.of(cc, DigitSequence.parse(toEncode.substring(cc.length())));
+  }
+
+  private static DigitSequence extractSupportedCallingCode(String seq) {
+    int cc = digitOf(seq, 0);
+    if (!isCallingCode(cc)) {
+      cc = (10 * cc) + digitOf(seq, 1);
+      if (!isCallingCode(cc)) {
+        cc = (10 * cc) + digitOf(seq, 2);
+        checkArgument(isCallingCode(cc), "Unknown calling code %s in E.164 number: %s", cc, seq);
+      }
+    }
+    return DigitSequence.parse(Integer.toString(cc));
+  }
+
+  private static int digitOf(String s, int n) {
+    int d = s.charAt(n) - '0';
+    checkArgument(d >=0 && d <= 9, "Invalid decimal digit in: %s", s);
+    return d;
+  }
+
+  private static boolean isCallingCode(int cc) {
+    int bits = CC_MASK.charAt(cc >>> 4);
+    return (bits & (1 << (cc & 0xF))) != 0;
   }
 
   @AutoValue
-  abstract static class SimpleEncodedE164 implements PhoneNumber {
-    abstract long encoded();
-
-    private static PhoneNumber of(String digits) {
-      return new AutoValue_PhoneNumbers_SimpleEncodedE164(DigitSequenceEncoder.encode(digits));
-    }
-
-    @Memoized
-    @Override
-    public DigitSequence getDigits() {
-      return DigitSequence.ofEncoded(encoded());
+  abstract static class E164PhoneNumber implements PhoneNumber {
+    private static PhoneNumber of(DigitSequence callingCode, DigitSequence nationalNumber) {
+      return new AutoValue_PhoneNumbers_E164PhoneNumber(callingCode, nationalNumber);
     }
 
     @Override
-    public final int getDigit(int n) {
-      return DigitSequenceEncoder.getDigit(n, encoded());
+    public abstract DigitSequence getCallingCode();
+
+    @Override
+    public abstract DigitSequence getNationalNumber();
+
+    @Override
+    public final DigitSequence getDigits() {
+      return getCallingCode().append(getNationalNumber());
     }
 
     @Override
     public final int length() {
-      return DigitSequenceEncoder.getLength(encoded());
+      return getCallingCode().length() + getNationalNumber().length();
     }
 
     @Memoized
     @Override
     public String toString() {
-      return "+" + DigitSequenceEncoder.toString(encoded());
+      return "+" + getCallingCode() + getNationalNumber();
     }
   }
 

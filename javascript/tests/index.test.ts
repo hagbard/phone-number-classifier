@@ -52,14 +52,14 @@ const pnc = new TestClassifier("tests/lpn_dfa_compact.json");
 describe("AbstractPhoneNumberClassifier", () => {
 
   test('getPossibleValues_uniqueValues', () => {
-    expect(pnc.forRegion().getPossibleValues(PhoneNumber.parseE164("+447700112345")))
+    expect(pnc.forRegion().getPossibleValues(PhoneNumber.fromE164("+447700112345")))
       .toEqual(new Set(["GB"]));
-    expect(pnc.forRegion().getPossibleValues(PhoneNumber.parseE164("+447700312345")))
+    expect(pnc.forRegion().getPossibleValues(PhoneNumber.fromE164("+447700312345")))
       .toEqual(new Set(["JE"]));
     });
 
   test('getPossibleValues_multipleValues', () => {
-    expect(pnc.forRegion().getPossibleValues(PhoneNumber.parseE164("+447700")))
+    expect(pnc.forRegion().getPossibleValues(PhoneNumber.fromE164("+447700")))
       .toEqual(new Set(["GB", "JE"]));
     });
 });
