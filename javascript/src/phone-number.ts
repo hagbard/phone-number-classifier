@@ -13,6 +13,7 @@ import { DigitSequence } from "./digit-sequence.js";
 export class PhoneNumber {
   private static readonly ASCII_0: number = 48;
 
+  // Obtained from running GenerateMetadata tool (encoded string is output to console).
   private static readonly CC_MASK: string =
       "\u0082\uc810\ufb97\uf7fb\u0007\ufc56\u0004\u0000\u0000\u0000\u0000\u0000\u0000\uf538"
       + "\uffff\uffff\u3ff7\u0000\u0e0c\u0000\u0000\uc000\u00ff\uf7fc\u002e\u0000\u00b0\u0000"
@@ -23,7 +24,7 @@ export class PhoneNumber {
   static parseE164(e164: string): PhoneNumber {
     let seq = e164.startsWith("+") ? e164.substring(1) : e164;
     if (seq.length <= 3) {
-      throw new Error("E.164 numbers must be at least 3 digits: `${e164}`");
+      throw new Error(`E.164 numbers must be at least 3 digits: ${e164}`);
     }
     let cc: number = PhoneNumber.digitOf(seq, 0);
     if (!PhoneNumber.isCallingCode(cc)) {
@@ -31,7 +32,7 @@ export class PhoneNumber {
       if (!PhoneNumber.isCallingCode(cc)) {
         cc = (10 * cc) + PhoneNumber.digitOf(seq, 2);
         if (!PhoneNumber.isCallingCode(cc)) {
-          throw new Error("Unknown calling code `${cc}` in E.164 number: `${e164}`");
+          throw new Error(`Unknown calling code ${cc} in E.164 number: ${e164}`);
         }
       }
     }
@@ -42,7 +43,7 @@ export class PhoneNumber {
   private static digitOf(s: string, n: number): number {
     var d = s.charCodeAt(n) - PhoneNumber.ASCII_0;
     if (d < 0 || d > 9) {
-      throw new Error("Invalid decimal digit in: `${s}`");
+      throw new Error(`Invalid decimal digit in: ${s}`);
     }
     return d;
   }
