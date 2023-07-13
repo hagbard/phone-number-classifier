@@ -182,15 +182,7 @@ function withDecomposed<T>(
     rawClassifier: RawClassifier,
     phoneNumber: PhoneNumber,
     callback: (classifier: RawClassifier, cc: DigitSequence, nn: DigitSequence) => T): T {
-  let ccs = rawClassifier.getSupportedCallingCodes();
-  let seq = phoneNumber.getDigitSequence();
-  for (let i = 1, maxCcLength = Math.min(3, seq.length()); i <= maxCcLength; i++) {
-    let cc: DigitSequence = seq.getPrefix(i);
-    if (ccs.has(cc.toString())) {
-      return callback(rawClassifier, cc, seq.getSuffix(seq.length() - i));
-    }
-  }
-  throw new Error(`invalid or unsupported calling code in: ${phoneNumber}`);
+  return callback(rawClassifier, phoneNumber.getCallingCode(), phoneNumber.getNationalNumber());
 }
 
 class Converter<V> {
