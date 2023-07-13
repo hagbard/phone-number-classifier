@@ -17,17 +17,18 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class E164PhoneNumbersTest {
+public class PhoneNumbersTest {
   @Test
   public void testParse() {
-    PhoneNumber number = PhoneNumbers.parseE164("+44 123 456789");
+    PhoneNumber number = PhoneNumbers.fromE164("+44123456789");
     assertThat(number.length()).isEqualTo(11);
     String s = number.toString();
     assertThat(s).isEqualTo("+44123456789");
+    DigitSequence digits = number.getDigits();
     for (int n = 0; n < number.length(); n++) {
-      assertThat(number.getDigit(n)).isEqualTo(s.charAt(n + 1) - '0');
+      assertThat(digits.getDigit(n)).isEqualTo(s.charAt(n + 1) - '0');
     }
-    assertThat(number).isEqualTo(PhoneNumbers.parseE164("+44 123 456 789"));
-    assertThat(number).isNotEqualTo(PhoneNumbers.parseE164("+44 123 456 999"));
+    assertThat(number).isEqualTo(PhoneNumbers.fromE164("+44123456789"));
+    assertThat(number).isNotEqualTo(PhoneNumbers.fromE164("+44123456999"));
   }
 }

@@ -21,9 +21,9 @@ export class PhoneNumber {
       + "\uefff\u001f\u0000\u0000\u0000\u0000\u0000\u0000\u0101\u0000\u0000\u01b4\u4040\u014f"
       + "\u0000\u0000\u0000\u0000\ufdff\u000b\u005f";
 
-  static parseE164(e164: string): PhoneNumber {
+  static fromE164(e164: string): PhoneNumber {
     let seq = e164.startsWith("+") ? e164.substring(1) : e164;
-    if (seq.length <= 3) {
+    if (seq.length < 3) {
       throw new Error(`E.164 numbers must be at least 3 digits: ${e164}`);
     }
     let cc: number = PhoneNumber.digitOf(seq, 0);
@@ -41,7 +41,7 @@ export class PhoneNumber {
   }
 
   private static digitOf(s: string, n: number): number {
-    var d = s.charCodeAt(n) - PhoneNumber.ASCII_0;
+    let d = s.charCodeAt(n) - PhoneNumber.ASCII_0;
     if (d < 0 || d > 9) {
       throw new Error(`Invalid decimal digit in: ${s}`);
     }
@@ -63,11 +63,11 @@ export class PhoneNumber {
     return this.nn;
   }
 
-  getDigitSequence(): DigitSequence {
+  getDigits(): DigitSequence {
     return this.cc.append(this.nn);
   }
 
   toString(): string {
-    return "+" + this.getDigitSequence();
+    return "+" + this.getCallingCode() + this.getNationalNumber();
   }
 }
