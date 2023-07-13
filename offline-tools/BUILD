@@ -42,6 +42,7 @@ java_proto_library(
 
 java_binary(
     name = "generate",
+    data = ["//:metadata.zip"],
     main_class = "net.goui.phonenumber.tools.GenerateMetadata",
     runtime_deps = [":offline_tools"],
 )

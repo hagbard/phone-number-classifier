@@ -2,7 +2,10 @@ package(
     default_visibility = ["//visibility:public"],
 )
 
-exports_files(["GenTestRules.bzl"])
+exports_files([
+    "GenTestRules.bzl",
+    "metadata.zip",
+])
 
 java_plugin(
     name = "autovalue_plugin",

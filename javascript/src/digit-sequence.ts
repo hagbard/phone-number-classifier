@@ -24,20 +24,32 @@ export interface Digits {
  * is limited to 17 digits, a limit of 19 should be sufficient for all expected use cases.
  */
 export abstract class DigitSequence {
+  private static readonly MAX_LENGTH: number = 19;
+
   /** @returns an iterator of the digits in this sequence. */
   abstract iterate(): Digits;
+
   /**
    * @param n the index of the digit to retrieve (in the range `0 <= n < length`).
    * @returns the N-th digit in the sequence (an `Error` is thrown if `n` is out of bounds).
    */
   abstract getDigit(n: number): number;
+
   /** @returns the length of the digit sequence. */
   abstract length(): number;
+
+  /**
+   * @param length the length of the returned sequence (in the range `0 <= length < length()`).
+   * @returns a digit sequence of `length` first digits of this sequence.
+   */
+  abstract append(s: DigitSequence): DigitSequence;
+
   /**
    * @param length the length of the returned sequence (in the range `0 <= length < length()`).
    * @returns a digit sequence of `length` first digits of this sequence.
    */
   abstract getPrefix(length: number): DigitSequence;
+
   /**
    * @param length the length of the returned sequence (in the range `0 <= length < length()`).
    * @returns a digit sequence of `length` last digits of this sequence.
@@ -49,10 +61,13 @@ export abstract class DigitSequence {
    * @returns a new `DigitSequence` representing the given digits.
    */
   public static parse(digits: string): DigitSequence {
-    if (/^[0-9]{0,19}$/.test(digits)) {
-      return new StringBasedDigitSequence(digits);
+    if (digits.length > DigitSequence.MAX_LENGTH) {
+      throw new Error(`Digit sequence too long: ${digits}`);
     }
-    throw new Error(`invalid digit sequence: ${digits}`);
+    if (!/^[0-9]+$/.test(digits)) {
+      throw new Error(`Invalid digit sequence: ${digits}`);
+    }
+    return new StringBasedDigitSequence(digits);
   }
 }
 
@@ -87,6 +102,10 @@ class StringBasedDigitSequence extends DigitSequence {
 
   length(): number {
     return this.digits.length;
+  }
+
+  append(s: DigitSequence): DigitSequence {
+    return DigitSequence.parse(this.digits + s.toString());
   }
 
   getPrefix(length: number): DigitSequence {
