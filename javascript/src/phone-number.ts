@@ -55,6 +55,10 @@ export class PhoneNumber {
 
   private constructor(private readonly cc: DigitSequence, private readonly nn: DigitSequence) {}
 
+  length(): number {
+    return this.cc.length() + this.nn.length();
+  }
+
   getCallingCode(): DigitSequence {
     return this.cc;
   }
