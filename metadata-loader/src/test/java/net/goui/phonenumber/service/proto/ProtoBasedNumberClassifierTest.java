@@ -1,12 +1,12 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
+Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
 
- This program and the accompanying materials are made available under the terms of the
- Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
- Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
+This program and the accompanying materials are made available under the terms of the
+Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
+Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
 
- SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 package net.goui.phonenumber.service.proto;
 
@@ -78,16 +78,25 @@ public class ProtoBasedNumberClassifierTest {
     assertThat(classifier.match(us, seq("65021234567"))).isEqualTo(EXCESS_DIGITS);
     assertThat(classifier.testLength(us, seq("65021234567"))).isEqualTo(TOO_LONG);
 
-    // Match for a specific type.
-    assertThat(classifier.match(us, seq("650212345"), "TYPE", "FIXED_LINE_OR_MOBILE"))
+    // Match for a specific value.
+    assertThat(
+            classifier
+                .getValueMatcher(us, "TYPE")
+                .matchValue(seq("650212345"), "FIXED_LINE_OR_MOBILE"))
         .isEqualTo(PARTIAL_MATCH);
-    assertThat(classifier.match(us, seq("6502123456"), "TYPE", "FIXED_LINE_OR_MOBILE"))
+    assertThat(
+            classifier
+                .getValueMatcher(us, "TYPE")
+                .matchValue(seq("6502123456"), "FIXED_LINE_OR_MOBILE"))
         .isEqualTo(MATCHED);
-    assertThat(classifier.match(us, seq("65021234567"), "TYPE", "FIXED_LINE_OR_MOBILE"))
+    assertThat(
+            classifier
+                .getValueMatcher(us, "TYPE")
+                .matchValue(seq("65021234567"), "FIXED_LINE_OR_MOBILE"))
         .isEqualTo(EXCESS_DIGITS);
 
-    // Match for another type (not the number's type).
-    assertThat(classifier.match(us, seq("6502123456"), "TYPE", "FIXED_LINE"))
+    // Match for a different value.
+    assertThat(classifier.getValueMatcher(us, "TYPE").matchValue(seq("6502123456"), "FIXED_LINE"))
         .isEqualTo(INVALID);
 
     // Match for region(s) (this is multi-valued).

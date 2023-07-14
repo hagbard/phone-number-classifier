@@ -42,13 +42,12 @@ export abstract class AbstractPhoneNumberClassifier {
    *
    * However, if it returns `LengthResult.Possible`, it may still not be a valid number.
    *
-   * @param {PhoneNumber} phoneNumber an E.164 phone number, including country calling code.
+   * @param {PhoneNumber} number an E.164 phone number, including country calling code.
    * @returns {LengthResult} a simply classification based only on the number's length for its
    *     calling code.
    */
-  testLength(phoneNumber: PhoneNumber): LengthResult {
-    return withDecomposed(
-        this.rawClassifier, phoneNumber, (classifier, cc, nn) => classifier.testLength(cc, nn));
+  testLength(number: PhoneNumber): LengthResult {
+    return this.rawClassifier.testLength(number.getCallingCode(), number.getNationalNumber());
   }
 
   /**
@@ -62,12 +61,11 @@ export abstract class AbstractPhoneNumberClassifier {
    * returns `MatchResult.Invalid`, then no additional digits can make the number valid. This can be
    * useful for giving feedback to users when they are entering numbers.
    *
-   * @param {PhoneNumber} phoneNumber an E.164 phone number, including country calling code.
+   * @param {PhoneNumber} number an E.164 phone number, including country calling code.
    * @returns {MatchResult} a classification based on the valid number ranges for its calling code.
    */
-  public match(phoneNumber: PhoneNumber): MatchResult {
-    return withDecomposed(
-        this.rawClassifier, phoneNumber, (classifier, cc, nn) => classifier.match(cc, nn));
+  public match(number: PhoneNumber): MatchResult {
+    return this.rawClassifier.match(number.getCallingCode(), number.getNationalNumber());
   }
 
   // Converts "UpperCamelCase" enum names to "UPPER_SNAKE_CASE" number type names.
@@ -176,15 +174,6 @@ export abstract class AbstractPhoneNumberClassifier {
   }
 }
 
-// Not part of AbstractPhoneNumberClassifier to avoid it needing to be made public.
-// Not part of RawClassifier since it depends on the higher level PhoneNumber type.
-function withDecomposed<T>(
-    rawClassifier: RawClassifier,
-    phoneNumber: PhoneNumber,
-    callback: (classifier: RawClassifier, cc: DigitSequence, nn: DigitSequence) => T): T {
-  return callback(rawClassifier, phoneNumber.getCallingCode(), phoneNumber.getNationalNumber());
-}
-
 class Converter<V> {
   static fromMap<V>(map: Map<V, string>, requiredValues: ReadonlySet<string>): Converter<V> {
     let inverse: Map<string, V> = new Map(Array.from(map.keys()).map(k => [map.get(k)!, k]));
@@ -236,7 +225,8 @@ class TypedClassifier<V> implements SingleValuedMatcher<V> {
 
   ensureMatcher(): TypedClassifier<V> {
     if (this.rawClassifier.isClassifierOnly(this.numberType)) {
-      throw new Error(`underlying classifier does not support partial matching for: ${this.numberType}`);
+      throw new Error(
+          `underlying classifier does not support partial matching for: ${this.numberType}`);
     }
     return this;
   }
@@ -248,41 +238,30 @@ class TypedClassifier<V> implements SingleValuedMatcher<V> {
     return this;
   }
 
-  classify(phoneNumber: PhoneNumber): ReadonlySet<V> {
-    let rawSet: ReadonlySet<string> = withDecomposed(
-        this.rawClassifier,
-        phoneNumber,
-        (classifier: RawClassifier, cc: DigitSequence, nn: DigitSequence) =>
-            classifier.classify(cc, nn, this.numberType));
+  classify(number: PhoneNumber): ReadonlySet<V> {
+    let rawSet: ReadonlySet<string> = this.rawClassifier.classify(
+        number.getCallingCode(), number.getNationalNumber(), this.numberType);
     return new Set<V>(Array.from(rawSet).map(s => this.converter.doBackward(s)));
   }
 
-  getPossibleValues(phoneNumber: PhoneNumber): ReadonlySet<V> {
-    return withDecomposed(
-      this.rawClassifier,
-      phoneNumber,
-      (classifier: RawClassifier, cc: DigitSequence, nn: DigitSequence) => {
-          return new Set(Array.from(classifier.getPossibleValues(this.numberType))
-              .filter(v =>
-                  classifier.matchValues(cc, nn, this.numberType, v) <= MatchResult.PartialMatch)
-              .map((s: string) => this.converter.doBackward(s)))});
+  getPossibleValues(number: PhoneNumber): ReadonlySet<V> {
+    let matcher: ValueMatcher =
+        this.rawClassifier.getValueMatcher(number.getCallingCode(), this.numberType);
+    return new Set(Array.from(this.rawClassifier.getPossibleValues(this.numberType))
+        .filter(v => matcher.matchValues(number.getNationalNumber(), v) <= MatchResult.PartialMatch)
+        .map((s: string) => this.converter.doBackward(s)));
   }
 
-  matchValues(phoneNumber: PhoneNumber, ...values: V[]): MatchResult {
+  matchValues(number: PhoneNumber, ...values: V[]): MatchResult {
     let rawValues: string[] = values.map(v => this.converter.doForward(v));
-    return withDecomposed(
-        this.rawClassifier,
-        phoneNumber,
-        (classifier: RawClassifier, cc: DigitSequence, nn: DigitSequence) =>
-            classifier.matchValues(cc, nn, this.numberType, ...rawValues));
+    let matcher: ValueMatcher =
+        this.rawClassifier.getValueMatcher(number.getCallingCode(), this.numberType);
+    return matcher.matchValues(number.getNationalNumber(), ...rawValues);
   }
 
-  identify(phoneNumber: PhoneNumber): V | null {
-    let rawValue = withDecomposed(
-        this.rawClassifier,
-        phoneNumber,
-        (classifier: RawClassifier, cc: DigitSequence, nn: DigitSequence) =>
-            classifier.classifyUniquely(cc, nn, this.numberType));
+  identify(number: PhoneNumber): V | null {
+    let rawValue = this.rawClassifier.classifyUniquely(
+        number.getCallingCode(), number.getNationalNumber(), this.numberType);
     return rawValue ? this.converter.doBackward(rawValue) : null;
   }
 }
@@ -327,7 +306,9 @@ class ClassifierFactory<V> {
    * `is_single_valued: true` in the configuration, or be one of the known single valued basic
    * types (e.g. "TYPE" or "TARIFF", but not "REGION" etc.).
    */
-  singleValuedMatcher(): SingleValuedMatcher<V> { return this.newFn().ensureSingleValued().ensureMatcher(); }
+  singleValuedMatcher(): SingleValuedMatcher<V> {
+      return this.newFn().ensureSingleValued().ensureMatcher();
+  }
 }
 
 /** Simple (non partial matching) classifier API supported by all classifiers. */
@@ -345,7 +326,7 @@ export interface Classifier<V> {
    * will never contain more than one entry (though it may be empty). However, in this case it is
    * recommended to call `SingleValuedClassifier#identify(PhoneNumber)` instead.
    */
-  classify(phoneNumber: PhoneNumber): ReadonlySet<V>;
+  classify(number: PhoneNumber): ReadonlySet<V>;
 }
 
 /** Extended classifier API which permits partial matching for number types. */
@@ -362,7 +343,7 @@ export interface Matcher<V> extends Classifier<V> {
    * If a complete phone number is given, this is the same as calling
    * `Classifier#classify(PhoneNumber)`.
    */
-  getPossibleValues(phoneNumber: PhoneNumber): ReadonlySet<V>;
+  getPossibleValues(number: PhoneNumber): ReadonlySet<V>;
 
   /**
    * Matches a phone number or prefix to determine its status with respect one or more values.
@@ -375,7 +356,7 @@ export interface Matcher<V> extends Classifier<V> {
    * all range sets associated with the given values. This is useful if business logic treats two
    * or more values in the same way (e.g. "MOBILE" and "FIXED_LINE_OR_MOBILE").
    */
-  matchValues(phoneNumber: PhoneNumber, ...values: V[]): MatchResult;
+  matchValues(number: PhoneNumber, ...values: V[]): MatchResult;
 }
 
 /** Single valued classifier API, which has an easier way to classify values uniquely. */
@@ -390,7 +371,7 @@ export interface SingleValuedClassifier<V> extends Classifier<V> {
    * `Classifier#classify(PhoneNumber)` and having to deal with a set with zero or one elements in
    * it.
    */
-  identify(phoneNumber: PhoneNumber): V | null;
+  identify(number: PhoneNumber): V | null;
 }
 
 /** Single valued matcher API, which has an easier way to classify values uniquely. */

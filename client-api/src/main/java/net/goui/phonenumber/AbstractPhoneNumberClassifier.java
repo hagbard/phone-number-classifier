@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -80,7 +79,7 @@ import net.goui.phonenumber.metadata.VersionInfo;
  * <p>From the user's perspective they can now do:
  *
  * <pre>{@code
- * MyCustomEnum attribute = myClassifier.forMyCustomAttribute().identify(phoneNumber);
+ * MyCustomEnum attribute = myClassifier.forMyCustomAttribute().identify(number);
  * }</pre>
  *
  * where {@code MyCustomEnum} would be something like:
@@ -202,10 +201,6 @@ public abstract class AbstractPhoneNumberClassifier {
     return rawClassifier;
   }
 
-  final <R> R withDecomposed(PhoneNumber number, BiFunction<DigitSequence, DigitSequence, R> fn) {
-    return fn.apply(number.getCallingCode(), number.getNationalNumber());
-  }
-
   /**
    * Tests a phone number against the possible lengths of any number in its numbering plan. This
    * method is fast, but takes no account of the number type.
@@ -215,11 +210,11 @@ public abstract class AbstractPhoneNumberClassifier {
    *
    * <p>However, if it returns {@link LengthResult#POSSIBLE}, it may still not be a valid number.
    *
-   * @param phoneNumber an E.164 phone number, including country calling code.
+   * @param number an E.164 phone number, including country calling code.
    * @return a simply classification based only on the number's length for its calling code.
    */
-  public final LengthResult testLength(PhoneNumber phoneNumber) {
-    return withDecomposed(phoneNumber, rawClassifier::testLength);
+  public final LengthResult testLength(PhoneNumber number) {
+    return rawClassifier.testLength(number.getCallingCode(), number.getNationalNumber());
   }
 
   /**
@@ -230,14 +225,14 @@ public abstract class AbstractPhoneNumberClassifier {
    *
    * <p>For example, if this returns {@link MatchResult#PARTIAL_MATCH}, then the given number is a
    * prefix of at least one valid number (e.g. adding more digits may produce a valid number).
-   * However if it returns {@link MatchResult#INVALID}, then no additional digits can make the
+   * However, if it returns {@link MatchResult#INVALID}, then no additional digits can make the
    * number valid. This can be useful for giving feedback to users when they are entering numbers.
    *
-   * @param phoneNumber an E.164 phone number, including country calling code.
+   * @param number an E.164 phone number, including country calling code.
    * @return a classification based on the valid number ranges for its calling code.
    */
-  public final MatchResult match(PhoneNumber phoneNumber) {
-    return withDecomposed(phoneNumber, rawClassifier::match);
+  public final MatchResult match(PhoneNumber number) {
+    return rawClassifier.match(number.getCallingCode(), number.getNationalNumber());
   }
 
   private static int intValueOf(DigitSequence cc) {
@@ -355,7 +350,7 @@ public abstract class AbstractPhoneNumberClassifier {
      * set will never contain more than one entry (though it may be empty). However, in this case it
      * is recommended to call {@link SingleValuedClassifier#identify(PhoneNumber)} instead.
      */
-    Set<V> classify(PhoneNumber phoneNumber);
+    Set<V> classify(PhoneNumber number);
   }
 
   /** Extended classifier API which permits partial matching for number types. */
@@ -372,7 +367,7 @@ public abstract class AbstractPhoneNumberClassifier {
      * <p>If a complete phone number is given, this is the same as calling {@link
      * Classifier#classify(PhoneNumber)}.
      */
-    Set<V> getPossibleValues(PhoneNumber phoneNumber);
+    Set<V> getPossibleValues(PhoneNumber number);
 
     /**
      * Matches a phone number or prefix to determine its status with respect to a given value.
@@ -381,7 +376,7 @@ public abstract class AbstractPhoneNumberClassifier {
      * FIXED_LINE} but would be {@link MatchResult#INVALID} for {@code MOBILE}. This method is
      * intended for use when phone numbers are being entered or analyzed for issues.
      */
-    MatchResult match(PhoneNumber phoneNumber, V value);
+    MatchResult match(PhoneNumber number, V value);
 
     /**
      * Matches a phone number or prefix to determine its status with respect to a set of values.
@@ -390,7 +385,7 @@ public abstract class AbstractPhoneNumberClassifier {
      * for several values. This is useful if a user's business logic treats two or more values in
      * the same way (e.g. {@code MOBILE} and {@code FIXED_LINE_OR_MOBILE}).
      */
-    MatchResult match(PhoneNumber phoneNumber, V... values);
+    MatchResult match(PhoneNumber number, V... values);
 
     /**
      * Matches a phone number or prefix to determine its status with respect to a set of values.
@@ -399,7 +394,7 @@ public abstract class AbstractPhoneNumberClassifier {
      * for several values. This is useful if a user's business logic treats two or more values in
      * the same way (e.g. {@code MOBILE} and {@code FIXED_LINE_OR_MOBILE}).
      */
-    MatchResult match(PhoneNumber phoneNumber, Set<V> values);
+    MatchResult match(PhoneNumber number, Set<V> values);
   }
 
   /** Single valued classifier API, which has an easier way to classify values uniquely. */
@@ -413,7 +408,7 @@ public abstract class AbstractPhoneNumberClassifier {
      * <p>For single valued types, this is expected to be more convenient than calling {@link
      * Classifier#classify(PhoneNumber)} and getting back a set with zero or one elements in it.
      */
-    Optional<V> identify(PhoneNumber phoneNumber);
+    Optional<V> identify(PhoneNumber number);
   }
 
   /** Single valued matcher API, which has an easier way to classify values uniquely. */

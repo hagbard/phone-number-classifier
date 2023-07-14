@@ -146,10 +146,6 @@ export class RawClassifier {
     return ccd.getTypeClassifier(idx);
   }
 
-  matchValues(callingCode: DigitSequence, nationalNumber: DigitSequence, numberType: string, ...values: string[]): MatchResult {
-    return this.getValueMatcher(callingCode, numberType).matchValues(nationalNumber, ...values);
-  }
-
   private getCallingCodeClassifier(callingCode: DigitSequence): CallingCodeClassifier {
     let ccd = this.classifiers.get(callingCode.toString());
     if (ccd !== undefined) {

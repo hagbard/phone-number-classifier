@@ -111,12 +111,4 @@ public interface RawClassifier {
       DigitSequence callingCode, DigitSequence nationalNumber, String numberType);
 
   ValueMatcher getValueMatcher(DigitSequence callingCode, String numberType);
-
-  default MatchResult match(
-      DigitSequence callingCode,
-      DigitSequence nationalNumber,
-      String numberType,
-      String value) {
-    return getValueMatcher(callingCode, numberType).matchValue(nationalNumber, value);
-  }
 }
