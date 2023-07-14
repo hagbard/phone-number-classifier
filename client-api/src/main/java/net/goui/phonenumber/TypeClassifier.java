@@ -1,12 +1,12 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
+Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
 
- This program and the accompanying materials are made available under the terms of the
- Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
- Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
+This program and the accompanying materials are made available under the terms of the
+Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
+Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
 
- SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 package net.goui.phonenumber;
 
@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
@@ -89,10 +88,6 @@ final class TypeClassifier<V> implements SingleValuedMatcher<V> {
     return this;
   }
 
-  <R> R withDecomposed(PhoneNumber number, BiFunction<DigitSequence, DigitSequence, R> fn) {
-    return phoneNumberClassifier.withDecomposed(number, fn);
-  }
-
   @Nullable
   String toValueString(@Nullable Object value) {
     return valueType.isInstance(value) ? toStringFn.apply(valueType.cast(value)) : null;
@@ -136,63 +131,59 @@ final class TypeClassifier<V> implements SingleValuedMatcher<V> {
   }
 
   @Override
-  public Set<V> classify(PhoneNumber phoneNumber) {
+  public Set<V> classify(PhoneNumber number) {
     return toValueSet(
-        phoneNumberClassifier.withDecomposed(
-            phoneNumber,
-            (cc, nn) -> phoneNumberClassifier.rawClassifier().classify(cc, nn, typeName)));
+        phoneNumberClassifier
+            .rawClassifier()
+            .classify(number.getCallingCode(), number.getNationalNumber(), typeName));
   }
 
   @Override
-  public Optional<V> identify(PhoneNumber phoneNumber) {
+  public Optional<V> identify(PhoneNumber number) {
     checkState(
         isSingleValued,
         "cannot \"uniquely identify\" numbers for a multi-valued type: %s",
         typeName);
     return toOptionalValue(
-        phoneNumberClassifier.withDecomposed(
-            phoneNumber,
-            (cc, nn) -> phoneNumberClassifier.rawClassifier().classifyUniquely(cc, nn, typeName)));
+        phoneNumberClassifier
+            .rawClassifier()
+            .classifyUniquely(number.getCallingCode(), number.getNationalNumber(), typeName));
   }
 
   @Override
-  public MatchResult match(PhoneNumber phoneNumber, V value) {
-    return withDecomposed(
-        phoneNumber,
-        (cc, nn) ->
-            rawClassifier().getValueMatcher(cc, typeName()).matchValue(nn, toValueString(value)));
+  public MatchResult match(PhoneNumber number, V value) {
+    return rawClassifier()
+        .getValueMatcher(number.getCallingCode(), typeName())
+        .matchValue(number.getNationalNumber(), toValueString(value));
   }
 
   @Override
-  public Set<V> getPossibleValues(PhoneNumber phoneNumber) {
-    ImmutableSet<String> possibleValues = rawClassifier().getPossibleValues(typeName);
-    return withDecomposed(
-        phoneNumber,
-        (cc, nn) ->
-            possibleValues.stream()
-                .filter(
-                    v -> rawClassifier().match(cc, nn, typeName, v).compareTo(PARTIAL_MATCH) <= 0)
-                .map(toValueFn)
-                .collect(toImmutableSet()));
+  public Set<V> getPossibleValues(PhoneNumber number) {
+    ValueMatcher matcher = rawClassifier().getValueMatcher(number.getCallingCode(), typeName);
+    DigitSequence nationalNumber = number.getNationalNumber();
+    return rawClassifier().getPossibleValues(typeName).stream()
+        .filter(v -> matcher.matchValue(nationalNumber, v).compareTo(PARTIAL_MATCH) <= 0)
+        .map(toValueFn)
+        .collect(toImmutableSet());
   }
 
   @Override
   @SafeVarargs // Requires that the method be explicitly final.
-  public final MatchResult match(PhoneNumber phoneNumber, V... values) {
-    return withDecomposed(phoneNumber, (cc, nn) -> match(cc, nn, Arrays.stream(values)));
+  public final MatchResult match(PhoneNumber number, V... values) {
+    return match(number, Arrays.stream(values));
   }
 
   @Override
-  public MatchResult match(PhoneNumber phoneNumber, Set<V> values) {
-    return withDecomposed(phoneNumber, (cc, nn) -> match(cc, nn, values.stream()));
+  public MatchResult match(PhoneNumber number, Set<V> values) {
+    return match(number, values.stream());
   }
 
-  private MatchResult match(
-      DigitSequence callingCode, DigitSequence nationalNumber, Stream<V> values) {
+  private MatchResult match(PhoneNumber number, Stream<V> values) {
     // Get this first to catch bad types early.
-    ValueMatcher valueMatcher = rawClassifier().getValueMatcher(callingCode, typeName());
+    ValueMatcher matcher = rawClassifier().getValueMatcher(number.getCallingCode(), typeName());
+    DigitSequence nationalNumber = number.getNationalNumber();
     return values
-        .map(v -> valueMatcher.matchValue(nationalNumber, toValueString(v)))
+        .map(v -> matcher.matchValue(nationalNumber, toValueString(v)))
         .reduce(INVALID, MatchResult::combine);
   }
 }

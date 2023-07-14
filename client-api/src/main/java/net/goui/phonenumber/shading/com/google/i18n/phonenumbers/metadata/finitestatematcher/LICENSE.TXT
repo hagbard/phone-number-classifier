@@ -1,5 +1,5 @@
 These files are copied from the Google libphonenumber project since they are not
-packaged in a way suitable for use in dependency-free client code due.
+packaged in a way suitable for use in dependency-free client code.
 
 Original code:
 https://github.com/google/libphonenumber/tree/master/metadata/src/main/java/com/google/i18n/phonenumbers/metadata/finitestatematcher
