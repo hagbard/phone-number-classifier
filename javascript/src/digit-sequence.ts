@@ -64,7 +64,7 @@ export abstract class DigitSequence {
     if (digits.length > DigitSequence.MAX_LENGTH) {
       throw new Error(`Digit sequence too long: ${digits}`);
     }
-    if (!/^[0-9]+$/.test(digits)) {
+    if (!/^[0-9]*$/.test(digits)) {
       throw new Error(`Invalid digit sequence: ${digits}`);
     }
     return new StringBasedDigitSequence(digits);
