@@ -27,7 +27,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
 import com.google.i18n.phonenumbers.metadata.model.FormatSpec;
-import com.google.i18n.phonenumbers.metadata.model.FormatSpec.FormatTemplate;
 import com.google.i18n.phonenumbers.metadata.model.FormatsTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.RangesTableSchema;
@@ -253,12 +252,13 @@ abstract class Metadata {
             checkNotNull(
                 formatsTable.get(formatId), "missing format specification for ID: %s", formatId);
         RangeTree formatRange = table.getRanges(RangesTableSchema.FORMAT, formatId);
-        nationalFormat.put(formatSpec.national().getSpecifier(), formatRange);
+        nationalFormat.put(FormatCompiler.compileSpec(formatSpec.national()), formatRange);
         // We MUST NOT skip adding ranges (even when no internation format exists) because otherwise
         // range simplification risks overwriting unassigned ranges. Since both columns have exactly
         // the same ranges, simplification will create the same end ranges, which will be shared.
         // Thus, the overhead for adding this "duplicated" data here is almost zero.
-        intlFormat.put(formatSpec.international().map(FormatTemplate::getSpecifier).orElse(""), formatRange);
+        intlFormat.put(
+            formatSpec.international().map(FormatCompiler::compileSpec).orElse(""), formatRange);
       }
       out.put(ClassifierType.NATIONAL_FORMAT, nationalFormat.build());
       out.put(ClassifierType.INTERNATIONAL_FORMAT, intlFormat.build());
