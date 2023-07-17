@@ -26,12 +26,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
+import com.google.i18n.phonenumbers.metadata.model.FormatSpec;
+import com.google.i18n.phonenumbers.metadata.model.FormatSpec.FormatTemplate;
+import com.google.i18n.phonenumbers.metadata.model.FormatsTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.RangesTableSchema;
-import com.google.i18n.phonenumbers.metadata.table.CsvParser;
-import com.google.i18n.phonenumbers.metadata.table.CsvSchema;
-import com.google.i18n.phonenumbers.metadata.table.CsvTable;
-import com.google.i18n.phonenumbers.metadata.table.RangeTable;
+import com.google.i18n.phonenumbers.metadata.table.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -40,10 +40,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -52,11 +53,14 @@ abstract class Metadata {
   private static final Pattern IS_OVERLAP_PATH =
       Pattern.compile("(metadata|[0-9]{1,3}/[^/]+)\\.csv");
 
-  public static final ImmutableSet<ClassifierType> DEFAULT_BASE_TYPES = ImmutableSet.of(
-      ClassifierType.TYPE,
-      ClassifierType.AREA_CODE_LENGTH,
-      ClassifierType.TARIFF,
-      ClassifierType.REGION);
+  public static final ImmutableSet<ClassifierType> DEFAULT_BASE_TYPES =
+      ImmutableSet.of(
+          ClassifierType.TYPE,
+          ClassifierType.AREA_CODE_LENGTH,
+          ClassifierType.TARIFF,
+          ClassifierType.NATIONAL_FORMAT,
+          ClassifierType.INTERNATIONAL_FORMAT,
+          ClassifierType.REGION);
 
   static final class Builder {
     private final CsvTable<DigitSequence> root;
@@ -146,7 +150,6 @@ abstract class Metadata {
       String zipFilePath,
       String overlayDirPath,
       String csvSeparator,
-      Set<ClassifierType> classifierTypes,
       Function<RangeMap, RangeMap> transformer)
       throws IOException {
 
@@ -164,20 +167,34 @@ abstract class Metadata {
         new TableLoader(zipFilePath, overlayDirPath, csvSeparator.charAt(0))) {
       root = loader.load("metadata/metadata.csv", MetadataTableSchema.SCHEMA);
       for (DigitSequence cc : root.getKeys()) {
-        String name = "metadata/" + cc + "/ranges.csv";
         RangeTable rangeTable =
-            RangesTableSchema.toRangeTable(loader.load(name, RangesTableSchema.SCHEMA));
-        RangeMap rawRangeMap = getRangeMapForTable(rangeTable, classifierTypes);
+            RangesTableSchema.toRangeTable(
+                loader.load(csvFile(cc, "ranges"), RangesTableSchema.SCHEMA));
+        ImmutableMap<String, FormatSpec> formatsTable =
+            FormatsTableSchema.toFormatSpecs(
+                loader.load(csvFile(cc, "formats"), FormatsTableSchema.SCHEMA));
+
+        RangeMap rawRangeMap = getRangeMapForTable(rangeTable, formatsTable);
         callingCodeMap.put(cc, transformer.apply(rawRangeMap));
       }
     }
     return create(root, callingCodeMap.buildOrThrow());
   }
 
+  private static String csvFile(DigitSequence cc, String baseName) {
+    return String.format("metadata/%s/%s.csv", cc, baseName);
+  }
+
   private static <T> CsvTable<T> loadTableFromZipEntry(
       ZipFile zip, String name, CsvSchema<T> schema) throws IOException {
-    try (Reader reader = new InputStreamReader(zip.getInputStream(zip.getEntry(name)))) {
+    ZipEntry zipEntry = zip.getEntry(name);
+    if (zipEntry == null) {
+      return CsvTable.builder(schema).build();
+    }
+    try (Reader reader = new InputStreamReader(zip.getInputStream(zipEntry))) {
       return CsvTable.importCsv(schema, reader);
+    } catch (IOException e) {
+      throw new IOException("error loading zip entry: " + name, e);
     }
   }
 
@@ -189,19 +206,63 @@ abstract class Metadata {
   }
 
   private static RangeMap getRangeMapForTable(
-      RangeTable table, Set<ClassifierType> classifierTypes) {
+      RangeTable rangeTable, ImmutableMap<String, FormatSpec> formatsTable) {
+
+    ImmutableList<BiConsumer<RangeTable, RangeMap.Builder>> extractFunctions =
+        ImmutableList.of(
+            extractColumn(RangesTableSchema.TYPE, ClassifierType.TYPE),
+            extractColumn(RangesTableSchema.TARIFF, ClassifierType.TARIFF),
+            extractColumn(RangesTableSchema.AREA_CODE_LENGTH, ClassifierType.AREA_CODE_LENGTH),
+            extractGroup(RangesTableSchema.REGIONS, ClassifierType.REGION),
+            extractFormat(formatsTable));
+
     RangeMap.Builder builder = RangeMap.builder();
-    for (ClassifierType type : classifierTypes) {
-      // NOTE: We could permit users to reduce built in types to "classifier only" if requested,
-      // but for now assume all built in types get built with partial matching support.
-      builder.put(
-          type,
-          RangeClassifier.builder()
-              .putAll(type.extractRangesFrom(table))
-              .setSingleValued(ClassifierType.isSingleValued(type))
-              .build());
-    }
-    return builder.build(table.getAllRanges());
+    extractFunctions.forEach(fn -> fn.accept(rangeTable, builder));
+    return builder.build(rangeTable.getAllRanges());
+  }
+
+  private static BiConsumer<RangeTable, RangeMap.Builder> extractColumn(
+      Column<?> column, ClassifierType type) {
+    return (table, out) -> {
+      RangeClassifier.Builder classifier = RangeClassifier.builder().setSingleValued(true);
+      table
+          .getAssignedValues(column)
+          .forEach(k -> classifier.put(k.toString(), table.getRanges(column, k)));
+      out.put(type, classifier.build());
+    };
+  }
+
+  private static BiConsumer<RangeTable, RangeMap.Builder> extractGroup(
+      ColumnGroup<?, ?> group, ClassifierType type) {
+    return (table, out) -> {
+      RangeClassifier.Builder classifier = RangeClassifier.builder().setSingleValued(false);
+      group
+          .extractGroupColumns(table.getColumns())
+          .forEach((k, c) -> classifier.put(k.toString(), table.getRanges(c, true)));
+      out.put(type, classifier.build());
+    };
+  }
+
+  private static BiConsumer<RangeTable, RangeMap.Builder> extractFormat(
+      ImmutableMap<String, FormatSpec> formatsTable) {
+    return (table, out) -> {
+      RangeClassifier.Builder nationalFormat = RangeClassifier.builder().setSingleValued(true);
+      RangeClassifier.Builder intlFormat = RangeClassifier.builder().setSingleValued(true);
+      for (String formatId : table.getAssignedValues(RangesTableSchema.FORMAT)) {
+        FormatSpec formatSpec =
+            checkNotNull(
+                formatsTable.get(formatId), "missing format specification for ID: %s", formatId);
+        RangeTree formatRange = table.getRanges(RangesTableSchema.FORMAT, formatId);
+        nationalFormat.put(formatSpec.national().getSpecifier(), formatRange);
+        // We MUST NOT skip adding ranges (even when no internation format exists) because otherwise
+        // range simplification risks overwriting unassigned ranges. Since both columns have exactly
+        // the same ranges, simplification will create the same end ranges, which will be shared.
+        // Thus, the overhead for adding this "duplicated" data here is almost zero.
+        intlFormat.put(formatSpec.international().map(FormatTemplate::getSpecifier).orElse(""), formatRange);
+      }
+      out.put(ClassifierType.NATIONAL_FORMAT, nationalFormat.build());
+      out.put(ClassifierType.INTERNATIONAL_FORMAT, intlFormat.build());
+    };
   }
 
   abstract CsvTable<DigitSequence> root();
@@ -234,7 +295,7 @@ abstract class Metadata {
   @AutoValue
   abstract static class RangeClassifier {
     static final class Builder {
-      private final ImmutableMap.Builder<String, RangeTree> map = ImmutableMap.builder();
+      private final Map<String, RangeTree> map = new LinkedHashMap<>();
       private boolean isSingleValued = false;
       private boolean isClassifierOnly = false;
 
@@ -255,7 +316,7 @@ abstract class Metadata {
       @CanIgnoreReturnValue
       public Builder put(String key, RangeTree ranges) {
         if (!ranges.isEmpty()) {
-          map.put(key, ranges);
+          map.merge(key, ranges, RangeTree::union);
         }
         return this;
       }
@@ -268,7 +329,7 @@ abstract class Metadata {
 
       public RangeClassifier build() {
         return new AutoValue_Metadata_RangeClassifier(
-            isSingleValued, isClassifierOnly, map.build());
+            isSingleValued, isClassifierOnly, ImmutableMap.copyOf(map));
       }
     }
 

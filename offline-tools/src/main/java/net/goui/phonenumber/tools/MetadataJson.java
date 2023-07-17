@@ -11,8 +11,6 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 package net.goui.phonenumber.tools;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 import static org.typemeta.funcj.json.model.JSAPI.arr;
 import static org.typemeta.funcj.json.model.JSAPI.field;
@@ -22,11 +20,8 @@ import static org.typemeta.funcj.json.model.JSAPI.str;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.ByteString;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -43,16 +38,14 @@ import org.typemeta.funcj.json.model.JsObject;
 import org.typemeta.funcj.json.model.JsValue;
 
 /** Convertor from MetadataProto to JSON encoded text. */
-final class MetadataJsonWriter {
+final class MetadataJson {
   /** Writes the given metadata proto as UTF-8 encoded JSON data to a specified output stream. */
-  public static void write(MetadataProto metadata, OutputStream os) throws IOException {
-    try (Writer w = new OutputStreamWriter(os, UTF_8)) {
-      w.write(toJson(metadata).toString());
-    }
+  public static String toJsonString(MetadataProto metadata) {
+    return toJson(metadata).toString();
   }
 
   /** Formats the given metadata proto as a human readable JSON string (for debugging). */
-  public static String formatAsJson(MetadataProto metadata) {
+  public static String toDebugJsonString(MetadataProto metadata) {
     return JsonToDoc.toString(toJson(metadata), 2, 80);
   }
 
@@ -73,8 +66,7 @@ final class MetadataJsonWriter {
     if (!metadata.getClassifierOnlyTypeList().isEmpty()) {
       fields.add(field("com", num(bitMask(metadata.getClassifierOnlyTypeList()))));
     }
-    fields.add(
-        field("ccd", jsArray(metadata.getCallingCodeDataList(), MetadataJsonWriter::toJson)));
+    fields.add(field("ccd", jsArray(metadata.getCallingCodeDataList(), MetadataJson::toJson)));
     fields.add(field("tok", jsArray(metadata.getTokenList(), JSAPI::str)));
     return obj(fields);
   }
@@ -107,18 +99,17 @@ final class MetadataJsonWriter {
     if (!ranges.isEmpty()) {
       fields.add(field("r", ranges));
     }
-    JsArray nnd = jsArray(proto.getNationalNumberDataList(), MetadataJsonWriter::toJson);
+    JsArray nnd = jsArray(proto.getNationalNumberDataList(), MetadataJson::toJson);
     if (!nnd.isEmpty()) {
       fields.add(field("n", nnd));
     }
-    fields.add(field("m", jsArray(proto.getMatcherDataList(), MetadataJsonWriter::toJson)));
+    fields.add(field("m", jsArray(proto.getMatcherDataList(), MetadataJson::toJson)));
     return obj(fields);
   }
 
   @VisibleForTesting
   static JsObject toJson(NationalNumberDataProto proto) {
-    JsObject.Field functions =
-        field("f", jsArray(proto.getMatcherList(), MetadataJsonWriter::toJson));
+    JsObject.Field functions = field("f", jsArray(proto.getMatcherList(), MetadataJson::toJson));
     if (proto.getDefaultValue() == 0) {
       return obj(functions);
     } else {
@@ -137,23 +128,10 @@ final class MetadataJsonWriter {
   static JsObject toJson(MatcherDataProto proto) {
     return obj(
         field("l", num(proto.getPossibleLengthsMask())),
-        field("b", str(toJsonString(proto.getMatcherData()))));
+        field("b", str(toBase64(proto.getMatcherData()))));
   }
 
-  @VisibleForTesting
-  static String toJsonString(ByteString bytes) {
-    StringBuilder out = new StringBuilder();
-    for (int i = 0, length = bytes.size() & ~1; i < length; i += 2) {
-      int c = ((bytes.byteAt(i) & 0xFF) << 8) | (bytes.byteAt(i + 1) & 0xFF);
-      out.append((char) c);
-    }
-    if ((bytes.size() & 1) != 0) {
-      // Partial char must be padded with trailing 0xFF (used to detect odd length).
-      int c = ((bytes.byteAt(bytes.size() - 1) & 0xFF) << 8) | 0xFF;
-      out.append((char) c);
-    }
-    String encoded = out.toString();
-    checkState(encoded.length() == (bytes.size() + 1) / 2);
-    return encoded;
+  private static String toBase64(ByteString bytes) {
+    return Base64.getEncoder().withoutPadding().encodeToString(bytes.toByteArray());
   }
 }

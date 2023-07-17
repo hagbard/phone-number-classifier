@@ -10,6 +10,7 @@
 
 import { Digits } from "./digit-sequence.js";
 import { MatchResult } from "./match-results.js";
+import { Buffer } from 'buffer';
 
 /**
  * A simple matcher for digit sequences which forms the basis for all phone number classifier and
@@ -19,7 +20,7 @@ import { MatchResult } from "./match-results.js";
  */
 export class DigitSequenceMatcher {
   /** @param bytes The encoded bytes defining the matcher behaviour. */
-  constructor(private readonly bytes: string) {
+  constructor(private readonly bytes: Buffer) {
     if (this.bytes.length == 0) {
       throw new Error("matcher data cannot be empty");
     }
@@ -79,46 +80,36 @@ enum State {
 class DataView {
   private position: number = 0;
 
-  constructor(private readonly bytes: string) {}
+  constructor(private readonly bytes: Buffer) {}
 
   length(): number {
-    let length = 2 * this.bytes.length;
-    if ((this.bytes.charCodeAt(this.bytes.length - 1) & 0xFF) == 0xFF) {
-      length -= 1;
-    }
-    return length;
+    return this.bytes.length;
   }
 
   /** Return the unsigned byte value at the given offset from the current position. */
   peekByte(offset: number): number {
-    offset += this.position;
-    let data = this.bytes.charCodeAt(offset >>> 1) >>> 0;
-    // char := hi [ even-byte | odd-byte  ] lo
-    return (offset & 1) == 0 ? (data >>> 8) : ((data & 0xFF) >>> 0);
+    return this.bytes.readUInt8(this.position + offset);
   }
 
   /** Return the unsigned byte value at the current position and move ahead 1 byte. */
   readByte(): number {
-    let data = this.peekByte(0);
+    let data: number = this.bytes.readUInt8(this.position);
     this.position += 1;
     return data;
   }
 
   /** Return the unsigned short value at the current position and move ahead 2 bytes. */
   readShort(): number {
-    let data = this.bytes.charCodeAt(this.position >>> 1) >>> 0;
-    // Adding 2 early does not affect odd/even (but does reference next char).
+    let data: number = this.bytes.readUInt16BE(this.position);
     this.position += 2;
-    if ((this.position & 1) != 0) {
-      data = ((data & 0xFF) << 8) | (this.bytes.charCodeAt(this.position >>> 1) >>> 8);
-    }
     return data;
   }
 
   /** Return the unsigned int value at the current position and move ahead 4 bytes. */
   readInt(): number {
-    // This could be optimized to avoid reading the middle char twice for odd positions.
-    return (this.readShort() << 16) | this.readShort();
+    let data: number = this.bytes.readUInt32BE(this.position);
+    this.position += 4;
+    return data;
   }
 
   /** Adjust the current position by the given (non-negative) offset. */
