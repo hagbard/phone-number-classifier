@@ -12,6 +12,7 @@ import { DigitSequence, Digits } from "./digit-sequence.js";
 import { DigitSequenceMatcher } from "./digit-sequence-matcher.js";
 import { MatchResult, LengthResult } from "./match-results.js";
 import { MetadataJson, VersionJson, CallingCodeJson, NationalNumberDataJson, MatcherDataJson } from "./metadata-json.js";
+import { Buffer } from 'buffer';
 
 export enum ReturnType {
     /** Phone numbers are associated with a single value (e.g. the phone number type). */
@@ -320,7 +321,8 @@ class DfaMatcherFunction extends MatcherFunction {
 
   constructor(json: MatcherDataJson) {
     super(json.l);
-    this.matcher = new DigitSequenceMatcher(json.b);
+
+    this.matcher = new DigitSequenceMatcher(DfaMatcherFunction.decodeBase64(json.b));
   }
 
   match(s: DigitSequence): MatchResult {
@@ -332,6 +334,15 @@ class DfaMatcherFunction extends MatcherFunction {
       return false;
     }
     return this.match(s) == MatchResult.Matched;
+  }
+
+  private static decodeBase64(base64: string): Buffer {
+    let binaryString: string = Buffer.from(base64, 'base64').toString('binary');
+    let bytes: Uint8Array = new Uint8Array(binaryString.length);
+    for (var i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return Buffer.from(bytes);
   }
 }
 

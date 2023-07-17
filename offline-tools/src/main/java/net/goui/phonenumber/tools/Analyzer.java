@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.goui.phonenumber.tools.Metadata.RangeMap;
@@ -95,11 +94,7 @@ public class Analyzer {
             : MetadataConfig.load(Paths.get(flags.configPath));
     Metadata originalMetadata =
         Metadata.load(
-            flags.zipPath,
-            flags.dirPath,
-            flags.csvSeparator,
-            Metadata.DEFAULT_BASE_TYPES,
-            config.getOutputTransformer());
+            flags.zipPath, flags.dirPath, flags.csvSeparator, config.getOutputTransformer());
 
     if (!flags.testDataPath.isEmpty()) {
       logger.atInfo().log("writing test data to: %s", flags.testDataPath);

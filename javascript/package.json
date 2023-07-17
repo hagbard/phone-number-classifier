@@ -1,6 +1,9 @@
 {
   "name": "phonenumbers_js",
   "version": "0.0.1",
+  "dependencies": {
+    "buffer": "^6.0.3"
+  },
   "devDependencies": {
     "@babel/parser": "^7.22.7",
     "@types/jest": "^29.5.2",

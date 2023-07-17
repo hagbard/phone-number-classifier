@@ -12,7 +12,7 @@ package net.goui.phonenumber.tools;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static java.nio.charset.StandardCharsets.UTF_16LE;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -22,7 +22,6 @@ import com.google.common.primitives.Bytes;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -88,7 +87,17 @@ public class GenerateMetadata {
     JSON(".json") {
       @Override
       void write(MetadataProto outputProto, OutputStream os) throws IOException {
-        MetadataJsonWriter.write(outputProto, os);
+        try (Writer w = new OutputStreamWriter(os, UTF_8)) {
+          w.write(MetadataJson.toJsonString(outputProto));
+        }
+      }
+    },
+    JSON_DEBUG(".json") {
+      @Override
+      void write(MetadataProto outputProto, OutputStream os) throws IOException {
+        try (Writer w = new OutputStreamWriter(os, UTF_8)) {
+          w.write(MetadataJson.toDebugJsonString(outputProto));
+        }
       }
     };
 
@@ -139,11 +148,7 @@ public class GenerateMetadata {
     MetadataConfig config = MetadataConfig.load(configPath);
     Metadata originalMetadata =
         Metadata.load(
-            flags.zipPath,
-            flags.dirPath,
-            flags.csvSeparator,
-            Metadata.DEFAULT_BASE_TYPES,
-            config.getOutputTransformer());
+            flags.zipPath, flags.dirPath, flags.csvSeparator, config.getOutputTransformer());
 
     System.out.format("Calling Codes:\n  %s\n", originalMetadata.getAvailableCallingCodes());
     System.out.format(
