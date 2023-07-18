@@ -22,6 +22,7 @@ java_library(
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_i18n_libphonenumber_metadata",
         "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:com_googlecode_libphonenumber_libphonenumber",
         "@maven//:com_ibm_icu_icu4j",
         "@maven//:io_grpc_grpc_context",
         "@maven//:org_checkerframework_checker_qual",
@@ -44,5 +45,12 @@ java_binary(
     name = "generate",
     data = ["//:metadata.zip"],
     main_class = "net.goui.phonenumber.tools.GenerateMetadata",
+    runtime_deps = [":offline_tools"],
+)
+
+java_binary(
+    name = "analyze",
+    data = ["//:metadata.zip"],
+    main_class = "net.goui.phonenumber.tools.Analyzer",
     runtime_deps = [":offline_tools"],
 )

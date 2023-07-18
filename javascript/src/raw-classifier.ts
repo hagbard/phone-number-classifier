@@ -164,14 +164,18 @@ export class RawClassifier {
   }
 }
 
+type MatcherFactory = (i?: number[] | number) => MatcherFunction
+
 class CallingCodeClassifier {
   static create(json: CallingCodeJson, decode: (i: number) => string): CallingCodeClassifier {
     // Matchers ordered to match indices in JSON. Build instances here so they are shared
     // rather than being rebuilt each time.
     let matchers: MatcherFunction[] = json.m.map(m => MatcherFunction.create(m));
-    let matcherFactory: (idx?: number[]) => MatcherFunction =
-        idx => (idx !== undefined && idx.length > 0)
-            ? MatcherFunction.of(idx.map(i => matchers[i])) : matchers[0];
+    let matcherFactory: MatcherFactory =
+        idx => Array.isArray(idx)
+            ? idx.length > 0 ? MatcherFunction.of(idx.map(i => matchers[i])) : matchers[0]
+            : idx !== undefined ? matchers[idx as number] : matchers[0];
+
     let validityMatcher: MatcherFunction = matcherFactory(json.r);
     let typeClassifiers: NationalNumberClassifier[] =
         (json.n !== undefined)
@@ -198,7 +202,7 @@ class NationalNumberClassifier implements ValueMatcher {
   static create(
       json: NationalNumberDataJson,
       decode: (v: number) => string,
-      matcherFactory: (i?: number[]) => MatcherFunction): NationalNumberClassifier {
+      matcherFactory: MatcherFactory): NationalNumberClassifier {
     let matcherCount = json.f.length;
     let matchers = new Map<string, MatcherFunction>();
     for (let i = 0; i < matcherCount; i++) {
@@ -241,7 +245,7 @@ class NationalNumberClassifier implements ValueMatcher {
         return value;
       }
     }
-    // This can be undefined and that's fine (it signals no match).
+    // This can be null and that's fine (it signals no match).
     return this.defaultValue;
   }
 
