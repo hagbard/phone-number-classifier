@@ -135,8 +135,7 @@ public class Analyzer {
 
           Sets.SetView<ClassifierType> formatTypes =
               Sets.intersection(rangeMap.getTypes(), FORMAT_MAP.keySet());
-          String region = getPrimaryRegion(cc, nn, rangeMap);
-          JsArray format = jsArray(formatTypes, t -> format(t, cc, nn, metadata, region));
+          JsArray format = jsArray(formatTypes, t -> format(t, cc, nn, metadata));
           if (!format.isEmpty()) {
             fields.add(field("format", format));
           }
@@ -155,14 +154,16 @@ public class Analyzer {
         field("values", jsArray(rangeMap.getClassifier(type).classify(nn), JSAPI::str)));
   }
 
-  private static String getPrimaryRegion(DigitSequence cc, DigitSequence nn, RangeMap rangeMap) {
-    ImmutableSet<String> regions = rangeMap.getClassifier(ClassifierType.REGION).classify(nn);
+  private static String getPrimaryRegion(DigitSequence cc, DigitSequence nn, Metadata metadata) {
+    ImmutableSet<String> regions =
+        metadata.getRangeMap(cc).getClassifier(ClassifierType.REGION).classify(nn);
     checkArgument(!regions.isEmpty(), "example numbers should classify to regions: +%s%s", cc, nn);
     return regions.asList().get(0);
   }
 
   private static JsObject format(
-      ClassifierType type, DigitSequence cc, DigitSequence nn, Metadata metadata, String region) {
+      ClassifierType type, DigitSequence cc, DigitSequence nn, Metadata metadata) {
+    String region = getPrimaryRegion(cc, nn, metadata);
     DigitSequence np = getNationalPrefix(metadata, cc);
     Optional<PhoneNumber> optLpn = parseNationalNumber(cc, np.toString() + nn.toString(), region);
     if (optLpn.isEmpty()) {

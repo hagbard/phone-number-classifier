@@ -54,3 +54,29 @@ java_binary(
     main_class = "net.goui.phonenumber.tools.Analyzer",
     runtime_deps = [":offline_tools"],
 )
+
+java_library(
+    name = "tests",
+    srcs = glob(["src/test/java/**/*.java"]),
+    deps = [
+        ":offline_tools",
+        "//client-api:phonenumbers",
+        "//metadata-proto:metadata_java_proto",
+        "//offline-tools:config_java_proto",
+        "@com_google_protobuf_protobuf_java",
+        "@maven//:com_google_guava_guava",
+        "@maven//:com_google_i18n_libphonenumber_metadata",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+        "@maven//:org_typemeta_funcj_json",
+    ],
+)
+
+GenTestRules(
+    name = "GeneratedTestRules",
+    test_files = glob(["src/test/java/**/*Test.java"]),
+    deps = [
+        ":offline_tools",
+        ":tests",
+    ],
+)
