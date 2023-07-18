@@ -124,7 +124,7 @@ export interface CallingCodeJson {
    * However, since the original data can often includes many ranges which are not associated with
    * "active"/callable numbers, users should not treat false-positives with any great significance.
    */
-  r?: number[];
+  r?: number[] | number;
 
   /**
    * Classifiers for different phone number types. This list has a one-to-one association with the
@@ -174,7 +174,7 @@ export interface MatcherFunctionJson {
    * Index(es) for the range data of this function. If more than one index is present, a composite
    * matcher is created. The index is local per CallingCodeJson.
    */
-  r?: number[];
+  r?: number[] | number;
 }
 
 /**

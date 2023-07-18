@@ -34,6 +34,12 @@
 
         <!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber -->
         <dependency>
+            <groupId>com.googlecode.libphonenumber</groupId>
+            <artifactId>libphonenumber</artifactId>
+            <version>8.13.16</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber -->
+        <dependency>
             <groupId>com.google.i18n.libphonenumber</groupId>
             <artifactId>metadata</artifactId>
             <version>1.0-SNAPSHOT</version>

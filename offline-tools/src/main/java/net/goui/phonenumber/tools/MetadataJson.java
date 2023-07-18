@@ -97,7 +97,7 @@ final class MetadataJson {
     fields.add(field("c", num(proto.getCallingCode())));
     JsArray ranges = jsArray(proto.getValidityMatcherIndexList(), JSAPI::num);
     if (!ranges.isEmpty()) {
-      fields.add(field("r", ranges));
+      fields.add(field("r", arrayOrSingleton(ranges)));
     }
     JsArray nnd = jsArray(proto.getNationalNumberDataList(), MetadataJson::toJson);
     if (!nnd.isEmpty()) {
@@ -121,7 +121,7 @@ final class MetadataJson {
   static JsObject toJson(MatcherFunctionProto proto) {
     JsObject.Field value = field("v", num(proto.getValue()));
     JsArray ranges = jsArray(proto.getMatcherIndexList(), JSAPI::num);
-    return ranges.isEmpty() ? obj(value) : obj(value, field("r", ranges));
+    return ranges.isEmpty() ? obj(value) : obj(value, field("r", arrayOrSingleton(ranges)));
   }
 
   @VisibleForTesting
@@ -129,6 +129,11 @@ final class MetadataJson {
     return obj(
         field("l", num(proto.getPossibleLengthsMask())),
         field("b", str(toBase64(proto.getMatcherData()))));
+  }
+
+  private static JsValue arrayOrSingleton(JsArray array) {
+    checkArgument(!array.isEmpty(), "should not attempt to write empty arrays");
+    return array.size() > 1 ? array : array.get(0).asNumber();
   }
 
   private static String toBase64(ByteString bytes) {

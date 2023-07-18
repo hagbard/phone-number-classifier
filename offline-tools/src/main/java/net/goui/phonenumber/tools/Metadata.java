@@ -27,7 +27,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
 import com.google.i18n.phonenumbers.metadata.model.FormatSpec;
-import com.google.i18n.phonenumbers.metadata.model.FormatSpec.FormatTemplate;
 import com.google.i18n.phonenumbers.metadata.model.FormatsTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.RangesTableSchema;
@@ -173,8 +172,12 @@ abstract class Metadata {
         ImmutableMap<String, FormatSpec> formatsTable =
             FormatsTableSchema.toFormatSpecs(
                 loader.load(csvFile(cc, "formats"), FormatsTableSchema.SCHEMA));
-
-        RangeMap rawRangeMap = getRangeMapForTable(rangeTable, formatsTable);
+        // Load the preferred national prefix (first element), used to build formatter data.
+        DigitSequence nationalPrefix =
+            root.get(cc, MetadataTableSchema.NATIONAL_PREFIX)
+                .map(s -> s.getValues().asList().get(0))
+                .orElse(DigitSequence.empty());
+        RangeMap rawRangeMap = getRangeMapForTable(rangeTable, formatsTable, nationalPrefix);
         callingCodeMap.put(cc, transformer.apply(rawRangeMap));
       }
     }
@@ -206,7 +209,9 @@ abstract class Metadata {
   }
 
   private static RangeMap getRangeMapForTable(
-      RangeTable rangeTable, ImmutableMap<String, FormatSpec> formatsTable) {
+      RangeTable rangeTable,
+      ImmutableMap<String, FormatSpec> formatsTable,
+      DigitSequence nationalPrefix) {
 
     ImmutableList<BiConsumer<RangeTable, RangeMap.Builder>> extractFunctions =
         ImmutableList.of(
@@ -214,7 +219,7 @@ abstract class Metadata {
             extractColumn(RangesTableSchema.TARIFF, ClassifierType.TARIFF),
             extractColumn(RangesTableSchema.AREA_CODE_LENGTH, ClassifierType.AREA_CODE_LENGTH),
             extractGroup(RangesTableSchema.REGIONS, ClassifierType.REGION),
-            extractFormat(formatsTable));
+            extractFormat(formatsTable, nationalPrefix));
 
     RangeMap.Builder builder = RangeMap.builder();
     extractFunctions.forEach(fn -> fn.accept(rangeTable, builder));
@@ -244,7 +249,7 @@ abstract class Metadata {
   }
 
   private static BiConsumer<RangeTable, RangeMap.Builder> extractFormat(
-      ImmutableMap<String, FormatSpec> formatsTable) {
+      ImmutableMap<String, FormatSpec> formatsTable, DigitSequence nationalPrefix) {
     return (table, out) -> {
       RangeClassifier.Builder nationalFormat = RangeClassifier.builder().setSingleValued(true);
       RangeClassifier.Builder intlFormat = RangeClassifier.builder().setSingleValued(true);
@@ -253,12 +258,18 @@ abstract class Metadata {
             checkNotNull(
                 formatsTable.get(formatId), "missing format specification for ID: %s", formatId);
         RangeTree formatRange = table.getRanges(RangesTableSchema.FORMAT, formatId);
-        nationalFormat.put(formatSpec.national().getSpecifier(), formatRange);
+        nationalFormat.put(
+            FormatCompiler.compileSpec(formatSpec.national(), nationalPrefix), formatRange);
         // We MUST NOT skip adding ranges (even when no internation format exists) because otherwise
         // range simplification risks overwriting unassigned ranges. Since both columns have exactly
         // the same ranges, simplification will create the same end ranges, which will be shared.
         // Thus, the overhead for adding this "duplicated" data here is almost zero.
-        intlFormat.put(formatSpec.international().map(FormatTemplate::getSpecifier).orElse(""), formatRange);
+        intlFormat.put(
+            formatSpec
+                .international()
+                .map(f -> FormatCompiler.compileSpec(f, nationalPrefix))
+                .orElse(""),
+            formatRange);
       }
       out.put(ClassifierType.NATIONAL_FORMAT, nationalFormat.build());
       out.put(ClassifierType.INTERNATIONAL_FORMAT, intlFormat.build());

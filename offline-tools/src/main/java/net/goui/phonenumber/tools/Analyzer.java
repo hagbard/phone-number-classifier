@@ -10,11 +10,14 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 
 package net.goui.phonenumber.tools;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
+import static net.goui.phonenumber.tools.ClassifierType.INTERNATIONAL_FORMAT;
+import static net.goui.phonenumber.tools.ClassifierType.NATIONAL_FORMAT;
 import static net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.MatcherType.DIGIT_SEQUENCE_MATCHER;
 import static org.typemeta.funcj.json.model.JSAPI.arr;
 import static org.typemeta.funcj.json.model.JSAPI.field;
@@ -25,9 +28,15 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.common.flogger.FluentLogger;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
+import com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema;
 import com.google.protobuf.TextFormat;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -35,13 +44,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,6 +57,7 @@ import org.typemeta.funcj.json.model.JsValue;
 
 public class Analyzer {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+  private static final PhoneNumberUtil PHONE_NUMBER_UTIL = PhoneNumberUtil.getInstance();
 
   static final class Flags {
     @Parameter(names = "--zip", description = "Standard format zip file path")
@@ -102,6 +106,13 @@ public class Analyzer {
     }
   }
 
+  private static final ImmutableMap<ClassifierType, PhoneNumberFormat> FORMAT_MAP =
+      ImmutableMap.of(
+          NATIONAL_FORMAT,
+          PhoneNumberFormat.NATIONAL,
+          INTERNATIONAL_FORMAT,
+          PhoneNumberFormat.INTERNATIONAL);
+
   private static void writeTestData(Metadata metadata, Path testdataPath) throws IOException {
     Random rnd = new Random();
     ImmutableSet<DigitSequence> callingCodes = metadata.getAvailableCallingCodes();
@@ -111,14 +122,25 @@ public class Analyzer {
       RangeTree allRanges = rangeMap.getAllRanges();
       Set<JsArray> uniqueResults = new HashSet<>();
       for (int n = 0; n < 50; n++) {
-        DigitSequence seq = allRanges.sample((long) (rnd.nextDouble() * allRanges.size()));
-        JsArray result = jsArray(rangeMap.getTypes(), t -> classify(rangeMap, t, seq));
+        DigitSequence nn = allRanges.sample((long) (rnd.nextDouble() * allRanges.size()));
+        JsArray result =
+            jsArray(
+                Sets.difference(rangeMap.getTypes(), FORMAT_MAP.keySet()),
+                t -> classify(rangeMap, t, nn));
         if (uniqueResults.add(result)) {
-          testData.add(
-              obj(
-                  field("cc", str(cc.toString())),
-                  field("number", str(seq.toString())),
-                  field("result", result)));
+          List<JsObject.Field> fields = new ArrayList<>();
+          fields.add(field("cc", str(cc.toString())));
+          fields.add(field("number", str(nn.toString())));
+          fields.add(field("result", result));
+
+          Sets.SetView<ClassifierType> formatTypes =
+              Sets.intersection(rangeMap.getTypes(), FORMAT_MAP.keySet());
+          String region = getPrimaryRegion(cc, nn, rangeMap);
+          JsArray format = jsArray(formatTypes, t -> format(t, cc, nn, metadata, region));
+          if (!format.isEmpty()) {
+            fields.add(field("format", format));
+          }
+          testData.add(obj(fields));
         }
       }
     }
@@ -127,14 +149,64 @@ public class Analyzer {
     }
   }
 
-  private static JsObject classify(RangeMap rangeMap, ClassifierType type, DigitSequence seq) {
+  private static JsObject classify(RangeMap rangeMap, ClassifierType type, DigitSequence nn) {
     return obj(
         field("type", str(type.id())),
-        field("values", jsArray(rangeMap.getClassifier(type).classify(seq), JSAPI::str)));
+        field("values", jsArray(rangeMap.getClassifier(type).classify(nn), JSAPI::str)));
   }
 
-  private static <T> JsArray jsArray(Collection<T> src, Function<T, JsValue> fn) {
-    return arr(src.stream().map(fn).collect(toList()));
+  private static String getPrimaryRegion(DigitSequence cc, DigitSequence nn, RangeMap rangeMap) {
+    ImmutableSet<String> regions = rangeMap.getClassifier(ClassifierType.REGION).classify(nn);
+    checkArgument(!regions.isEmpty(), "example numbers should classify to regions: +%s%s", cc, nn);
+    return regions.asList().get(0);
+  }
+
+  private static JsObject format(
+      ClassifierType type, DigitSequence cc, DigitSequence nn, Metadata metadata, String region) {
+    DigitSequence np = getNationalPrefix(metadata, cc);
+    Optional<PhoneNumber> optLpn = parseNationalNumber(cc, np.toString() + nn.toString(), region);
+    if (optLpn.isEmpty()) {
+      optLpn = parseNationalNumber(cc, nn.toString(), region);
+      if (optLpn.isEmpty()) {
+        optLpn = parseE164("+" + cc + nn);
+      }
+    }
+    PhoneNumber lpn =
+        optLpn.orElseThrow(() -> new AssertionError("cannot parse: " + cc + " - " + nn));
+    String formatted = PhoneNumberUtil.getInstance().format(lpn, FORMAT_MAP.get(type));
+    return obj(field("type", str(type.id())), field("value", str(formatted)));
+  }
+
+  private static Optional<PhoneNumber> parseNationalNumber(
+      DigitSequence cc, String nn, String region) {
+    if (!region.equals("001")) {
+      try {
+        PhoneNumber lpn = PHONE_NUMBER_UTIL.parse(nn, region);
+        if (cc.toString().equals(Integer.toString(lpn.getCountryCode()))) {
+          return Optional.of(lpn);
+        }
+      } catch (NumberParseException ignored) {
+      }
+    }
+    return Optional.empty();
+  }
+
+  private static Optional<PhoneNumber> parseE164(String e164) {
+    try {
+      return Optional.of(PHONE_NUMBER_UTIL.parse(e164, "ZZ"));
+    } catch (NumberParseException ignored) {
+    }
+    return Optional.empty();
+  }
+
+  private static DigitSequence getNationalPrefix(Metadata metadata, DigitSequence cc) {
+    return metadata
+        .root()
+        .get(cc, MetadataTableSchema.NATIONAL_PREFIX)
+        .orElse(MetadataTableSchema.DigitSequences.of(DigitSequence.empty()))
+        .getValues()
+        .asList()
+        .get(0);
   }
 
   static void debug(Metadata originalMetadata, Metadata simplifiedMetadata, MetadataConfig config) {
@@ -177,5 +249,9 @@ public class Analyzer {
       newTotalBytes += newBytes;
     }
     System.out.format("TOTAL (proto bytes): %d, %d\n", oldTotalBytes, newTotalBytes);
+  }
+
+  private static <T> JsArray jsArray(Collection<T> src, Function<T, JsValue> fn) {
+    return arr(src.stream().map(fn).collect(toList()));
   }
 }

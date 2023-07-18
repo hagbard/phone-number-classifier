@@ -12,6 +12,7 @@ import { PhoneNumber } from "./phone-number.js";
 import { DigitSequence, Digits } from "./digit-sequence.js";
 import { RawClassifier, ValueMatcher, ReturnType } from "./raw-classifier.js";
 import { MatchResult, LengthResult } from "./match-results.js";
+import { PhoneNumberFormatter, FormatType } from "./phone-number-formatter.js";
 
 /**
  * A base class from which custom, type-safe classifiers can be derived.
@@ -77,6 +78,10 @@ export abstract class AbstractPhoneNumberClassifier {
 
   protected getRawClassifier(): RawClassifier {
     return this.rawClassifier;
+  }
+
+  protected getFormatter(type: FormatType): PhoneNumberFormatter {
+    return new PhoneNumberFormatter(this.getRawClassifier(), type);
   }
 
   /**
@@ -307,7 +312,7 @@ class ClassifierFactory<V> {
    * types (e.g. "TYPE" or "TARIFF", but not "REGION" etc.).
    */
   singleValuedMatcher(): SingleValuedMatcher<V> {
-      return this.newFn().ensureSingleValued().ensureMatcher();
+    return this.newFn().ensureSingleValued().ensureMatcher();
   }
 }
 
