@@ -44,11 +44,11 @@ class TableLoader implements AutoCloseable {
     if (overlayPath != null) {
       return loadTableFromFile(overlayPath, schema, csvParser);
     }
-    try (InputStream is = TableLoader.class.getResourceAsStream("/" + rootRelativePath)) {
-      if (is != null) {
-        return loadFromResourceInputStream(is, rootRelativePath, schema);
-      }
-    }
+//    try (InputStream is = TableLoader.class.getResourceAsStream("/" + rootRelativePath)) {
+//      if (is != null) {
+//        return loadFromResourceInputStream(is, rootRelativePath, schema);
+//      }
+//    }
     checkState(
         zip != null,
         "cannot find metadata path in overlay directory, and no zip file was specified: %s",

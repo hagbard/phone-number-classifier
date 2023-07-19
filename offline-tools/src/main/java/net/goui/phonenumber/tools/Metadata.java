@@ -44,6 +44,8 @@ abstract class Metadata {
           ClassifierType.NATIONAL_FORMAT,
           ClassifierType.INTERNATIONAL_FORMAT,
           ClassifierType.REGION);
+  // Argentina is ... special.
+  private static final DigitSequence CC_ARGENTINA = DigitSequence.of("54");
 
   public Metadata transform(RangeMapTransformer outputTransformer) {
     Metadata.Builder transformed = Metadata.builder(root());
@@ -113,6 +115,15 @@ abstract class Metadata {
         ImmutableMap<String, FormatSpec> formatsTable =
             FormatsTableSchema.toFormatSpecs(
                 loader.load(csvFile(cc, "formats"), FormatsTableSchema.SCHEMA));
+
+        if (cc.equals(CC_ARGENTINA)) {
+          RangeTable rewrittenTable =
+              SpecialCaseArgentinaRanges.addSyntheticMobileRanges(rangeTable, formatsTable);
+          formatsTable =
+              SpecialCaseArgentinaRanges.addSyntheticMobileFormats(rangeTable, formatsTable);
+          rangeTable = rewrittenTable;
+        }
+
         // Load the preferred national prefix (first element), used to build formatter data.
         DigitSequence nationalPrefix =
             root.get(cc, MetadataTableSchema.NATIONAL_PREFIX)
