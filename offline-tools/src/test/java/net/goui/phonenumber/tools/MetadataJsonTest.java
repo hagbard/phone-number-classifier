@@ -13,7 +13,7 @@ package net.goui.phonenumber.tools;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.Arrays.asList;
 import static net.goui.phonenumber.proto.Metadata.MetadataProto.MatcherType.DIGIT_SEQUENCE_MATCHER;
-import static net.goui.phonenumber.tools.MetadataJsonWriter.toJson;
+import static net.goui.phonenumber.tools.MetadataJson.toJson;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -30,7 +30,7 @@ import org.junit.runners.JUnit4;
 import org.typemeta.funcj.json.model.JsValue;
 
 @RunWith(JUnit4.class)
-public class MetadataJsonWriterTest {
+public class MetadataJsonTest {
   @Test
   public void testMetadata() {
     NationalNumberDataProto nnd = // {"v":3,"f":[{"v":4,"r":[0,1]}]}
@@ -62,7 +62,7 @@ public class MetadataJsonWriterTest {
 
     // This is NOT testing what we emit, but the other tests show that adequately and this is
     // vaguely human readable.
-    assertThat(MetadataJsonWriter.formatAsJson(metadata))
+    assertThat(MetadataJson.toDebugJsonString(metadata))
         .isEqualTo(
             String.join(
                 "\n",
@@ -78,9 +78,9 @@ public class MetadataJsonWriterTest {
                 "  \"ccd\": [",
                 "    {",
                 "      \"c\": 44,", // calling code
-                "      \"r\": [1],", // validation matcher index (almost always 0 and omitted).
+                "      \"r\": 1,", // validation matcher index (almost always 0 and omitted).
                 "      \"n\": [{\"v\": 3, \"f\": [{\"v\": 4, \"r\": [0, 1]}]}],",
-                "      \"m\": [{\"l\": 32, \"b\": \"\\u0123\\u45ff\"}, {\"l\": 96, \"b\": \"\\u6789\\uabcd\"}]",
+                "      \"m\": [{\"l\": 32, \"b\": \"ASNF\"}, {\"l\": 96, \"b\": \"Z4mrzQ\"}]",
                 "    }",
                 "  ],",
                 // The token list allows sharing of strings between country calling code data.
@@ -119,7 +119,7 @@ public class MetadataJsonWriterTest {
 
     assertThat(toJson(ccd).toString())
         .isEqualTo(
-            "{\"c\":44,\"r\":[1],\"n\":[{\"v\":99,\"f\":[{\"v\":12}]}],\"m\":[{\"l\":32,\"b\":\"\\u0123\\u45ff\"}]}");
+            "{\"c\":44,\"r\":1,\"n\":[{\"v\":99,\"f\":[{\"v\":12}]}],\"m\":[{\"l\":32,\"b\":\"ASNF\"}]}");
   }
 
   @Test
@@ -152,22 +152,11 @@ public class MetadataJsonWriterTest {
   public void testMatcherData() {
     MatcherDataProto matcher = matcher(123, bytes(0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF));
 
-    assertJson(toJson(matcher), "{\"l\":123,\"b\":\"\\u0123\\u4567\\u89ab\\ucdef\"}");
+    assertJson(toJson(matcher), "{\"l\":123,\"b\":\"ASNFZ4mrze8\"}");
   }
 
   private static void assertJson(JsValue json, String expected) {
     assertThat(json.toString()).isEqualTo(expected);
-  }
-
-  @SuppressWarnings("UnnecessaryUnicodeEscape")
-  @Test
-  public void testToJsonString() {
-    assertThat(MetadataJsonWriter.toJsonString(bytes())).isEqualTo("");
-    assertThat(
-            MetadataJsonWriter.toJsonString(bytes(0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF)))
-        .isEqualTo("\u0123\u4567\u89AB\uCDEF");
-    assertThat(MetadataJsonWriter.toJsonString(bytes(0x0, 0x1, 0x2, 0x3, 0x4)))
-        .isEqualTo("\u0001\u0203\u04FF");
   }
 
   private static VersionInfo version(String uri, int version) {

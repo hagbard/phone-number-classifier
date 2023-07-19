@@ -12,11 +12,8 @@ package net.goui.phonenumber.tools;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 import static net.goui.phonenumber.tools.ClassifierType.VALIDITY;
 
 import com.google.auto.value.AutoValue;
@@ -32,26 +29,13 @@ import com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.RangesTableSchema;
 import com.google.i18n.phonenumbers.metadata.table.*;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 @AutoValue
 abstract class Metadata {
-  private static final Pattern IS_OVERLAP_PATH =
-      Pattern.compile("(metadata|[0-9]{1,3}/[^/]+)\\.csv");
-
   public static final ImmutableSet<ClassifierType> DEFAULT_BASE_TYPES =
       ImmutableSet.of(
           ClassifierType.TYPE,
@@ -60,6 +44,15 @@ abstract class Metadata {
           ClassifierType.NATIONAL_FORMAT,
           ClassifierType.INTERNATIONAL_FORMAT,
           ClassifierType.REGION);
+
+  public Metadata transform(RangeMapTransformer outputTransformer) {
+    Metadata.Builder transformed = Metadata.builder(root());
+    ImmutableSet<DigitSequence> callingCodes = getAvailableCallingCodes();
+    for (DigitSequence cc : callingCodes) {
+      transformed.put(cc, outputTransformer.apply(getRangeMap(cc)));
+    }
+    return transformed.build();
+  }
 
   static final class Builder {
     private final CsvTable<DigitSequence> root;
@@ -97,59 +90,7 @@ abstract class Metadata {
     return new AutoValue_Metadata(root, expectedTypesList, callingCodeMap);
   }
 
-  private static class TableLoader implements AutoCloseable {
-    @Nullable private final ZipFile zip;
-    private final ImmutableMap<String, Path> overlayMap;
-    private final CsvParser csvParser;
-
-    private TableLoader(String zipPath, String overlayDirPath, char overlaySeparator)
-        throws IOException {
-      this.zip = !zipPath.isEmpty() ? new ZipFile(zipPath) : null;
-      this.overlayMap = readOverlayFiles(overlayDirPath);
-      this.csvParser = CsvParser.withSeparator(overlaySeparator).trimWhitespace();
-    }
-
-    <T> CsvTable<T> load(String path, CsvSchema<T> schema) throws IOException {
-      Path overlayPath = overlayMap.get(path);
-      if (overlayPath != null) {
-        return loadTableFromFile(Paths.get(path), schema, csvParser);
-      }
-      checkState(
-          zip != null,
-          "cannot find metadata path in overlay directory, and no zip file was specified: %s",
-          path);
-      return loadTableFromZipEntry(zip, path, schema);
-    }
-
-    private static ImmutableMap<String, Path> readOverlayFiles(String overlayDirPath)
-        throws IOException {
-      ImmutableMap<String, Path> overlayMap = ImmutableMap.of();
-      if (!overlayDirPath.isEmpty()) {
-        Path overlayDir = Paths.get(overlayDirPath);
-        try (Stream<Path> files = Files.walk(overlayDir, 2, FOLLOW_LINKS)) {
-          // Files are resolved against the root directory. Key is relative path string.
-          overlayMap =
-              files
-                  .filter(f -> IS_OVERLAP_PATH.matcher(f.toString()).matches())
-                  .collect(toImmutableMap(Object::toString, Path::toAbsolutePath));
-        }
-      }
-      return overlayMap;
-    }
-
-    @Override
-    public void close() throws IOException {
-      if (zip != null) {
-        zip.close();
-      }
-    }
-  }
-
-  public static Metadata load(
-      String zipFilePath,
-      String overlayDirPath,
-      String csvSeparator,
-      Function<RangeMap, RangeMap> transformer)
+  public static Metadata load(String zipFilePath, String overlayDirPath, String csvSeparator)
       throws IOException {
 
     checkArgument(
@@ -177,8 +118,7 @@ abstract class Metadata {
             root.get(cc, MetadataTableSchema.NATIONAL_PREFIX)
                 .map(s -> s.getValues().asList().get(0))
                 .orElse(DigitSequence.empty());
-        RangeMap rawRangeMap = getRangeMapForTable(rangeTable, formatsTable, nationalPrefix);
-        callingCodeMap.put(cc, transformer.apply(rawRangeMap));
+        callingCodeMap.put(cc, getRangeMapForTable(rangeTable, formatsTable, nationalPrefix));
       }
     }
     return create(root, callingCodeMap.buildOrThrow());
@@ -186,26 +126,6 @@ abstract class Metadata {
 
   private static String csvFile(DigitSequence cc, String baseName) {
     return String.format("metadata/%s/%s.csv", cc, baseName);
-  }
-
-  private static <T> CsvTable<T> loadTableFromZipEntry(
-      ZipFile zip, String name, CsvSchema<T> schema) throws IOException {
-    ZipEntry zipEntry = zip.getEntry(name);
-    if (zipEntry == null) {
-      return CsvTable.builder(schema).build();
-    }
-    try (Reader reader = new InputStreamReader(zip.getInputStream(zipEntry))) {
-      return CsvTable.importCsv(schema, reader);
-    } catch (IOException e) {
-      throw new IOException("error loading zip entry: " + name, e);
-    }
-  }
-
-  private static <T> CsvTable<T> loadTableFromFile(
-      Path path, CsvSchema<T> schema, CsvParser csvParser) throws IOException {
-    try (Reader reader = Files.newBufferedReader(path, UTF_8)) {
-      return CsvTable.importCsv(schema, reader, csvParser);
-    }
   }
 
   private static RangeMap getRangeMapForTable(
@@ -260,7 +180,8 @@ abstract class Metadata {
         RangeTree formatRange = table.getRanges(RangesTableSchema.FORMAT, formatId);
         nationalFormat.put(
             FormatCompiler.compileSpec(formatSpec.national(), nationalPrefix), formatRange);
-        // We MUST NOT skip adding ranges (even when no internation format exists) because otherwise
+        // We MUST NOT skip adding ranges (even when no international format exists) because
+        // otherwise
         // range simplification risks overwriting unassigned ranges. Since both columns have exactly
         // the same ranges, simplification will create the same end ranges, which will be shared.
         // Thus, the overhead for adding this "duplicated" data here is almost zero.

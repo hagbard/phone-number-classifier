@@ -125,12 +125,14 @@ public class GenerateMetadata {
     JCommander.newBuilder().addObject(flags).build().parse(args);
     setLogging(flags.logLevel);
 
+    // This takes a long time, so only do it once).
+    Metadata rawMetadata = Metadata.load(flags.zipPath, flags.dirPath, flags.csvSeparator);
+
     Optional<Path> configDir =
         !flags.configDir.isEmpty() ? Optional.of(Paths.get(flags.configDir)) : Optional.empty();
-
     if (!flags.configPath.isEmpty()) {
       Path configPath = Paths.get(flags.configPath);
-      writeMetadataForConfig(flags, configDir.map(d -> d.resolve(configPath)).orElse(configPath));
+      writeMetadataForConfig(rawMetadata, configDir.map(d -> d.resolve(configPath)).orElse(configPath), flags);
     } else if (!flags.configPattern.isEmpty()) {
       Predicate<String> isConfig = Pattern.compile(flags.configPattern).asMatchPredicate();
       try (Stream<Path> configs =
@@ -138,25 +140,23 @@ public class GenerateMetadata {
               .filter(f -> isConfig.test(f.getFileName().toString()))) {
         Iterator<Path> it = configs.iterator();
         while (it.hasNext()) {
-          writeMetadataForConfig(flags, it.next());
+          writeMetadataForConfig(rawMetadata, it.next(), flags);
         }
       }
     }
   }
 
-  private static void writeMetadataForConfig(Flags flags, Path configPath) throws IOException {
+  private static void writeMetadataForConfig(Metadata rawMetadata, Path configPath, Flags flags) throws IOException {
     MetadataConfig config = MetadataConfig.load(configPath);
-    Metadata originalMetadata =
-        Metadata.load(
-            flags.zipPath, flags.dirPath, flags.csvSeparator, config.getOutputTransformer());
+    Metadata transformedMetadata = rawMetadata.transform(config.getOutputTransformer());
 
-    System.out.format("Calling Codes:\n  %s\n", originalMetadata.getAvailableCallingCodes());
+    System.out.format("Calling Codes:\n  %s\n", transformedMetadata.getAvailableCallingCodes());
     System.out.format(
         "Calling Code Bitmask (UTF-16 string, little endian):\n  '%s'\n",
-        asLittleEndianUtf16Bitmask(originalMetadata.getAvailableCallingCodes()));
+        asLittleEndianUtf16Bitmask(transformedMetadata.getAvailableCallingCodes()));
 
-    Metadata simplifiedMetadata = MetadataSimplifier.simplify(originalMetadata, config);
-    validateNoChangeToOriginalRanges(originalMetadata, simplifiedMetadata);
+    Metadata simplifiedMetadata = MetadataSimplifier.simplify(transformedMetadata, config);
+    validateNoChangeToOriginalRanges(transformedMetadata, simplifiedMetadata);
 
     simplifiedMetadata = simplifiedMetadata.trimValidRanges();
 
