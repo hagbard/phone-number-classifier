@@ -7,7 +7,7 @@ package(
 java_library(
     name = "offline_tools",
     srcs = glob(["src/main/java/**/*.java"]),
-    resources = glob(["src/main/resources/*.pb"]),
+    resources = glob(["src/main/resources/metadata/**/*.csv"]),
     deps = [
         ":config_java_proto",
         "//:autovalue",

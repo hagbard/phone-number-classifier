@@ -10,8 +10,8 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 
 package net.goui.phonenumber.tools;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.function.Function.identity;
@@ -26,6 +26,7 @@ import static org.typemeta.funcj.json.model.JSAPI.str;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -135,10 +136,12 @@ public class Analyzer {
 
           Sets.SetView<ClassifierType> formatTypes =
               Sets.intersection(rangeMap.getTypes(), FORMAT_MAP.keySet());
-          JsArray format = jsArray(formatTypes, t -> format(t, cc, nn, metadata));
-          if (!format.isEmpty()) {
-            fields.add(field("format", format));
-          }
+          ImmutableList<JsValue> formats =
+              formatTypes.stream()
+                  .map(t -> format(t, cc, nn, metadata))
+                  .filter(Objects::nonNull)
+                  .collect(toImmutableList());
+          fields.add(field("format", arr(formats)));
           testData.add(obj(fields));
         }
       }
@@ -163,6 +166,13 @@ public class Analyzer {
 
   private static JsObject format(
       ClassifierType type, DigitSequence cc, DigitSequence nn, Metadata metadata) {
+    Metadata.RangeClassifier formatClassifier = metadata.getRangeMap(cc).getClassifier(type);
+    checkState(formatClassifier.isSingleValued(), "formats are single valued");
+    if (formatClassifier.classify(nn).isEmpty()) {
+      logger.atInfo().log("skip missing %s format for: +%s%s", type, cc, nn);
+      return null;
+    }
+
     String region = getPrimaryRegion(cc, nn, metadata);
     DigitSequence np = getNationalPrefix(metadata, cc);
     Optional<PhoneNumber> optLpn = parseNationalNumber(cc, np.toString() + nn.toString(), region);

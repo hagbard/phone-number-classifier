@@ -53,9 +53,24 @@ export class PhoneNumberFormatter {
         }
       }
     }
+    // NOTE: This accounts for classifiers which don't have every value assigned.
+    //
+    // It's possible that a partial match was made above (i.e. PartialMatch/ExcessDigits), but that
+    // the number is valid but simply unassigned any value. So by making a final validity check we
+    // can catch this and reset the default value (which for formatting is always the empty string).
+    if (bestResult !== MatchResult.Matched
+        && bestFormatSpec.length > 0
+        && this.rawClassifier.match(number.getCallingCode(), number.getNationalNumber()) < bestResult) {
+      bestFormatSpec = "";
+    }
     // bestFormatSpec is non-null base64 encoded binary spec (possibly empty).
     // bestResult is corresponding match (can be too short, too long, or invalid).
-    let formatted = PhoneNumberFormatter.formatNationalNumber(number.getNationalNumber(), bestFormatSpec);
+    let formatted: string;
+    if (bestFormatSpec.length > 0) {
+      formatted = PhoneNumberFormatter.formatNationalNumber(number.getNationalNumber(), bestFormatSpec);
+    } else {
+      formatted = number.getNationalNumber().toString();
+    }
     if (this.type === FormatType.INTERNATIONAL) {
       formatted = "+" + number.getCallingCode() + " " + formatted;
     }
@@ -163,14 +178,5 @@ export class PhoneNumberFormatter {
       out += digits.next().toString();
     }
     return out;
-  }
-
-  private static decodeBase64(base64: string): Buffer {
-    let binaryString: string = Buffer.from(base64, 'base64').toString('binary');
-    let bytes: Uint8Array = new Uint8Array(binaryString.length);
-    for (var i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-    return Buffer.from(bytes);
   }
 }
