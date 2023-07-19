@@ -49,16 +49,29 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.goui.phonenumber.tools.Metadata.RangeMap;
+
 import org.typemeta.funcj.json.algebra.JsonToDoc;
 import org.typemeta.funcj.json.model.JSAPI;
 import org.typemeta.funcj.json.model.JsArray;
 import org.typemeta.funcj.json.model.JsObject;
 import org.typemeta.funcj.json.model.JsValue;
 
+/**
+ * Tool for writing test data and other auxiliary range analysis.
+ */
 public class Analyzer {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
   private static final PhoneNumberUtil PHONE_NUMBER_UTIL = PhoneNumberUtil.getInstance();
+
+  /** The base types we extract from the underlying metadata by default. */
+  public static final ImmutableSet<ClassifierType> DEFAULT_BASE_TYPES =
+      ImmutableSet.of(
+          ClassifierType.TYPE,
+          ClassifierType.AREA_CODE_LENGTH,
+          ClassifierType.TARIFF,
+          ClassifierType.NATIONAL_FORMAT,
+          ClassifierType.INTERNATIONAL_FORMAT,
+          ClassifierType.REGION);
 
   static final class Flags {
     @Parameter(names = "--zip", description = "Standard format zip file path")
@@ -95,7 +108,7 @@ public class Analyzer {
 
     MetadataConfig config =
         flags.configPath.isEmpty()
-            ? MetadataConfig.simple(Metadata.DEFAULT_BASE_TYPES, DIGIT_SEQUENCE_MATCHER, 0, 1)
+            ? MetadataConfig.simple(DEFAULT_BASE_TYPES, DIGIT_SEQUENCE_MATCHER, 0, 1)
             : MetadataConfig.load(Paths.get(flags.configPath));
     Metadata transformedMetadata =
         Metadata.load(flags.zipPath, flags.dirPath, flags.csvSeparator)
@@ -166,7 +179,7 @@ public class Analyzer {
 
   private static JsObject format(
       ClassifierType type, DigitSequence cc, DigitSequence nn, Metadata metadata) {
-    Metadata.RangeClassifier formatClassifier = metadata.getRangeMap(cc).getClassifier(type);
+    RangeClassifier formatClassifier = metadata.getRangeMap(cc).getClassifier(type);
     checkState(formatClassifier.isSingleValued(), "formats are single valued");
     if (formatClassifier.classify(nn).isEmpty()) {
       logger.atInfo().log("skip missing %s format for: +%s%s", type, cc, nn);
@@ -184,7 +197,7 @@ public class Analyzer {
     }
     PhoneNumber lpn =
         optLpn.orElseThrow(() -> new AssertionError("cannot parse: " + cc + " - " + nn));
-    String formatted = PhoneNumberUtil.getInstance().format(lpn, FORMAT_MAP.get(type));
+    String formatted = PHONE_NUMBER_UTIL.format(lpn, FORMAT_MAP.get(type));
     return obj(field("type", str(type.id())), field("value", str(formatted)));
   }
 

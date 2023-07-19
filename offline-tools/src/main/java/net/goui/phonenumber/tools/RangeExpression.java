@@ -17,7 +17,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.goui.phonenumber.tools.Metadata.RangeMap;
 
 abstract class RangeExpression implements Function<RangeMap, RangeTree> {
   // Label for special expression literal which takes the value of all valid ranges in the range map.

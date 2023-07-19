@@ -53,7 +53,7 @@ export class PhoneNumberFormatter {
    * back to simple block formatting for missing data.
    */
   static canFormat(rawClassifier: RawClassifier, type: FormatType): boolean {
-    return this.rawClassifier.getSupportedNumberTypes().has(type);
+    return rawClassifier.getSupportedNumberTypes().has(type);
   }
 
   /**
