@@ -37,9 +37,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.goui.phonenumber.proto.Metadata.*;
-import net.goui.phonenumber.tools.Metadata.RangeClassifier;
-import net.goui.phonenumber.tools.Metadata.RangeMap;
 
+/**
+ * The primary tool for generating client metadata for phone number classifiers.
+ */
 public class GenerateMetadata {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 

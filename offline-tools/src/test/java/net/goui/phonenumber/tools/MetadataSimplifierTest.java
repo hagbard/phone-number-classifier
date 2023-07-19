@@ -19,8 +19,7 @@ import com.google.i18n.phonenumbers.metadata.PrefixTree;
 import com.google.i18n.phonenumbers.metadata.RangeSpecification;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
 import java.util.Arrays;
-import net.goui.phonenumber.tools.Metadata.RangeClassifier;
-import net.goui.phonenumber.tools.Metadata.RangeMap;
+
 import net.goui.phonenumber.tools.MetadataSimplifier.RangeExpander;
 import org.junit.Test;
 import org.junit.runner.RunWith;

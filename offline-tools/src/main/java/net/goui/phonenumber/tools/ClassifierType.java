@@ -19,6 +19,12 @@ import com.google.common.base.Ascii;
 import com.google.common.collect.ImmutableMap;
 import java.util.stream.Stream;
 
+/**
+ * Classifier types are a simplified representation of {@link
+ * com.google.i18n.phonenumbers.metadata.table.RangeTable RangeTable} columns, used by the {@link
+ * RangeMap RangeMap} class. They are less strongly types than {@code RangeTable} columns,
+ * since they must be able to represent user created custom columns.
+ */
 @AutoValue
 abstract class ClassifierType {
   // If anything is added here, also add it to Metadata#getRangeMapForTable().
@@ -33,6 +39,7 @@ abstract class ClassifierType {
   // Synthetic classifier used when validation ranges are transformed.
   static final ClassifierType VALIDITY = ClassifierType.baseType("VALIDITY");
 
+  // Base types exist on the underlying metadata and do not need a prefixed name.
   private static final ImmutableMap<String, ClassifierType> BASE_TYPES =
       Stream.of(
               VALIDITY, // Added after RangeMap is loaded if configuration restricts validation.
@@ -44,11 +51,25 @@ abstract class ClassifierType {
               INTERNATIONAL_FORMAT)
           .collect(toImmutableMap(ClassifierType::id, identity()));
 
+  /**
+   * Returns whether a type is intended to classify a single value. "TARIFF" is an example of a
+   * single valued type (i.e. a number only has one tariff), but "REGIONS" is multivalued (i.e. a
+   * number can be assigned to several regions).
+   *
+   * <p>This distinction is useful since a single-valued type can have a different API, more suited
+   * to its expected use.
+   */
   public static boolean isSingleValued(ClassifierType type) {
     checkArgument(type.isBaseType(), "only applicable for base types: %s", type);
     return !type.id().equals(REGION.id());
   }
 
+  /**
+   * Create or return a classifier for the given identifier. If the given ID does not correspond to
+   * a "base type", then it must take the form {@code "<namespace>:<id>"} where the namespace prefix
+   * is used to avoid name clashes with base types. The namespace can be any short identifier and
+   * would normally be shared by all custom types in a project.
+   */
   public static ClassifierType of(String id) {
     id = Ascii.toUpperCase(id);
     ClassifierType type = BASE_TYPES.get(id);
@@ -64,7 +85,9 @@ abstract class ClassifierType {
     return new AutoValue_ClassifierType(id, true);
   }
 
+  /** Returns the ID string which uniquely identifies this type. */
   public abstract String id();
 
+  /** Returns whether this type is a base type. */
   public abstract boolean isBaseType();
 }

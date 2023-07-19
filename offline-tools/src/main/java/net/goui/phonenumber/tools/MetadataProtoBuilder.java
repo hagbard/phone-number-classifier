@@ -32,8 +32,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import net.goui.phonenumber.proto.Metadata.*;
-import net.goui.phonenumber.tools.Metadata.RangeClassifier;
-import net.goui.phonenumber.tools.Metadata.RangeMap;
 
 final class MetadataProtoBuilder {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();

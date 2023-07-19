@@ -22,8 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import net.goui.phonenumber.tools.Metadata.RangeClassifier;
-import net.goui.phonenumber.tools.Metadata.RangeMap;
+
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.ClassifierConfigProto;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.CustomClassifierProto;

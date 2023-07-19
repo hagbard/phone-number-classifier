@@ -12,8 +12,6 @@ package net.goui.phonenumber.tools;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.ImmutableMap.toImmutableMap;
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static net.goui.phonenumber.tools.ClassifierType.VALIDITY;
 
 import com.google.auto.value.AutoValue;
@@ -29,32 +27,16 @@ import com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.RangesTableSchema;
 import com.google.i18n.phonenumbers.metadata.table.*;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.stream.Stream;
 
+/**
+ * Encapsulation of phone number metadata for classifiers, either for underlying metadata or custom
+ * metadata with simplified ranges or custom classifiers.
+ */
 @AutoValue
 abstract class Metadata {
-  public static final ImmutableSet<ClassifierType> DEFAULT_BASE_TYPES =
-      ImmutableSet.of(
-          ClassifierType.TYPE,
-          ClassifierType.AREA_CODE_LENGTH,
-          ClassifierType.TARIFF,
-          ClassifierType.NATIONAL_FORMAT,
-          ClassifierType.INTERNATIONAL_FORMAT,
-          ClassifierType.REGION);
   // Argentina is ... special.
   private static final DigitSequence CC_ARGENTINA = DigitSequence.of("54");
-
-  public Metadata transform(RangeMapTransformer outputTransformer) {
-    Metadata.Builder transformed = Metadata.builder(root());
-    ImmutableSet<DigitSequence> callingCodes = getAvailableCallingCodes();
-    for (DigitSequence cc : callingCodes) {
-      transformed.put(cc, outputTransformer.apply(getRangeMap(cc)));
-    }
-    return transformed.build();
-  }
 
   static final class Builder {
     private final CsvTable<DigitSequence> root;
@@ -66,17 +48,17 @@ abstract class Metadata {
     }
 
     @CanIgnoreReturnValue
-    Builder put(DigitSequence cc, RangeMap rangeMap) {
+    public Builder put(DigitSequence cc, RangeMap rangeMap) {
       callingCodeMap.put(cc, rangeMap);
       return this;
     }
 
-    Metadata build() {
+    public Metadata build() {
       return create(root, callingCodeMap.buildOrThrow());
     }
   }
 
-  static Builder builder(CsvTable<DigitSequence> root) {
+  public static Builder builder(CsvTable<DigitSequence> root) {
     return new Builder(root);
   }
 
@@ -92,6 +74,10 @@ abstract class Metadata {
     return new AutoValue_Metadata(root, expectedTypesList, callingCodeMap);
   }
 
+  /**
+   * Loads underlying data from the specified zip file, with optional overlay directory for local
+   * data patching.
+   */
   public static Metadata load(String zipFilePath, String overlayDirPath, String csvSeparator)
       throws IOException {
 
@@ -218,12 +204,37 @@ abstract class Metadata {
     return rangeData().keySet();
   }
 
+  /** Returns the range map for a calling code. */
   public final RangeMap getRangeMap(DigitSequence cc) {
     RangeMap rangeTable = rangeData().get(cc);
     checkArgument(rangeTable != null, "no data for calling code: %s", cc);
     return rangeTable;
   }
 
+  /**
+   * Returns a transformed metadata instance, usually with reduced or custom types. This operation
+   * should occur before simplification to obtain the metadata of a user configuration.
+   */
+  public Metadata transform(RangeMapTransformer outputTransformer) {
+    Metadata.Builder transformed = Metadata.builder(root());
+    ImmutableSet<DigitSequence> callingCodes = getAvailableCallingCodes();
+    for (DigitSequence cc : callingCodes) {
+      transformed.put(cc, outputTransformer.apply(getRangeMap(cc)));
+    }
+    return transformed.build();
+  }
+
+  /**
+   * Trims metadata according to an internally held (special) "validation" type. This should be
+   * called after simplification to apply a range restriction to the simplified ranges. This avoids
+   * either:
+   *
+   * <ul>
+   *   <li>Removing ranges before simplification, and then overwriting them during simplification.
+   *   <li>Restricting simplified metadata to some originally determined range, and leaving unwanted
+   *       expanded range assignments in.
+   * </ul>
+   */
   public final Metadata trimValidRanges() {
     if (!getTypes().contains(VALIDITY)) {
       return this;
@@ -233,160 +244,5 @@ abstract class Metadata {
       trimmedMetadata.put(cc, getRangeMap(cc).trimValidRanges());
     }
     return trimmedMetadata.build();
-  }
-
-  @AutoValue
-  abstract static class RangeClassifier {
-    static final class Builder {
-      private final Map<String, RangeTree> map = new LinkedHashMap<>();
-      private boolean isSingleValued = false;
-      private boolean isClassifierOnly = false;
-
-      private Builder() {}
-
-      @CanIgnoreReturnValue
-      public Builder setSingleValued(boolean isSingleValued) {
-        this.isSingleValued = isSingleValued;
-        return this;
-      }
-
-      @CanIgnoreReturnValue
-      public Builder setClassifierOnly(boolean isClassifierOnly) {
-        this.isClassifierOnly = isClassifierOnly;
-        return this;
-      }
-
-      @CanIgnoreReturnValue
-      public Builder put(String key, RangeTree ranges) {
-        if (!ranges.isEmpty()) {
-          map.merge(key, ranges, RangeTree::union);
-        }
-        return this;
-      }
-
-      @CanIgnoreReturnValue
-      public Builder putAll(Map<String, RangeTree> rangeMap) {
-        rangeMap.forEach(this::put);
-        return this;
-      }
-
-      public RangeClassifier build() {
-        return new AutoValue_Metadata_RangeClassifier(
-            isSingleValued, isClassifierOnly, ImmutableMap.copyOf(map));
-      }
-    }
-
-    public static RangeClassifier.Builder builder() {
-      return new RangeClassifier.Builder();
-    }
-
-    public abstract boolean isSingleValued();
-
-    public abstract boolean isClassifierOnly();
-
-    abstract ImmutableMap<String, RangeTree> map();
-
-    public final ImmutableSet<String> orderedKeys() {
-      return map().keySet();
-    }
-
-    public final ImmutableSet<Map.Entry<String, RangeTree>> orderedEntries() {
-      return map().entrySet();
-    }
-
-    public final RangeTree getRanges(String key) {
-      return map().getOrDefault(key, RangeTree.empty());
-    }
-
-    public final ImmutableSet<String> classify(DigitSequence seq) {
-      Stream<String> matches =
-          orderedEntries().stream().filter(e -> e.getValue().contains(seq)).map(Map.Entry::getKey);
-      if (isSingleValued()) {
-        return matches.findFirst().map(ImmutableSet::of).orElse(ImmutableSet.of());
-      } else {
-        return matches.collect(toImmutableSet());
-      }
-    }
-
-    public final RangeClassifier intersect(RangeTree bound) {
-      Builder trimmed =
-          builder().setSingleValued(isSingleValued()).setClassifierOnly(isClassifierOnly());
-      for (Map.Entry<String, RangeTree> e : orderedEntries()) {
-        trimmed.put(e.getKey(), e.getValue().intersect(bound));
-      }
-      return trimmed.build();
-    }
-  }
-
-  @AutoValue
-  abstract static class RangeMap {
-
-    static final class Builder {
-      private final Map<ClassifierType, RangeClassifier> map = new LinkedHashMap<>();
-
-      Builder() {}
-
-      @CanIgnoreReturnValue
-      Builder put(ClassifierType type, RangeClassifier classifier) {
-        map.put(type, classifier);
-        return this;
-      }
-
-      RangeMap build(RangeTree allRanges) {
-        // Bound all classifiers by the outer range to ensure that classifiers don't classify
-        // invalid sequences.
-        ImmutableMap<ClassifierType, RangeClassifier> trimmedMap =
-            map.entrySet().stream()
-                .collect(toImmutableMap(Map.Entry::getKey, e -> e.getValue().intersect(allRanges)));
-        return new AutoValue_Metadata_RangeMap(allRanges, trimmedMap);
-      }
-    }
-
-    static RangeMap.Builder builder() {
-      return new RangeMap.Builder();
-    }
-
-    abstract RangeTree getAllRanges();
-
-    abstract ImmutableMap<ClassifierType, RangeClassifier> classifiers();
-
-    public final ImmutableSet<ClassifierType> getTypes() {
-      return classifiers().keySet();
-    }
-
-    public final RangeClassifier getClassifier(ClassifierType type) {
-      return checkNotNull(classifiers().get(type), "no such type: %s", type.id());
-    }
-
-    public final RangeTree getRanges(ClassifierType type, String key) {
-      RangeClassifier classifier = getClassifier(type);
-      return classifier != null ? classifier.getRanges(key) : RangeTree.empty();
-    }
-
-    public final RangeMap trimValidRanges() {
-      RangeClassifier validityClassifier = classifiers().get(VALIDITY);
-      if (validityClassifier == null) {
-        return this;
-      }
-      RangeTree validRanges = validityClassifier.getRanges("VALID");
-      RangeMap.Builder trimmedMap = RangeMap.builder();
-      for (Map.Entry<ClassifierType, RangeClassifier> e : classifiers().entrySet()) {
-        if (e.getKey().equals(VALIDITY)) {
-          // Don't add the validity classifier (there's no point).
-          continue;
-        }
-        RangeClassifier classifier = e.getValue();
-        RangeClassifier.Builder trimmedClassifier =
-            RangeClassifier.builder()
-                .setSingleValued(classifier.isSingleValued())
-                .setClassifierOnly(classifier.isClassifierOnly());
-        for (String key : classifier.orderedKeys()) {
-          // The result is ignored if empty.
-          trimmedClassifier.put(key, classifier.getRanges(key).intersect(validRanges));
-        }
-        trimmedMap.put(e.getKey(), trimmedClassifier.build());
-      }
-      return trimmedMap.build(validRanges);
-    }
   }
 }
