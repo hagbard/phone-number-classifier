@@ -1,12 +1,12 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
+Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
 
- This program and the accompanying materials are made available under the terms of the
- Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
- Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
+This program and the accompanying materials are made available under the terms of the
+Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
+Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
 
- SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 package net.goui.phonenumber;
 
@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
+import net.goui.phonenumber.PhoneNumberFormatter.FormatType;
 import net.goui.phonenumber.metadata.ClassifierLoader;
 import net.goui.phonenumber.metadata.RawClassifier;
 import net.goui.phonenumber.metadata.VersionInfo;
@@ -201,6 +203,10 @@ public abstract class AbstractPhoneNumberClassifier {
     return rawClassifier;
   }
 
+  protected PhoneNumberFormatter getFormatter(FormatType type) {
+    return new PhoneNumberFormatter(rawClassifier, type);
+  }
+
   /**
    * Tests a phone number against the possible lengths of any number in its numbering plan. This
    * method is fast, but takes no account of the number type.
@@ -325,7 +331,8 @@ public abstract class AbstractPhoneNumberClassifier {
 
   private <V> TypeClassifier<V> newClassifier(
       String typeName,
-      Class<V> typeClass, Function<String, V> toValue,
+      Class<V> typeClass,
+      Function<String, V> toValue,
       Function<? super V, String> toString) {
     checkArgument(
         rawClassifier().getSupportedNumberTypes().contains(typeName),

@@ -16,8 +16,8 @@ import net.goui.phonenumber.metadata.VersionInfo;
 import net.goui.phonenumber.service.proto.AbstractResourceClassifierService;
 
 @AutoService(ClassifierService.class)
-public class TinyData extends AbstractResourceClassifierService {
-  public TinyData() {
-    super(VersionInfo.of("goui.net/libphonenumber/dfa/tiny", 1, 1, 0), "/lpn_dfa_tiny.pb");
+public class ValidationOnlyData extends AbstractResourceClassifierService {
+  public ValidationOnlyData() {
+    super(VersionInfo.of("goui.net/libphonenumber/dfa/minimal_validation_only", 1, 1, 0), "/validation_only.pb");
   }
 }

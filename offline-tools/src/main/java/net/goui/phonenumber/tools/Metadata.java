@@ -32,8 +32,6 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 @AutoValue
@@ -46,6 +44,15 @@ abstract class Metadata {
           ClassifierType.NATIONAL_FORMAT,
           ClassifierType.INTERNATIONAL_FORMAT,
           ClassifierType.REGION);
+
+  public Metadata transform(RangeMapTransformer outputTransformer) {
+    Metadata.Builder transformed = Metadata.builder(root());
+    ImmutableSet<DigitSequence> callingCodes = getAvailableCallingCodes();
+    for (DigitSequence cc : callingCodes) {
+      transformed.put(cc, outputTransformer.apply(getRangeMap(cc)));
+    }
+    return transformed.build();
+  }
 
   static final class Builder {
     private final CsvTable<DigitSequence> root;
@@ -83,11 +90,7 @@ abstract class Metadata {
     return new AutoValue_Metadata(root, expectedTypesList, callingCodeMap);
   }
 
-  public static Metadata load(
-      String zipFilePath,
-      String overlayDirPath,
-      String csvSeparator,
-      Function<RangeMap, RangeMap> transformer)
+  public static Metadata load(String zipFilePath, String overlayDirPath, String csvSeparator)
       throws IOException {
 
     checkArgument(
@@ -115,8 +118,7 @@ abstract class Metadata {
             root.get(cc, MetadataTableSchema.NATIONAL_PREFIX)
                 .map(s -> s.getValues().asList().get(0))
                 .orElse(DigitSequence.empty());
-        RangeMap rawRangeMap = getRangeMapForTable(rangeTable, formatsTable, nationalPrefix);
-        callingCodeMap.put(cc, transformer.apply(rawRangeMap));
+        callingCodeMap.put(cc, getRangeMapForTable(rangeTable, formatsTable, nationalPrefix));
       }
     }
     return create(root, callingCodeMap.buildOrThrow());
@@ -178,7 +180,8 @@ abstract class Metadata {
         RangeTree formatRange = table.getRanges(RangesTableSchema.FORMAT, formatId);
         nationalFormat.put(
             FormatCompiler.compileSpec(formatSpec.national(), nationalPrefix), formatRange);
-        // We MUST NOT skip adding ranges (even when no internation format exists) because otherwise
+        // We MUST NOT skip adding ranges (even when no international format exists) because
+        // otherwise
         // range simplification risks overwriting unassigned ranges. Since both columns have exactly
         // the same ranges, simplification will create the same end ranges, which will be shared.
         // Thus, the overhead for adding this "duplicated" data here is almost zero.

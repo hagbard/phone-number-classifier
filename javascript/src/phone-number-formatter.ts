@@ -19,32 +19,64 @@ export enum FormatType {
 }
 
 /**
- * A base class from which custom, type-safe classifiers can be derived.
+ * Provides a format function for phone numbers based on a specific format type.
  *
- * This class maps the structure of a known metadata schema to set of a type-safe accessor methods
- * from which type specific classifiers and matchers can be obtained. In typical usage, a subclass
- * of this class will exist for each uniquely structured metadata schema, and will only be extended
- * as that schema evolves.
+ * When a metadata schema supports formatter metadata, an instance of this class can be returned to
+ * the user from a subclass of `AbstractPhoneNumberClassifier`. Instances of this class cannot be
+ * created for classifiers which do not have the required metadata.
  *
- * In the subclass, new type-safe fields should be created for each supported phone number attribute
- * (e.g. "TARIFF" or "TYPE") via the `protected` `forXxx()` methods. Currently there exists support
- * for mapping to/from numeric or string based enums or (as a last resort) using string identifiers
- * directly.
+ * This class is deliberately lightweight and avoids holding pre-computed format data so that it can
+ * be instantiated on demand (if needed). All formatting information is encoded into the format
+ * specifier strings obtained from the raw classifier.
  */
 export class PhoneNumberFormatter {
+  private static readonly CARRIER_CODE_BYTE: number = 0x3E;
+  private static readonly RAW_ASCII_BYTE: number = 0x3F;
+
+  private static readonly GROUP_TYPE_MASK: number = 0x7 << 3;
+  private static readonly PLAIN_GROUP: number = 0x0 << 3;
+  private static readonly GROUP_THEN_SPACE: number = 0x1 << 3;
+  private static readonly GROUP_THEN_HYPHEN: number = 0x2 << 3;
+  private static readonly OPTIONAL_GROUP: number = 0x4 << 3;
+  private static readonly PARENTHESIZED_GROUP: number = 0x5 << 3;
+  private static readonly IGNORED_GROUP: number = 0x6 << 3;
+
+  /**
+   * Returns whether a classifier has the required format metadata for a type.
+   *
+   * In general this should not be needed, since most metadata schemas should define whether
+   * specific format metadata is to be included. The associated `AbstractPhoneNumberClassifier`
+   * subclass should know implicitly if a format type is supported, so no runtime check should be
+   * needed.
+   *
+   * However, it is foreseeable that some schemas could define formatting to be optional and fall
+   * back to simple block formatting for missing data.
+   */
+  static canFormat(rawClassifier: RawClassifier, type: FormatType): boolean {
+    return this.rawClassifier.getSupportedNumberTypes().has(type);
+  }
+
+  /**
+   * Constructs a formatter using the metadata from the given classifier. Formatter instances should
+   * only need to be constructed in a subclass of `AbstractPhoneNumberClassifier`, to expose the
+   * functionality implied by the expected metadata schema.
+   */
   constructor(private readonly rawClassifier: RawClassifier, private readonly type: FormatType) {
-    if (!rawClassifier.getSupportedNumberTypes().has(type)) {
+    if (!PhoneNumberFormatter.canFormat(rawClassifier, type)) {
       throw new Error(`No format data available for ${type} formatting`);
     }
   }
 
-  format(number: PhoneNumber): string {
+  /**
+   * Formats a phone number according to the type of this formatter.
+   */
+  format(phoneNumber: PhoneNumber): string {
     let bestFormatSpec: string = "";
     let bestResult: MatchResult = MatchResult.Invalid;
     let matcher: ValueMatcher =
-        this.rawClassifier.getValueMatcher(number.getCallingCode(), this.type);
+        this.rawClassifier.getValueMatcher(phoneNumber.getCallingCode(), this.type);
     for (var v of this.rawClassifier.getPossibleValues(this.type)) {
-      let r = matcher.matchValues(number.getNationalNumber(), v);
+      let r = matcher.matchValues(phoneNumber.getNationalNumber(), v);
       if (r < bestResult) {
         bestResult = r;
         bestFormatSpec = v;
@@ -60,33 +92,22 @@ export class PhoneNumberFormatter {
     // can catch this and reset the default value (which for formatting is always the empty string).
     if (bestResult !== MatchResult.Matched
         && bestFormatSpec.length > 0
-        && this.rawClassifier.match(number.getCallingCode(), number.getNationalNumber()) < bestResult) {
+        && this.rawClassifier.match(phoneNumber.getCallingCode(), phoneNumber.getNationalNumber()) < bestResult) {
       bestFormatSpec = "";
     }
     // bestFormatSpec is non-null base64 encoded binary spec (possibly empty).
     // bestResult is corresponding match (can be too short, too long, or invalid).
     let formatted: string;
     if (bestFormatSpec.length > 0) {
-      formatted = PhoneNumberFormatter.formatNationalNumber(number.getNationalNumber(), bestFormatSpec);
+      formatted = PhoneNumberFormatter.formatNationalNumber(phoneNumber.getNationalNumber(), bestFormatSpec);
     } else {
-      formatted = number.getNationalNumber().toString();
+      formatted = phoneNumber.getNationalNumber().toString();
     }
     if (this.type === FormatType.INTERNATIONAL) {
-      formatted = "+" + number.getCallingCode() + " " + formatted;
+      formatted = "+" + phoneNumber.getCallingCode() + " " + formatted;
     }
     return formatted;
   }
-
-  private static readonly CARRIER_CODE_BYTE: number = 0x3E;
-  private static readonly RAW_ASCII_BYTE: number = 0x3F;
-
-  private static readonly GROUP_TYPE_MASK: number = 0x7 << 3;
-  private static readonly PLAIN_GROUP: number = 0x0 << 3;
-  private static readonly GROUP_THEN_SPACE: number = 0x1 << 3;
-  private static readonly GROUP_THEN_HYPHEN: number = 0x2 << 3;
-  private static readonly OPTIONAL_GROUP: number = 0x4 << 3;
-  private static readonly PARENTHESIZED_GROUP: number = 0x5 << 3;
-  private static readonly IGNORED_GROUP: number = 0x6 << 3;
 
   private static isGroup(byte: number): boolean {
     return (byte & 0x40) != 0;

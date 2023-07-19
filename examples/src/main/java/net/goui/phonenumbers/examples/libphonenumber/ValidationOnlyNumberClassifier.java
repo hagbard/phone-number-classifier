@@ -10,42 +10,30 @@
 
 package net.goui.phonenumbers.examples.libphonenumber;
 
+import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.INTERNATIONAL;
+import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.NATIONAL;
+
 import com.ibm.icu.util.Region;
 import net.goui.phonenumber.AbstractPhoneNumberClassifier;
 import net.goui.phonenumber.PhoneNumberFormatter;
 import net.goui.phonenumber.metadata.RawClassifier;
 
-import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.INTERNATIONAL;
-import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.NATIONAL;
+public final class ValidationOnlyNumberClassifier extends AbstractPhoneNumberClassifier {
 
-public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifier {
-
-  public static LibPhoneNumberClassifier load(SchemaVersion version, SchemaVersion... rest) {
-    return new LibPhoneNumberClassifier(
+  public static ValidationOnlyNumberClassifier load(SchemaVersion version, SchemaVersion... rest) {
+    return new ValidationOnlyNumberClassifier(
         AbstractPhoneNumberClassifier.loadRawClassifier(version, rest));
   }
 
-  private final SingleValuedMatcher<NumberType> typeMatcher =
-      forEnum("LPN:TYPE", NumberType.class).singleValuedMatcher();
-  private final Matcher<Region> regionMatcher =
-      forType("REGION", Region.class, Region::getInstance, Object::toString).matcher();
   private final PhoneNumberFormatter nationalFormatter = getFormatter(NATIONAL);
   private final PhoneNumberFormatter internationalFormatter = getFormatter(INTERNATIONAL);
 
-  private LibPhoneNumberClassifier(RawClassifier rawClassifier) {
+  private ValidationOnlyNumberClassifier(RawClassifier rawClassifier) {
     super(rawClassifier);
   }
 
   RawClassifier rawClassifierForTesting() {
     return rawClassifier();
-  }
-
-  public SingleValuedMatcher<NumberType> forType() {
-    return typeMatcher;
-  }
-
-  public Matcher<Region> forRegion() {
-    return regionMatcher;
   }
 
   public PhoneNumberFormatter national() {

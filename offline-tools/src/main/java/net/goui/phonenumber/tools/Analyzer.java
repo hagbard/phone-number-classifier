@@ -97,13 +97,13 @@ public class Analyzer {
         flags.configPath.isEmpty()
             ? MetadataConfig.simple(Metadata.DEFAULT_BASE_TYPES, DIGIT_SEQUENCE_MATCHER, 0, 1)
             : MetadataConfig.load(Paths.get(flags.configPath));
-    Metadata originalMetadata =
-        Metadata.load(
-            flags.zipPath, flags.dirPath, flags.csvSeparator, config.getOutputTransformer());
+    Metadata transformedMetadata =
+        Metadata.load(flags.zipPath, flags.dirPath, flags.csvSeparator)
+            .transform(config.getOutputTransformer());
 
     if (!flags.testDataPath.isEmpty()) {
       logger.atInfo().log("writing test data to: %s", flags.testDataPath);
-      writeTestData(originalMetadata, Paths.get(flags.testDataPath));
+      writeTestData(transformedMetadata, Paths.get(flags.testDataPath));
     }
   }
 

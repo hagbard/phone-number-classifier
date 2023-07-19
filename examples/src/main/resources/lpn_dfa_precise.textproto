@@ -46,3 +46,9 @@ classifier {
   # valued classifier (e.g. a number or prefix can be associated with several regions).
   type_name: "REGION"
 }
+classifier {
+  type_name: "NATIONAL_FORMAT"
+}
+classifier {
+  type_name: "INTERNATIONAL_FORMAT"
+}
