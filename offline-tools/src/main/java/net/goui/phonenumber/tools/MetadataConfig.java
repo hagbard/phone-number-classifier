@@ -33,19 +33,28 @@ import net.goui.phonenumber.proto.Metadata.MetadataProto.VersionInfo;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.MatcherType;
 
+/** Encapsulation of a metadata configuration file. */
 @AutoValue
 abstract class MetadataConfig {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
   private static final int MIN_ALLOWED_PREFIX_LENGTH = 1;
 
+  /**
+   * Loads the metadata configuration from a given path (see {@link MetadataConfigProto} for
+   * documentation).
+   */
   public static MetadataConfig load(Path configPath) throws IOException {
-    logger.atInfo().log("Building metadata from config: %s", configPath);
-    return load(TextFormat.parse(Files.readString(configPath), MetadataConfigProto.class));
+    logger.atInfo().log("Loading config: %s", configPath);
+    return from(TextFormat.parse(Files.readString(configPath), MetadataConfigProto.class));
   }
 
-  public static MetadataConfig load(MetadataConfigProto configProto) {
-    checkArgument(configProto.hasVersion(), "version must be specified: %s", configProto);
+  /**
+   * Creates a metadata configuration from a loaded proto message (see {@link MetadataConfigProto}
+   * for documentation).
+   */
+  public static MetadataConfig from(MetadataConfigProto configProto) {
+    checkArgument(configProto.hasVersion(), "Version must be specified: %s", configProto);
     VersionInfo version =
         VersionInfo.newBuilder()
             .setDataSchemaUri(configProto.getVersion().getDataSchemaUri())
@@ -59,14 +68,14 @@ abstract class MetadataConfig {
       ImmutableSet<DigitSequence> overrideCallingCodes =
           loadCallingCodes(override.getCallingCodes(), override.getCallingCodeList());
       checkArgument(
-          !overrideCallingCodes.isEmpty(), "must specify calling codes in overrides: %s", override);
+          !overrideCallingCodes.isEmpty(), "Must specify calling codes in overrides: %s", override);
       CallingCodeConfig overrideConfig =
           CallingCodeConfig.of(
               override.getMaximumFalsePositivePercent(), override.getMinimumPrefixLength());
       for (DigitSequence cc : overrideCallingCodes) {
         checkArgument(
             !configMap.containsKey(cc),
-            "duplicate calling code '%s' in override: %s",
+            "Duplicate calling code '%s' in override: %s",
             cc,
             override);
         configMap.put(cc, overrideConfig);
@@ -96,6 +105,7 @@ abstract class MetadataConfig {
         ImmutableSet.copyOf(configProto.getMatcherTypeList()));
   }
 
+  /** Returns a very simplified metadata configuration which can serve as a default. */
   public static MetadataConfig simple(
       Set<ClassifierType> classifierTypes,
       MatcherType matcherType,
@@ -123,27 +133,33 @@ abstract class MetadataConfig {
     return ccs.map(DigitSequence::of).collect(toImmutableSet());
   }
 
+  /** Returns the schema version define in this configuration. */
   public abstract VersionInfo getVersion();
 
+  /** Returns the transformer defined by the set of classifiers in the configuration */
   public abstract RangeMapTransformer getOutputTransformer();
 
+  // Internal field, should not be needed outside this class.
   abstract ImmutableMap<DigitSequence, CallingCodeConfig> explicitCallingCodeMap();
 
+  // Internal field, should not be needed outside this class.
   abstract Optional<CallingCodeConfig> defaultConfig();
 
-  abstract ImmutableSet<MatcherType> matcherTypes();
+  /** Returns the set of output types for the matcher data (either regex or DFA matcher data). */
+  public abstract ImmutableSet<MatcherType> matcherTypes();
 
-  public final ImmutableSet<ClassifierType> getOutputTypes() {
-    return getOutputTransformer().getOutputTypes();
-  }
-
+  /**
+   * Returns the configuration for a specific calling code (either the default configuration or an
+   * override).
+   */
   public final Optional<CallingCodeConfig> getCallingCodeConfig(DigitSequence cc) {
     Optional<CallingCodeConfig> config = Optional.ofNullable(explicitCallingCodeMap().get(cc));
     return config.or(this::defaultConfig);
   }
 
+  /** A configuration for how to process data on a per calling code basis. */
   @AutoValue
-  abstract static class CallingCodeConfig {
+  public abstract static class CallingCodeConfig {
     static CallingCodeConfig of(int maxFalsePositivePercent, int minPrefixLength) {
       checkArgument(maxFalsePositivePercent >= 0);
       checkArgument(minPrefixLength >= 0);
@@ -151,8 +167,16 @@ abstract class MetadataConfig {
           maxFalsePositivePercent, Math.max(minPrefixLength, MIN_ALLOWED_PREFIX_LENGTH));
     }
 
-    abstract int maxFalsePositivePercent();
+    /**
+     * The percent increase of addition validation ranges allowed during simplification (see {@link
+     * MetadataConfigProto} for documentation).
+     */
+    public abstract int maxFalsePositivePercent();
 
-    abstract int minPrefixLength();
+    /**
+     * The minimum number prefix length which any simplification operation must not go below (see
+     * {@link MetadataConfigProto} for documentation).
+     */
+    public abstract int minPrefixLength();
   }
 }
