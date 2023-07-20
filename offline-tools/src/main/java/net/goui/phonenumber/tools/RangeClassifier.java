@@ -10,18 +10,17 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 
 package net.goui.phonenumber.tools;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
-
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 @AutoValue
 abstract class RangeClassifier {

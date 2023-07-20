@@ -13,7 +13,6 @@ package net.goui.phonenumbers.examples.libphonenumber;
 import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.INTERNATIONAL;
 import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.NATIONAL;
 
-import com.ibm.icu.util.Region;
 import net.goui.phonenumber.AbstractPhoneNumberClassifier;
 import net.goui.phonenumber.PhoneNumberFormatter;
 import net.goui.phonenumber.metadata.RawClassifier;

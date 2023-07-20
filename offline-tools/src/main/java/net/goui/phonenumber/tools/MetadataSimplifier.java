@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
-
 import net.goui.phonenumber.tools.MetadataConfig.CallingCodeConfig;
 
 /** */

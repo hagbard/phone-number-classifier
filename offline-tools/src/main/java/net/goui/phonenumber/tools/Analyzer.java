@@ -49,7 +49,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.typemeta.funcj.json.algebra.JsonToDoc;
 import org.typemeta.funcj.json.model.JSAPI;
 import org.typemeta.funcj.json.model.JsArray;
