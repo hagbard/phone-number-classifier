@@ -16,7 +16,6 @@ import com.google.common.truth.Truth;
 import com.google.i18n.phonenumbers.metadata.RangeSpecification;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
 import java.util.Arrays;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

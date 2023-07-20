@@ -19,7 +19,6 @@ import com.google.i18n.phonenumbers.metadata.RangeTree;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 import java.util.Arrays;
-
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
