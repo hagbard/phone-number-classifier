@@ -39,7 +39,10 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import net.goui.phonenumber.tools.MetadataConfig.CallingCodeConfig;
 
-/** */
+/**
+ * Simplifies phone number metadata to reduce metadata size at the expense of additional
+ * false-positive number classification.
+ */
 final class MetadataSimplifier {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
@@ -131,8 +134,7 @@ final class MetadataSimplifier {
       RangeTree unassignedRange = rangeExpander.getAssignableRange();
       for (String key : sortedKeys) {
         logger.atFinest().log("value: %s", key);
-        RangeTree assignedRanges =
-            rangeExpander.expandRange(rangeMap.getRanges(type, key));
+        RangeTree assignedRanges = rangeExpander.expandRange(rangeMap.getRanges(type, key));
         if (!assignedRanges.isEmpty()) {
           expandedRangeMap.put(key, assignedRanges);
           unassignedRange = unassignedRange.subtract(assignedRanges);

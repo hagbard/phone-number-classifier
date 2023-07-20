@@ -58,10 +58,6 @@ final class RangeMapTransformer implements Function<RangeMap, RangeMap> {
     this.transformers = checkNotNull(transformers);
   }
 
-  public ImmutableSet<ClassifierType> getOutputTypes() {
-    return transformers.keySet();
-  }
-
   @Override
   public RangeMap apply(RangeMap input) {
     RangeMap.Builder output = RangeMap.builder();
