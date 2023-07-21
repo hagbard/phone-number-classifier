@@ -40,6 +40,10 @@ override {
   minimum_prefix_length: 3
 }
 
+# Define which formats are to be supported.
+format: NATIONAL
+format: INTERNATIONAL
+
 # Create a custom number classifier which matches the semantics of the libphonenumber library.
 classifier {
   type_name: "LPN:TYPE"
@@ -60,10 +64,4 @@ classifier {
 }
 classifier {
   type_name: "REGION"
-}
-classifier {
-  type_name: "NATIONAL_FORMAT"
-}
-classifier {
-  type_name: "INTERNATIONAL_FORMAT"
 }

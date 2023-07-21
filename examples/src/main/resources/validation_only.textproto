@@ -32,12 +32,10 @@ default_maximum_false_positive_percent: 100000
 # E.g. Do not simplify to "7xxx_xxx_xxx" if the ranges are really "7[2-6]xx_xxx_xxx".
 default_minimum_prefix_length: 1
 
+# Define which formats are to be supported.
+format: NATIONAL
+format: INTERNATIONAL
+
 classifier {
   type_name: "REGION"
-}
-classifier {
-  type_name: "NATIONAL_FORMAT"
-}
-classifier {
-  type_name: "INTERNATIONAL_FORMAT"
 }
