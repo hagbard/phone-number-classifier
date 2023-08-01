@@ -18,6 +18,8 @@ version {
 matcher_type: DIGIT_SEQUENCE_MATCHER
 default_maximum_false_positive_percent: 100
 default_minimum_prefix_length: 3
+format: NATIONAL
+format: INTERNATIONAL
 classifier {
   type_name: "LPN:TYPE"
   custom {
@@ -37,10 +39,4 @@ classifier {
 }
 classifier {
   type_name: "REGION"
-}
-classifier {
-  type_name: "NATIONAL_FORMAT"
-}
-classifier {
-  type_name: "INTERNATIONAL_FORMAT"
 }

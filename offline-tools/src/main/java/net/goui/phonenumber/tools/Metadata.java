@@ -18,13 +18,18 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Iterables;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
+import com.google.i18n.phonenumbers.metadata.i18n.PhoneRegion;
+import com.google.i18n.phonenumbers.metadata.model.ExamplesTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.FormatSpec;
 import com.google.i18n.phonenumbers.metadata.model.FormatsTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.RangesTableSchema;
+import com.google.i18n.phonenumbers.metadata.proto.Types.ValidNumberType;
 import com.google.i18n.phonenumbers.metadata.table.*;
 import java.io.IOException;
 import java.util.function.BiConsumer;
@@ -101,6 +106,9 @@ abstract class Metadata {
         ImmutableMap<String, FormatSpec> formatsTable =
             FormatsTableSchema.toFormatSpecs(
                 loader.load(csvFile(cc, "formats"), FormatsTableSchema.SCHEMA));
+        ImmutableTable<PhoneRegion, ValidNumberType, DigitSequence> exampleTable =
+            ExamplesTableSchema.toExampleTable(
+                loader.load(csvFile(cc, "examples"), ExamplesTableSchema.SCHEMA));
 
         if (cc.equals(CC_ARGENTINA)) {
           RangeTable rewrittenTable =
@@ -111,11 +119,18 @@ abstract class Metadata {
         }
 
         // Load the preferred national prefix (first element), used to build formatter data.
-        DigitSequence nationalPrefix =
+        ImmutableList<DigitSequence> nationalPrefixes =
             root.get(cc, MetadataTableSchema.NATIONAL_PREFIX)
-                .map(s -> s.getValues().asList().get(0))
-                .orElse(DigitSequence.empty());
-        callingCodeMap.put(cc, getRangeMapForTable(rangeTable, formatsTable, nationalPrefix));
+                .map(s -> s.getValues().asList())
+                .orElse(ImmutableList.of());
+
+        // We only have example numbers for the main region (currently).
+        PhoneRegion mainRegion = root.get(cc, MetadataTableSchema.MAIN_REGION).orElseThrow();
+        ImmutableMap<ValidNumberType, DigitSequence> exampleNumbersMap =
+            exampleTable.row(mainRegion);
+
+        callingCodeMap.put(
+            cc, getRangeMapForTable(rangeTable, formatsTable, nationalPrefixes, exampleNumbersMap));
       }
     }
     return create(root, callingCodeMap.buildOrThrow());
@@ -128,17 +143,23 @@ abstract class Metadata {
   private static RangeMap getRangeMapForTable(
       RangeTable rangeTable,
       ImmutableMap<String, FormatSpec> formatsTable,
-      DigitSequence nationalPrefix) {
+      ImmutableList<DigitSequence> nationalPrefixes,
+      ImmutableMap<ValidNumberType, DigitSequence> exampleNumbersMap) {
 
+    DigitSequence primaryNationalPrefix =
+        Iterables.getFirst(nationalPrefixes, DigitSequence.empty());
     ImmutableList<BiConsumer<RangeTable, RangeMap.Builder>> extractFunctions =
         ImmutableList.of(
             extractColumn(RangesTableSchema.TYPE, ClassifierType.TYPE),
             extractColumn(RangesTableSchema.TARIFF, ClassifierType.TARIFF),
             extractColumn(RangesTableSchema.AREA_CODE_LENGTH, ClassifierType.AREA_CODE_LENGTH),
             extractGroup(RangesTableSchema.REGIONS, ClassifierType.REGION),
-            extractFormat(formatsTable, nationalPrefix));
+            extractFormat(formatsTable, primaryNationalPrefix));
 
-    RangeMap.Builder builder = RangeMap.builder();
+    RangeMap.Builder builder =
+        RangeMap.builder()
+            .setNationalPrefixes(nationalPrefixes)
+            .setExampleNumbers(exampleNumbersMap);
     extractFunctions.forEach(fn -> fn.accept(rangeTable, builder));
     return builder.build(rangeTable.getAllRanges());
   }

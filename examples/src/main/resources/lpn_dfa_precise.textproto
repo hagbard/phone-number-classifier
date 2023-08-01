@@ -15,11 +15,18 @@ version {
   data_schema_uri: "goui.net/libphonenumber/dfa/precise"
   data_schema_version: 1
 }
+
 # Encode metadata for use by the finite state "digit sequence matcher". This is smaller and
 # faster than using regular expressions, but may not be supported on all platforms.
 matcher_type: DIGIT_SEQUENCE_MATCHER
+
 # With no allowance for false positives, this data is not simplified in any way.
 default_maximum_false_positive_percent: 0
+
+# Define which formats are to be supported.
+format: NATIONAL
+format: INTERNATIONAL
+
 # Create a custom number classifier which matches the semantics of the libphonenumber library.
 classifier {
   type_name: "LPN:TYPE"
@@ -45,10 +52,4 @@ classifier {
   # We cope the region information directly from the underlying metadata. This is a multi
   # valued classifier (e.g. a number or prefix can be associated with several regions).
   type_name: "REGION"
-}
-classifier {
-  type_name: "NATIONAL_FORMAT"
-}
-classifier {
-  type_name: "INTERNATIONAL_FORMAT"
 }

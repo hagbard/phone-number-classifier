@@ -10,11 +10,15 @@
 
 package net.goui.phonenumber.metadata;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+
+import java.util.Optional;
 import java.util.Set;
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.LengthResult;
 import net.goui.phonenumber.MatchResult;
+import net.goui.phonenumber.PhoneNumber;
 
 /**
  * The underlying classifier API from which type-safe user-facing phone number APIs can be built.
@@ -76,6 +80,10 @@ public interface RawClassifier {
    * to enumerate the available types.
    */
   ImmutableSet<String> getSupportedNumberTypes();
+
+  ImmutableList<DigitSequence> getNationalPrefixes(DigitSequence callingCode);
+
+  Optional<DigitSequence> getExampleNationalNumber(DigitSequence callingCode);
 
   /** A fast test of a phone number against all possible lengths of a country calling code. */
   LengthResult testLength(DigitSequence callingCode, DigitSequence nationalNumber);

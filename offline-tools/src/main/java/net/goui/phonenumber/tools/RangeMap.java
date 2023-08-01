@@ -11,14 +11,18 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 package net.goui.phonenumber.tools;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static net.goui.phonenumber.tools.ClassifierType.VALIDITY;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
+import com.google.i18n.phonenumbers.metadata.proto.Types.ValidNumberType;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,6 +40,8 @@ abstract class RangeMap {
   /** A builder for a {@link RangeMap} with which classifiers can be mapped from types. */
   static final class Builder {
     private final Map<ClassifierType, RangeClassifier> map = new LinkedHashMap<>();
+    private ImmutableList<DigitSequence> nationalPrefixes = ImmutableList.of();
+    private ImmutableMap<ValidNumberType, DigitSequence> exampleNumbers = ImmutableMap.of();
 
     Builder() {}
 
@@ -46,6 +52,18 @@ abstract class RangeMap {
       return this;
     }
 
+    @CanIgnoreReturnValue
+    public Builder setNationalPrefixes(ImmutableList<DigitSequence> nationalPrefixes) {
+      this.nationalPrefixes = checkNotNull(nationalPrefixes);
+      return this;
+    }
+
+    @CanIgnoreReturnValue
+    public Builder setExampleNumbers(ImmutableMap<ValidNumberType, DigitSequence> exampleNumbers) {
+      this.exampleNumbers = checkNotNull(exampleNumbers);
+      return this;
+    }
+
     /** Builds a new range map bounded by the given range. */
     public RangeMap build(RangeTree allRanges) {
       // Bound all classifiers by the outer range to ensure that individual classifiers don't
@@ -53,7 +71,12 @@ abstract class RangeMap {
       ImmutableMap<ClassifierType, RangeClassifier> trimmedMap =
           map.entrySet().stream()
               .collect(toImmutableMap(Map.Entry::getKey, e -> e.getValue().intersect(allRanges)));
-      return new AutoValue_RangeMap(allRanges, trimmedMap);
+      // Remove any example numbers not valid within the restricted range.
+      ImmutableMap<ValidNumberType, DigitSequence> filteredExamples =
+          exampleNumbers.entrySet().stream()
+              .filter(e -> allRanges.contains(e.getValue()))
+              .collect(toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
+      return new AutoValue_RangeMap(allRanges, trimmedMap, nationalPrefixes, filteredExamples);
     }
   }
 
@@ -61,11 +84,19 @@ abstract class RangeMap {
     return new Builder();
   }
 
+  Builder toBuilder() {
+    return builder().setExampleNumbers(exampleNumbers()).setNationalPrefixes(nationalPrefixes());
+  }
+
   /** Returns the bounding range for this range map. */
   public abstract RangeTree getAllRanges();
 
   // Internal field (shouldn't be needed by outside this class).
   abstract ImmutableMap<ClassifierType, RangeClassifier> classifiers();
+
+  abstract ImmutableList<DigitSequence> nationalPrefixes();
+
+  abstract ImmutableMap<ValidNumberType, DigitSequence> exampleNumbers();
 
   /** Returns the classifiers in this range map. */
   public final ImmutableSet<ClassifierType> getTypes() {
@@ -115,7 +146,7 @@ abstract class RangeMap {
     // risk simplification expanding ranges over the top. Having done simplification we can now
     // restrict the map to the simplified valid ranges.
     RangeTree validRanges = validityClassifier.getRanges("VALID");
-    Builder trimmedMap = RangeMap.builder();
+    Builder trimmedMap = toBuilder();
     for (Map.Entry<ClassifierType, RangeClassifier> e : classifiers().entrySet()) {
       if (e.getKey().equals(VALIDITY)) {
         // Don't re-add the validity classifier (there's no point).

@@ -16,11 +16,13 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.Comparator.naturalOrder;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableTable;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import net.goui.phonenumber.DigitSequence;
@@ -34,8 +36,11 @@ import net.goui.phonenumber.proto.Metadata.NationalNumberDataProto;
 
 final class ProtoBasedNumberClassifier implements RawClassifier {
   private final VersionInfo version;
+  // TODO: Create encapsulation of CallingCodeData and migrate everything.
   private final ImmutableMap<DigitSequence, MatcherFunction> validityMatchers;
   private final ImmutableTable<DigitSequence, String, NationalNumberClassifier> classifierTable;
+  private final ImmutableMap<DigitSequence, DigitSequence> exampleNumberMap;
+  private final ImmutableListMultimap<DigitSequence, DigitSequence> nationalPrefixMap;
   private final ImmutableSet<String> singleValuedTypes;
   private final ImmutableSet<String> classifierOnlyTypes;
   private final ImmutableSetMultimap<String, String> possibleValues;
@@ -50,8 +55,23 @@ final class ProtoBasedNumberClassifier implements RawClassifier {
     ImmutableTable.Builder<DigitSequence, String, NationalNumberClassifier> classifiers =
         ImmutableTable.builder();
     classifiers.orderRowsBy(naturalOrder()).orderColumnsBy(naturalOrder());
+    ImmutableMap.Builder<DigitSequence, DigitSequence> exampleNumberMap = ImmutableMap.builder();
+    ImmutableListMultimap.Builder<DigitSequence, DigitSequence> nationalPrefixMap =
+        ImmutableListMultimap.builder();
     for (Metadata.CallingCodeProto callingCodeProto : metadataProto.getCallingCodeDataList()) {
       DigitSequence cc = getCallingCode(callingCodeProto);
+
+      ImmutableList<DigitSequence> nationalPrefixes =
+          callingCodeProto.getNationalPrefixList().stream()
+              .map(tokens::get)
+              .map(DigitSequence::parse)
+              .collect(toImmutableList());
+      nationalPrefixMap.putAll(cc, nationalPrefixes);
+
+      String example = callingCodeProto.getExampleNumber();
+      if (!example.isEmpty()) {
+        exampleNumberMap.put(cc, DigitSequence.parse(example));
+      }
 
       ImmutableList<MatcherFunction> matchers =
           callingCodeProto.getMatcherDataList().stream()
@@ -77,6 +97,8 @@ final class ProtoBasedNumberClassifier implements RawClassifier {
     }
     this.validityMatchers = validityMatchers.build();
     this.classifierTable = classifiers.build();
+    this.nationalPrefixMap = nationalPrefixMap.build();
+    this.exampleNumberMap = exampleNumberMap.buildOrThrow();
 
     this.singleValuedTypes =
         metadataProto.getSingleValuedTypeList().stream()
@@ -118,6 +140,16 @@ final class ProtoBasedNumberClassifier implements RawClassifier {
   @Override
   public ImmutableSet<DigitSequence> getSupportedCallingCodes() {
     return classifierTable.rowKeySet();
+  }
+
+  @Override
+  public ImmutableList<DigitSequence> getNationalPrefixes(DigitSequence callingCode) {
+    return nationalPrefixMap.get(callingCode);
+  }
+
+  @Override
+  public Optional<DigitSequence> getExampleNationalNumber(DigitSequence callingCode) {
+    return Optional.ofNullable(exampleNumberMap.get(callingCode));
   }
 
   @Override

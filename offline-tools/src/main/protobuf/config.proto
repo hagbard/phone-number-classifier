@@ -82,7 +82,7 @@ message MetadataConfigProto {
   // to examine the set of matcher types if the schema allows more than one representation.
   repeated MatcherType matcher_type = 2;
   enum MatcherType {
-    UNKNOWN = 0;
+    MATCHER_TYPE_UNKNOWN = 0;
     DIGIT_SEQUENCE_MATCHER = 1;
     REGULAR_EXPRESSION = 2;
   }
@@ -152,6 +152,22 @@ message MetadataConfigProto {
   // the "false positive" limit.
   int32 default_minimum_prefix_length = 8;
 
+  // Available formats. A supplier may choose to provide matcher metadata with one or more of these
+  // formats. Adding a single format is likely to increase metadata size noticeably, but adding a
+  // second format is a minimal additional overhead.
+  //
+  // Note that E.164 formatting is always available in the client API (e.g. "+441923123456").
+  repeated NumberFormat format = 9;
+  enum NumberFormat {
+    NUMBER_FORMAT_UNKNOWN = 0;
+    // Enables formatting phone numbers for international dialling from outside the region (e.g.
+    // "+44 1923 123456").
+    INTERNATIONAL = 1;
+    // Enables formatting phone numbers for national dialling from within a region (e.g.
+    // "01923 123456").
+    NATIONAL = 2;
+  }
+
   // Specification of the classifiers defined by this configuration.
   //
   // Including an in-built classifier:
@@ -186,7 +202,7 @@ message MetadataConfigProto {
   // }
   // ----------------------------------------------------------------------------------------------
   //
-  repeated ClassifierConfigProto classifier = 9;
+  repeated ClassifierConfigProto classifier = 10;
   message ClassifierConfigProto {
     string type_name = 1;
     CustomClassifierProto custom = 2;
@@ -242,7 +258,7 @@ message MetadataConfigProto {
   }
 
   // Overrides for specific calling codes to control the simplification in a fine-grained manner.
-  repeated ConfigOverrideProto override = 10;
+  repeated ConfigOverrideProto override = 11;
   message ConfigOverrideProto {
     // A non-empty list of calling codes to which this overridden configuration should apply.
     repeated uint32 calling_code = 1;

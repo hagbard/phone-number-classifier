@@ -28,6 +28,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import net.goui.phonenumber.PhoneNumberFormatter.FormatType;
+import net.goui.phonenumber.PhoneNumbers.E164PhoneNumber;
 import net.goui.phonenumber.metadata.ClassifierLoader;
 import net.goui.phonenumber.metadata.RawClassifier;
 import net.goui.phonenumber.metadata.VersionInfo;
@@ -204,6 +205,12 @@ public abstract class AbstractPhoneNumberClassifier {
 
   protected PhoneNumberFormatter getFormatter(FormatType type) {
     return new PhoneNumberFormatter(rawClassifier, type);
+  }
+
+  public Optional<PhoneNumber> getExampleNumber(DigitSequence callingCode) {
+    return rawClassifier
+        .getExampleNationalNumber(callingCode)
+        .map(nn -> E164PhoneNumber.of(callingCode, nn));
   }
 
   /**

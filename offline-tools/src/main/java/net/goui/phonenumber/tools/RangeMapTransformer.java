@@ -13,6 +13,7 @@ package net.goui.phonenumber.tools;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
+import static net.goui.phonenumber.tools.ClassifierType.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -25,21 +26,25 @@ import java.util.stream.Stream;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.ClassifierConfigProto;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.CustomClassifierProto;
+import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.NumberFormat;
 
 final class RangeMapTransformer implements Function<RangeMap, RangeMap> {
   public static RangeMapTransformer from(MetadataConfigProto proto) {
-    Stream<RangeTransformer> configuredClassifiers =
+    Stream<RangeTransformer> classifiers =
         proto.getClassifierList().stream().map(RangeTransformer::from);
+
+    classifiers =
+        Stream.concat(classifiers, proto.getFormatList().stream().map(RangeTransformer::from));
 
     String validationRangeExpression = proto.getValidationRanges();
     if (!validationRangeExpression.isEmpty()) {
-      configuredClassifiers =
+      classifiers =
           Stream.concat(
-              configuredClassifiers,
-              Stream.of(RangeTransformer.validity(validationRangeExpression)));
+              classifiers, Stream.of(RangeTransformer.validity(validationRangeExpression)));
     }
+
     ImmutableMap<ClassifierType, RangeTransformer> transformers =
-        configuredClassifiers.collect(toImmutableMap(t -> t.type, Function.identity()));
+        classifiers.collect(toImmutableMap(t -> t.type, Function.identity()));
     return new RangeMapTransformer(transformers);
   }
 
@@ -60,7 +65,7 @@ final class RangeMapTransformer implements Function<RangeMap, RangeMap> {
 
   @Override
   public RangeMap apply(RangeMap input) {
-    RangeMap.Builder output = RangeMap.builder();
+    RangeMap.Builder output = input.toBuilder();
     for (Map.Entry<ClassifierType, RangeTransformer> e : transformers.entrySet()) {
       output.put(e.getKey(), e.getValue().transform(input));
     }
@@ -69,9 +74,26 @@ final class RangeMapTransformer implements Function<RangeMap, RangeMap> {
 
   abstract static class RangeTransformer {
     static RangeTransformer from(ClassifierConfigProto config) {
-      return config.hasCustom()
-          ? new RangeTransformer.Custom(config.getTypeName(), config.getCustom())
-          : new RangeTransformer.Copying(config.getTypeName());
+      if (config.hasCustom()) {
+        return new RangeTransformer.Custom(config.getTypeName(), config.getCustom());
+      }
+      ClassifierType type = ClassifierType.of(config.getTypeName());
+      checkArgument(
+          type != NATIONAL_FORMAT && type != INTERNATIONAL_FORMAT,
+          "use 'format: <type>' to specify additional formats (type=%s)",
+          type);
+      checkArgument(
+          PUBLIC_CLASSIFIERS.contains(type),
+          "invalid classifier (did you mean to add a 'custom' section?): %s",
+          type);
+      return new RangeTransformer.Copying(type.id());
+    }
+
+    static RangeTransformer from(NumberFormat format) {
+      checkArgument(
+          format != NumberFormat.NUMBER_FORMAT_UNKNOWN, "Invalid number format: %s", format);
+      // We assert the enum name matches the associated ClassifierType prefix.
+      return new RangeTransformer.Copying(format.name() + "_FORMAT");
     }
 
     static RangeTransformer validity(String expression) {

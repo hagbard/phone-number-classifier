@@ -85,18 +85,29 @@ message CallingCodeProto {
   // because calling codes never have leading zeros.
   uint32 calling_code = 1;
 
+  // Index of CLDR region code considered to be the "main" region associated with the data. If
+  // additional region information is needed, a REGION classifier should be built into the data.
+  uint32 primary_region = 2;
+
+  // Indices of zero or more national prefixes used for this calling code.
+  // The first value is the default, but all values may be used when parsing a number.
+  repeated uint32 national_prefix = 3;
+
   // Index of range(s) which defined the set of valid numbers in this region. For "simplified"
   // data, this may greatly exceed the original "raw" ranges, but must always be a superset.
   // However, since the original data can often includes many ranges which are not associated with
   // "active"/callable numbers, users should not treat false-positives with any great significance.
-  repeated uint32 validity_matcher_index = 2;
+  repeated uint32 validity_matcher_index = 4;
 
   // Classifiers for different data types. The type corresponds to the entry with the same index in
   // type_names.
-  repeated NationalNumberDataProto national_number_data = 3;
+  repeated NationalNumberDataProto national_number_data = 5;
 
   // List of matcher data, indexed for validity data and from national_number_data.
-  repeated MatcherDataProto matcher_data = 4;
+  repeated MatcherDataProto matcher_data = 6;
+
+  // An optional, representative example number (extracted from Libphonenumber).
+  string example_number = 7;
 }
 
 message NationalNumberDataProto {

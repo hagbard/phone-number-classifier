@@ -114,7 +114,7 @@ final class MetadataSimplifier {
         new RangeExpander(originalValidationRange, simplifiedValidationRange);
 
     // Now simplify the ranges for the values of each classifier type in turn.
-    RangeMap.Builder simplifiedRangeMap = RangeMap.builder();
+    RangeMap.Builder simplifiedRangeMap = rangeMap.toBuilder();
     RangeTree totalUnassigned = RangeTree.empty();
     for (ClassifierType type : rangeMap.getTypes()) {
       // Process keys from the largest to smallest (in terms of their associated ranges) since

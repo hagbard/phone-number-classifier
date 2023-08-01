@@ -8,7 +8,15 @@
  SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-import { PhoneNumber, AbstractPhoneNumberClassifier, Matcher, SingleValuedMatcher, DigitSequence, PhoneNumberFormatter, FormatType } from "../src/index";
+import {
+    PhoneNumber,
+    AbstractPhoneNumberClassifier,
+    Matcher,
+    SingleValuedMatcher,
+    DigitSequence,
+    PhoneNumberFormatter,
+    FormatType,
+    MatchResult } from "../src/index";
 import { RawClassifier } from "../src/internal";
 import goldenDataJson from "./lpn_golden_data.json"
 const fs = require("fs");
@@ -46,6 +54,10 @@ class TestClassifier extends AbstractPhoneNumberClassifier {
     return super.getRawClassifier();
   }
 
+  getNationalPrefixes(callingCode: DigitSequence): DigitSequence[] {
+    return this.rawClassifierForTests().getNationalPrefixes(callingCode);
+  }
+
   formatForTests(cc: DigitSequence, nn: DigitSequence, type: string): string {
     let number: PhoneNumber = PhoneNumber.fromE164("+" + cc + nn);
     switch (type) {
@@ -78,28 +90,32 @@ function assertDigits(seq: DigitSequence, ...digits: number[]) {
   }
 }
 
+function seq(s: string): DigitSequence {
+  return DigitSequence.parse(s);
+}
+
 describe("PhoneNumber", () => {
   test("testParse", () => {
-    assertDigits(DigitSequence.parse(""));
-    assertDigits(DigitSequence.parse("0"), 0);
-    assertDigits(DigitSequence.parse("0000"), 0, 0, 0, 0);
-    assertDigits(DigitSequence.parse("1234"), 1, 2, 3, 4);
-    assertDigits(DigitSequence.parse("123456789"), 1, 2, 3, 4, 5, 6, 7, 8, 9);
+    assertDigits(seq(""));
+    assertDigits(seq("0"), 0);
+    assertDigits(seq("0000"), 0, 0, 0, 0);
+    assertDigits(seq("1234"), 1, 2, 3, 4);
+    assertDigits(seq("123456789"), 1, 2, 3, 4, 5, 6, 7, 8, 9);
   });
 
   test("testParseErrors", () => {
-    expect(() => DigitSequence.parse("x"))
+    expect(() => seq("x"))
         .toThrow(new Error("Invalid digit sequence: x"));
-    expect(() => DigitSequence.parse("01234x567"))
+    expect(() => seq("01234x567"))
         .toThrow(new Error("Invalid digit sequence: 01234x567"));
     // 20 digits (too long).
-    expect(() => DigitSequence.parse("01234567890123456789"))
+    expect(() => seq("01234567890123456789"))
         .toThrow(new Error("Digit sequence too long: 01234567890123456789"));
   });
 
   test("testToString", () => {
-    expect(DigitSequence.parse("").toString()).toEqual("");
-    expect(DigitSequence.parse("012345").toString()).toEqual("012345");
+    expect(seq("").toString()).toEqual("");
+    expect(seq("012345").toString()).toEqual("012345");
   });
 });
 
@@ -110,18 +126,26 @@ describe("PhoneNumber", () => {
     expect(number.toString()).toEqual("+44123456789");
   });
 
+  test("testOf", () => {
+    let cc = seq("44");
+    let nn = seq("7471920002");
+    let number: PhoneNumber = PhoneNumber.of(cc, nn);
+    expect(number.getCallingCode()).toEqual(cc);
+    expect(number.getNationalNumber()).toEqual(nn);
+  });
+
   test("testCallingCodeAndNationalNumber", () => {
     let oneDigitCc: PhoneNumber = PhoneNumber.fromE164("+15515817989");
-    expect(oneDigitCc.getCallingCode()).toEqual(DigitSequence.parse("1"));
-    expect(oneDigitCc.getNationalNumber()).toEqual(DigitSequence.parse("5515817989"));
+    expect(oneDigitCc.getCallingCode()).toEqual(seq("1"));
+    expect(oneDigitCc.getNationalNumber()).toEqual(seq("5515817989"));
 
     let twoDigitCc: PhoneNumber = PhoneNumber.fromE164("+447471920002");
-    expect(twoDigitCc.getCallingCode()).toEqual(DigitSequence.parse("44"));
-    expect(twoDigitCc.getNationalNumber()).toEqual(DigitSequence.parse("7471920002"));
+    expect(twoDigitCc.getCallingCode()).toEqual(seq("44"));
+    expect(twoDigitCc.getNationalNumber()).toEqual(seq("7471920002"));
 
     let threeDigitCc: PhoneNumber = PhoneNumber.fromE164("+962707952933");
-    expect(threeDigitCc.getCallingCode()).toEqual(DigitSequence.parse("962"));
-    expect(threeDigitCc.getNationalNumber()).toEqual(DigitSequence.parse("707952933"));
+    expect(threeDigitCc.getCallingCode()).toEqual(seq("962"));
+    expect(threeDigitCc.getNationalNumber()).toEqual(seq("707952933"));
   });
 
   test("testEquality", () => {
@@ -142,6 +166,19 @@ describe("AbstractPhoneNumberClassifier", () => {
       .toEqual(new Set(["JE"]));
     expect(pnc.forRegion().getPossibleValues(PhoneNumber.fromE164("+447700")))
       .toEqual(new Set(["GB", "JE"]));
+  });
+
+  test('testGetNationalPrefixes', () => {
+    expect(pnc.getNationalPrefixes(seq("1"))).toEqual([seq("1")]);
+    expect(pnc.getNationalPrefixes(seq("44"))).toEqual([seq("0")]);
+    expect(pnc.getNationalPrefixes(seq("375"))).toEqual([seq("8"), seq("0"), seq("80")]);
+  });
+
+  test('testGetExampleNumber', () => {
+    let cc = seq("44");
+    let exampleNumber: PhoneNumber|null = pnc.getExampleNumber(cc);
+    expect(exampleNumber).toEqual(PhoneNumber.fromE164("+447400123456"));
+    expect(pnc.match(exampleNumber!)).toEqual(MatchResult.Matched);
   });
 });
 

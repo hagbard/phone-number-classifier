@@ -69,6 +69,10 @@ export class PhoneNumberFormatter {
 
   /**
    * Formats a phone number according to the type of this formatter.
+   *
+   * <p>Note that for invalid numbers, the INTERNATIONAL format will become E.164 naturally, but the
+   * NATIONAL format will NOT have the national prefix prepended. In general, if a number is matched
+   * as `Invalid`, you should only show its E.164 representation.
    */
   format(phoneNumber: PhoneNumber): string {
     let bestFormatSpec: string = "";

@@ -17,6 +17,7 @@ import static java.util.function.UnaryOperator.identity;
 import com.google.auto.value.AutoValue;
 import com.google.common.base.Ascii;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.util.stream.Stream;
 
 /**
@@ -38,6 +39,10 @@ abstract class ClassifierType {
 
   // Synthetic classifier used when validation ranges are transformed.
   static final ClassifierType VALIDITY = ClassifierType.baseType("VALIDITY");
+
+  // Classifiers which can be specified in a 'classifier' message.
+  static final ImmutableSet<ClassifierType> PUBLIC_CLASSIFIERS =
+      ImmutableSet.of(TYPE, TARIFF, AREA_CODE_LENGTH, REGION);
 
   // Base types exist on the underlying metadata and do not need a prefixed name.
   private static final ImmutableMap<String, ClassifierType> BASE_TYPES =

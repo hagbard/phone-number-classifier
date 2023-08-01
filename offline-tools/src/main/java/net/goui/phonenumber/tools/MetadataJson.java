@@ -95,6 +95,15 @@ final class MetadataJson {
   static JsObject toJson(CallingCodeProto proto) {
     List<JsObject.Field> fields = new ArrayList<>();
     fields.add(field("c", num(proto.getCallingCode())));
+
+    JsArray nationalPrefixes = jsArray(proto.getNationalPrefixList(), JSAPI::num);
+    if (!nationalPrefixes.isEmpty()) {
+      fields.add(field("p", arrayOrSingleton(nationalPrefixes)));
+    }
+    String exampleNumber = proto.getExampleNumber();
+    if (!exampleNumber.isEmpty()) {
+      fields.add(field("e", str(exampleNumber)));
+    }
     JsArray ranges = jsArray(proto.getValidityMatcherIndexList(), JSAPI::num);
     if (!ranges.isEmpty()) {
       fields.add(field("r", arrayOrSingleton(ranges)));
