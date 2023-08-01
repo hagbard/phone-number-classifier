@@ -89,6 +89,14 @@ export class RawClassifier {
     return new Set(this.types.keys());
   }
 
+  getNationalPrefixes(cc: DigitSequence): DigitSequence[] {
+    return this.getCallingCodeClassifier(cc).getNationalPrefixes();
+  }
+
+  getExampleNationalNumber(cc: DigitSequence): DigitSequence|null {
+    return this.getCallingCodeClassifier(cc).getExampleNationalNumber();
+  }
+
   /** A fast test of a phone number against all possible lengths of a country calling code. */
   testLength(callingCode: DigitSequence, nationalNumber: DigitSequence): LengthResult {
     return this.getCallingCodeClassifier(callingCode).testLength(nationalNumber);
@@ -135,7 +143,7 @@ export class RawClassifier {
         : classifier.classifyMultiValue(nationalNumber);
   }
 
-  classifyUniquely(callingCode: DigitSequence, nationalNumber: DigitSequence, numberType: string): string | null {
+  classifyUniquely(callingCode: DigitSequence, nationalNumber: DigitSequence, numberType: string): string|null {
     let ccd: CallingCodeClassifier = this.getCallingCodeClassifier(callingCode);
     let idx: number = this.getTypeClassifierIndex(numberType);
     return ccd.getTypeClassifier(idx).classifySingleValue(nationalNumber);
@@ -180,10 +188,26 @@ class CallingCodeClassifier {
     let typeClassifiers: NationalNumberClassifier[] =
         (json.n !== undefined)
             ? json.n.map(n => NationalNumberClassifier.create(n, decode, matcherFactory)) : [];
-    return new CallingCodeClassifier(validityMatcher, typeClassifiers);
+    let exampleNumber = json.e ? DigitSequence.parse(json.e) : null;
+    let npi: number[] = Array.isArray(json.p) ? json.p : json.p ? [json.p] : [];
+    let nationalPrefixes: DigitSequence[] = npi.map(i => DigitSequence.parse(decode(i)));
+    return new CallingCodeClassifier(
+        validityMatcher, typeClassifiers, nationalPrefixes, exampleNumber);
   }
 
-  constructor(private readonly validityMatcher: MatcherFunction, private readonly typeClassifiers: NationalNumberClassifier[]) {}
+  constructor(
+      private readonly validityMatcher: MatcherFunction,
+      private readonly typeClassifiers: NationalNumberClassifier[],
+      private readonly nationalPrefixes: DigitSequence[],
+      private readonly exampleNationalNumber: DigitSequence|null) {}
+
+  getExampleNationalNumber(): DigitSequence|null {
+    return this.exampleNationalNumber;
+  }
+
+  getNationalPrefixes(): DigitSequence[] {
+    return this.nationalPrefixes;
+  }
 
   testLength(nationalNumber: DigitSequence): LengthResult {
     return this.validityMatcher.testLength(nationalNumber);
@@ -239,7 +263,7 @@ class NationalNumberClassifier implements ValueMatcher {
     return values;
   }
 
-  classifySingleValue(nationalNumber: DigitSequence): string | null {
+  classifySingleValue(nationalNumber: DigitSequence): string|null {
     for (let [value, matcher] of this.matchers) {
       if (matcher.isMatch(nationalNumber)) {
         return value;
@@ -270,8 +294,21 @@ class NationalNumberClassifier implements ValueMatcher {
 }
 
 abstract class MatcherFunction {
+  private static readonly EmptyMatcher: MatcherFunction = new class extends MatcherFunction {
+    match(s: DigitSequence): MatchResult {
+      return MatchResult.Invalid;
+    }
+
+    isMatch(s: DigitSequence): boolean {
+      return false;
+    }
+  }(0);
+
   static create(json: MatcherDataJson): MatcherFunction {
-    return new DfaMatcherFunction(json);
+    // Sometimes you can get empty data (esp. when restricting validation ranges). This typically
+    // means there are NO valid numbers of the restricted range for this calling code, so every
+    // input (even the empty sequence) is Invalid.
+    return json.b ? new DfaMatcherFunction(json) : MatcherFunction.EmptyMatcher;
   }
 
   static of(functions: MatcherFunction[]): MatcherFunction {

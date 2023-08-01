@@ -1,0 +1,24 @@
+# proto-file:
+# proto-message: MetadataConfigProto
+
+# For JavaScript the schema URI isn't super important assuming the data is bundled with the
+# library, but the major/minor versions must be compatible with the library code.
+version {
+  major_version: 1
+  minor_version: 0
+  data_schema_uri: "<uri-goes-here>/dfa/minimal"
+  data_schema_version: 1
+}
+# JavaScript only supports DIGIT_SEQUENCE_MATCHER since the JS regex API isn't good enough
+# to support partial matching.
+matcher_type: DIGIT_SEQUENCE_MATCHER
+# By maxing out the false positive limits and setting the minimum prefix length to 1,
+# we get maximum range simplification (smallest reasonable data).
+default_maximum_false_positive_percent: 100000
+default_minimum_prefix_length: 2
+# In this example we only care about likely mobile numbers (no UAN, PAGER etc.).
+validation_ranges: "TYPE:MOBILE + TYPE:FIXED_LINE_OR_MOBILE + TYPE:FIXED_LINE + TYPE:VOIP"
+# Apart from validation, we want formatting and region information.
+format: NATIONAL
+format: INTERNATIONAL
+classifier { type_name: "REGION" }

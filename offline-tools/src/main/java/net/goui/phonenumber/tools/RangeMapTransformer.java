@@ -65,7 +65,7 @@ final class RangeMapTransformer implements Function<RangeMap, RangeMap> {
 
   @Override
   public RangeMap apply(RangeMap input) {
-    RangeMap.Builder output = RangeMap.builder();
+    RangeMap.Builder output = input.toBuilder();
     for (Map.Entry<ClassifierType, RangeTransformer> e : transformers.entrySet()) {
       output.put(e.getKey(), e.getValue().transform(input));
     }

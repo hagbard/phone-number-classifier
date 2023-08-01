@@ -37,7 +37,11 @@ export class PhoneNumber {
       }
     }
     let callingCode: DigitSequence = DigitSequence.parse(cc.toString());
-    return new PhoneNumber(callingCode, DigitSequence.parse(seq.substring(callingCode.length())));
+    return PhoneNumber.of(callingCode, DigitSequence.parse(seq.substring(callingCode.length())));
+  }
+
+  static of(callingCode: DigitSequence, nationalNumber: DigitSequence): PhoneNumber {
+    return new PhoneNumber(callingCode, nationalNumber);
   }
 
   private static digitOf(s: string, n: number): number {

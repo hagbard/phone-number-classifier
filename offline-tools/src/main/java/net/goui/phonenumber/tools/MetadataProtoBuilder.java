@@ -17,18 +17,21 @@ import static net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.Matche
 import static net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.MatcherType.REGULAR_EXPRESSION;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.flogger.LazyArg;
 import com.google.common.primitives.Bytes;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
 import com.google.i18n.phonenumbers.metadata.finitestatematcher.compiler.MatcherCompiler;
+import com.google.i18n.phonenumbers.metadata.proto.Types.ValidNumberType;
 import com.google.i18n.phonenumbers.metadata.regex.RegexGenerator;
 import com.google.protobuf.ByteString;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import net.goui.phonenumber.proto.Metadata.*;
@@ -45,12 +48,18 @@ final class MetadataProtoBuilder {
       Comparator.comparing(MatcherFunctionProto::getSerializedSize)
           .thenComparing(MatcherFunctionProto::getValue);
 
-  private static final RegexGenerator regexGenerator =
+  private static final RegexGenerator REGEX_GENERATOR =
       RegexGenerator.basic()
           .withDfaFactorization()
           .withSubgroupOptimization()
           .withDotMatch()
           .withTailOptimization();
+
+  // Types to look for example numbers in, in order of preference. If no valid example number is
+  // found in one of these types, use the first valid example number in the example map.
+  private static final ImmutableSet<ValidNumberType> PRIORITY_EXAMPLE_TYPES =
+      ImmutableSet.of(
+          ValidNumberType.MOBILE, ValidNumberType.FIXED_LINE_OR_MOBILE, ValidNumberType.FIXED_LINE);
 
   public static MetadataProto toMetadataProto(Metadata metadata, MetadataConfig config) {
     return new MetadataProtoBuilder(config).buildMetadata(metadata);
@@ -84,6 +93,27 @@ final class MetadataProtoBuilder {
       CallingCodeProto.Builder callingCodeData = outputProto.addCallingCodeDataBuilder();
       callingCodeData.setCallingCode(Integer.parseInt(cc.toString()));
 
+      RangeMap rangeMap = metadata.getRangeMap(cc);
+      RangeTree allRanges = rangeMap.getAllRanges();
+
+      //      callingCodeData.setPrimaryRegion(xxx);
+      rangeMap.nationalPrefixes().stream()
+          .map(Object::toString)
+          .map(this::tokenize)
+          .forEach(callingCodeData::addNationalPrefix);
+
+      if (!rangeMap.exampleNumbers().isEmpty()) {
+        DigitSequence exampleNumber =
+            PRIORITY_EXAMPLE_TYPES.stream()
+                .map(rangeMap.exampleNumbers()::get)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(rangeMap.exampleNumbers().values().iterator().next());
+        callingCodeData.setExampleNumber(exampleNumber.toString());
+      } else {
+        logger.atWarning().log("[cc=%s] No available example number", cc);
+      }
+
       Map<RangeTree, Integer> rangesMap = new LinkedHashMap<>();
 
       // Adds shared matcher data, returning its index.
@@ -99,13 +129,10 @@ final class MetadataProtoBuilder {
             return index;
           };
 
-      // Currently validity data is always index 0, but in theory it could be split into
-      // several matchers and have multiple indices.
-      RangeMap rangeMap = metadata.getRangeMap(cc);
       // We assume that an empty validity matcher index list means "use index 0", so no need to
       // call addValidityMatcherIndex(0) with the result.
       checkState(
-          matcherDataCollector.apply(rangeMap.getAllRanges()) == 0,
+          matcherDataCollector.apply(allRanges) == 0,
           "bad validity matcher index (should be zero): %s",
           callingCodeData);
       checkState(rangeMap.getTypes().asList().equals(metadata.getTypes()));
@@ -188,12 +215,16 @@ final class MetadataProtoBuilder {
     int lengthMask = ranges.getLengths().stream().mapToInt(n -> 1 << n).reduce(0, (a, b) -> a | b);
     proto.setPossibleLengthsMask(lengthMask);
     if (config.matcherTypes().contains(DIGIT_SEQUENCE_MATCHER)) {
-      byte[] bytes = MatcherCompiler.compile(ranges);
-      proto.setMatcherData(ByteString.copyFrom(bytes));
-      logger.atFine().log("matcher bytes: %s", toHexString(bytes));
+      if (!ranges.isEmpty()) {
+        byte[] bytes = MatcherCompiler.compile(ranges);
+        proto.setMatcherData(ByteString.copyFrom(bytes));
+        logger.atFine().log("matcher bytes: %s", toHexString(bytes));
+      } else {
+        logger.atWarning().log("empty matcher range");
+      }
     }
     if (config.matcherTypes().contains(REGULAR_EXPRESSION)) {
-      String regex = regexGenerator.toRegex(ranges);
+      String regex = REGEX_GENERATOR.toRegex(ranges);
       proto.setRegexData(regex);
       logger.atFine().log("matcher regex: [%s]", regex);
     }

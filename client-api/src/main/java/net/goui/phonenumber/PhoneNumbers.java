@@ -64,7 +64,7 @@ public final class PhoneNumbers {
 
   @AutoValue
   abstract static class E164PhoneNumber implements PhoneNumber {
-    private static PhoneNumber of(DigitSequence callingCode, DigitSequence nationalNumber) {
+    static PhoneNumber of(DigitSequence callingCode, DigitSequence nationalNumber) {
       return new AutoValue_PhoneNumbers_E164PhoneNumber(callingCode, nationalNumber);
     }
 

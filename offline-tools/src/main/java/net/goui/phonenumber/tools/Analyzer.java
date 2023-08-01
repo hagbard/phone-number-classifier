@@ -13,6 +13,7 @@ package net.goui.phonenumber.tools;
 import static com.google.common.base.Preconditions.*;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
+import static com.google.i18n.phonenumbers.metadata.regex.RegexFormatter.FormatOption.FORCE_CAPTURING_GROUPS;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
@@ -26,6 +27,7 @@ import static org.typemeta.funcj.json.model.JSAPI.str;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -38,6 +40,8 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
 import com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema;
+import com.google.i18n.phonenumbers.metadata.regex.RegexFormatter;
+import com.google.i18n.phonenumbers.metadata.regex.RegexGenerator;
 import com.google.protobuf.TextFormat;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -71,6 +75,13 @@ public class Analyzer {
           ClassifierType.NATIONAL_FORMAT,
           ClassifierType.INTERNATIONAL_FORMAT,
           ClassifierType.REGION);
+
+  private static final RegexGenerator REGEX_GENERATOR =
+      RegexGenerator.basic()
+          .withDfaFactorization()
+          .withSubgroupOptimization()
+          .withDotMatch()
+          .withTailOptimization();
 
   static final class Flags {
     @Parameter(names = "--zip", description = "Standard format zip file path")
@@ -109,14 +120,37 @@ public class Analyzer {
         flags.configPath.isEmpty()
             ? MetadataConfig.simple(DEFAULT_BASE_TYPES, DIGIT_SEQUENCE_MATCHER, 0, 1)
             : MetadataConfig.load(Paths.get(flags.configPath));
+    // Don't call trimValidRanges() until we have the simplified version.
     Metadata transformedMetadata =
         Metadata.load(flags.zipPath, flags.dirPath, flags.csvSeparator)
             .transform(config.getOutputTransformer());
+    Metadata simplifiedMetadata =
+        MetadataSimplifier.simplify(transformedMetadata, config).trimValidRanges();
+    transformedMetadata = transformedMetadata.trimValidRanges();
 
     if (!flags.testDataPath.isEmpty()) {
       logger.atInfo().log("writing test data to: %s", flags.testDataPath);
       writeTestData(transformedMetadata, Paths.get(flags.testDataPath));
     }
+    printRegex(transformedMetadata, simplifiedMetadata);
+  }
+
+  private static void printRegex(Metadata original, Metadata simplified) {
+    for (DigitSequence cc : original.getAvailableCallingCodes()) {
+      System.out.println("<<<< " + cc);
+      System.out.println(CharMatcher.whitespace().removeFrom(getRegex(original, cc)));
+      System.out.println(">>>> " + cc);
+      System.out.println(getRegex(simplified, cc));
+    }
+  }
+
+  private static String getRegex(Metadata original, DigitSequence cc) {
+    RangeMap rangeMap = original.getRangeMap(cc);
+    if (rangeMap.getAllRanges().isEmpty()) {
+      return "<empty>";
+    }
+    String regex = REGEX_GENERATOR.toRegex(rangeMap.getAllRanges());
+    return RegexFormatter.format(regex, FORCE_CAPTURING_GROUPS);
   }
 
   private static final ImmutableMap<ClassifierType, PhoneNumberFormat> FORMAT_MAP =
@@ -133,6 +167,9 @@ public class Analyzer {
     for (DigitSequence cc : callingCodes) {
       RangeMap rangeMap = metadata.getRangeMap(cc);
       RangeTree allRanges = rangeMap.getAllRanges();
+      if (allRanges.isEmpty()) {
+        continue;
+      }
       Set<JsArray> uniqueResults = new HashSet<>();
       for (int n = 0; n < 50; n++) {
         DigitSequence nn = allRanges.sample((long) (rnd.nextDouble() * allRanges.size()));

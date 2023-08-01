@@ -62,6 +62,18 @@ abstract class MatcherFunction {
         unknownValues);
   }
 
+  private static final MatcherFunction EMPTY_MATCHER = new MatcherFunction(0) {
+    @Override
+    public MatchResult match(DigitSequence s) {
+      return INVALID;
+    }
+
+    @Override
+    public boolean isMatch(DigitSequence s) {
+      return false;
+    }
+  };
+
   static MatchResult resultOf(DigitSequenceMatcher.Result r) {
     return RESULT_MAP.get(r);
   }
@@ -77,8 +89,10 @@ abstract class MatcherFunction {
     }
     // Regex is expected to take up considerably more memory than the DFA matcher.
     String regex = proto.getRegexData();
-    checkState(!regex.isEmpty(), "no matcher data in proto: %s", proto);
-    return new RegexMatcher(lengthMask, regex);
+    if (!regex.isEmpty()) {
+      return new RegexMatcher(lengthMask, regex);
+    }
+    return EMPTY_MATCHER;
   }
 
   static MatcherFunction combine(List<MatcherFunction> functions) {

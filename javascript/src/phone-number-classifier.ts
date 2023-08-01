@@ -84,6 +84,11 @@ export abstract class AbstractPhoneNumberClassifier {
     return new PhoneNumberFormatter(this.getRawClassifier(), type);
   }
 
+  getExampleNumber(callingCode: DigitSequence): PhoneNumber|null {
+    let nn = this.rawClassifier.getExampleNationalNumber(callingCode);
+    return nn ? PhoneNumber.of(callingCode, nn) : null;
+  }
+
   /**
    * Returns a new classifier factory which can be used to obtain a type-safe matcher or classifier
    * for the given string based enum. The enum used MUST use constant names which match the

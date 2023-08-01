@@ -31,7 +31,6 @@
             <artifactId>metadata-proto</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
         <!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber -->
         <dependency>
             <groupId>com.googlecode.libphonenumber</groupId>
@@ -44,21 +43,24 @@
             <artifactId>metadata</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.1-jre</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.beust/jcommander -->
         <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
             <version>1.82</version>
         </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.typemeta/funcj-json -->
         <dependency>
             <groupId>org.typemeta</groupId>
             <artifactId>funcj-json</artifactId>
             <version>0.6.18</version>
         </dependency>
-
         <!-- https://mvnrepository.com/artifact/com.google.flogger/flogger -->
         <dependency>
             <groupId>com.google.flogger</groupId>
