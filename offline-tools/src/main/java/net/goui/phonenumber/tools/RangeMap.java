@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
+import com.google.i18n.phonenumbers.metadata.i18n.PhoneRegion;
 import com.google.i18n.phonenumbers.metadata.proto.Types.ValidNumberType;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -40,6 +41,7 @@ abstract class RangeMap {
   /** A builder for a {@link RangeMap} with which classifiers can be mapped from types. */
   static final class Builder {
     private final Map<ClassifierType, RangeClassifier> map = new LinkedHashMap<>();
+    private PhoneRegion mainRegion;
     private ImmutableList<DigitSequence> nationalPrefixes = ImmutableList.of();
     private ImmutableMap<ValidNumberType, DigitSequence> exampleNumbers = ImmutableMap.of();
 
@@ -49,6 +51,12 @@ abstract class RangeMap {
     @CanIgnoreReturnValue
     public Builder put(ClassifierType type, RangeClassifier classifier) {
       map.put(type, classifier);
+      return this;
+    }
+
+    @CanIgnoreReturnValue
+    public Builder setMainRegion(PhoneRegion mainRegion) {
+      this.mainRegion = checkNotNull(mainRegion);
       return this;
     }
 
@@ -76,7 +84,8 @@ abstract class RangeMap {
           exampleNumbers.entrySet().stream()
               .filter(e -> allRanges.contains(e.getValue()))
               .collect(toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
-      return new AutoValue_RangeMap(allRanges, trimmedMap, nationalPrefixes, filteredExamples);
+      return new AutoValue_RangeMap(
+          allRanges, trimmedMap, mainRegion, nationalPrefixes, filteredExamples);
     }
   }
 
@@ -85,7 +94,10 @@ abstract class RangeMap {
   }
 
   Builder toBuilder() {
-    return builder().setExampleNumbers(exampleNumbers()).setNationalPrefixes(nationalPrefixes());
+    return builder()
+        .setMainRegion(getMainRegion())
+        .setExampleNumbers(getExampleNumbers())
+        .setNationalPrefixes(getNationalPrefixes());
   }
 
   /** Returns the bounding range for this range map. */
@@ -94,9 +106,11 @@ abstract class RangeMap {
   // Internal field (shouldn't be needed by outside this class).
   abstract ImmutableMap<ClassifierType, RangeClassifier> classifiers();
 
-  abstract ImmutableList<DigitSequence> nationalPrefixes();
+  abstract PhoneRegion getMainRegion();
 
-  abstract ImmutableMap<ValidNumberType, DigitSequence> exampleNumbers();
+  abstract ImmutableList<DigitSequence> getNationalPrefixes();
+
+  abstract ImmutableMap<ValidNumberType, DigitSequence> getExampleNumbers();
 
   /** Returns the classifiers in this range map. */
   public final ImmutableSet<ClassifierType> getTypes() {

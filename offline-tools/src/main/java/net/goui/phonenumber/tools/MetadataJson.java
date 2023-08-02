@@ -96,6 +96,7 @@ final class MetadataJson {
     List<JsObject.Field> fields = new ArrayList<>();
     fields.add(field("c", num(proto.getCallingCode())));
 
+    fields.add(field("r", num(proto.getPrimaryRegion())));
     JsArray nationalPrefixes = jsArray(proto.getNationalPrefixList(), JSAPI::num);
     if (!nationalPrefixes.isEmpty()) {
       fields.add(field("p", arrayOrSingleton(nationalPrefixes)));
@@ -106,7 +107,7 @@ final class MetadataJson {
     }
     JsArray ranges = jsArray(proto.getValidityMatcherIndexList(), JSAPI::num);
     if (!ranges.isEmpty()) {
-      fields.add(field("r", arrayOrSingleton(ranges)));
+      fields.add(field("v", arrayOrSingleton(ranges)));
     }
     JsArray nnd = jsArray(proto.getNationalNumberDataList(), MetadataJson::toJson);
     if (!nnd.isEmpty()) {

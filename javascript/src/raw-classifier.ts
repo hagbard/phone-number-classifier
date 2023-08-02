@@ -89,12 +89,16 @@ export class RawClassifier {
     return new Set(this.types.keys());
   }
 
-  getNationalPrefixes(cc: DigitSequence): DigitSequence[] {
-    return this.getCallingCodeClassifier(cc).getNationalPrefixes();
+  getMainRegion(callingCode: DigitSequence): string {
+    return this.getCallingCodeClassifier(callingCode).getMainRegion();
   }
 
-  getExampleNationalNumber(cc: DigitSequence): DigitSequence|null {
-    return this.getCallingCodeClassifier(cc).getExampleNationalNumber();
+  getNationalPrefixes(callingCode: DigitSequence): DigitSequence[] {
+    return this.getCallingCodeClassifier(callingCode).getNationalPrefixes();
+  }
+
+  getExampleNationalNumber(callingCode: DigitSequence): DigitSequence|null {
+    return this.getCallingCodeClassifier(callingCode).getExampleNationalNumber();
   }
 
   /** A fast test of a phone number against all possible lengths of a country calling code. */
@@ -184,22 +188,28 @@ class CallingCodeClassifier {
             ? idx.length > 0 ? MatcherFunction.of(idx.map(i => matchers[i])) : matchers[0]
             : idx !== undefined ? matchers[idx as number] : matchers[0];
 
-    let validityMatcher: MatcherFunction = matcherFactory(json.r);
+    let validityMatcher: MatcherFunction = matcherFactory(json.v);
     let typeClassifiers: NationalNumberClassifier[] =
         (json.n !== undefined)
             ? json.n.map(n => NationalNumberClassifier.create(n, decode, matcherFactory)) : [];
+    let mainRegion = decode(json.r);
     let exampleNumber = json.e ? DigitSequence.parse(json.e) : null;
     let npi: number[] = Array.isArray(json.p) ? json.p : json.p ? [json.p] : [];
     let nationalPrefixes: DigitSequence[] = npi.map(i => DigitSequence.parse(decode(i)));
     return new CallingCodeClassifier(
-        validityMatcher, typeClassifiers, nationalPrefixes, exampleNumber);
+        validityMatcher, typeClassifiers, mainRegion, nationalPrefixes, exampleNumber);
   }
 
   constructor(
       private readonly validityMatcher: MatcherFunction,
       private readonly typeClassifiers: NationalNumberClassifier[],
+      private readonly mainRegion: string,
       private readonly nationalPrefixes: DigitSequence[],
       private readonly exampleNationalNumber: DigitSequence|null) {}
+
+  getMainRegion(): string {
+    return this.mainRegion;
+  }
 
   getExampleNationalNumber(): DigitSequence|null {
     return this.exampleNationalNumber;

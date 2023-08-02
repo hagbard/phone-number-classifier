@@ -84,6 +84,10 @@ export abstract class AbstractPhoneNumberClassifier {
     return new PhoneNumberFormatter(this.getRawClassifier(), type);
   }
 
+  getMainRegion(callingCode: DigitSequence): string {
+    return this.rawClassifier.getMainRegion(callingCode);
+  }
+
   getExampleNumber(callingCode: DigitSequence): PhoneNumber|null {
     let nn = this.rawClassifier.getExampleNationalNumber(callingCode);
     return nn ? PhoneNumber.of(callingCode, nn) : null;

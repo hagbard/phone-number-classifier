@@ -168,6 +168,11 @@ describe("AbstractPhoneNumberClassifier", () => {
       .toEqual(new Set(["GB", "JE"]));
   });
 
+  test('testGetMainRegion', () => {
+    expect(pnc.getMainRegion(seq("1"))).toEqual("US");
+    expect(pnc.getMainRegion(seq("44"))).toEqual("GB");
+  });
+
   test('testGetNationalPrefixes', () => {
     expect(pnc.getNationalPrefixes(seq("1"))).toEqual([seq("1")]);
     expect(pnc.getNationalPrefixes(seq("44"))).toEqual([seq("0")]);
