@@ -16,6 +16,7 @@ import static net.goui.phonenumber.tools.ClassifierType.VALIDITY;
 
 import com.google.i18n.phonenumbers.metadata.RangeSpecification;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
+import com.google.i18n.phonenumbers.metadata.i18n.PhoneRegion;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 import java.util.Arrays;
@@ -26,10 +27,6 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class GenerateMetadataTest {
-
-
-
-
   // This is an important test because it shows that simplification cannot reintroduce ranges
   // which are excluded in `validation_ranges` expression. If simplification naively reset the
   // validation range before simplification, this test would fail.
