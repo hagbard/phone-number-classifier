@@ -96,19 +96,19 @@ final class MetadataProtoBuilder {
       RangeMap rangeMap = metadata.getRangeMap(cc);
       RangeTree allRanges = rangeMap.getAllRanges();
 
-      //      callingCodeData.setPrimaryRegion(xxx);
-      rangeMap.nationalPrefixes().stream()
+      callingCodeData.setPrimaryRegion(tokenize(rangeMap.getMainRegion().toString()));
+      rangeMap.getNationalPrefixes().stream()
           .map(Object::toString)
           .map(this::tokenize)
           .forEach(callingCodeData::addNationalPrefix);
 
-      if (!rangeMap.exampleNumbers().isEmpty()) {
+      if (!rangeMap.getExampleNumbers().isEmpty()) {
         DigitSequence exampleNumber =
             PRIORITY_EXAMPLE_TYPES.stream()
-                .map(rangeMap.exampleNumbers()::get)
+                .map(rangeMap.getExampleNumbers()::get)
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElse(rangeMap.exampleNumbers().values().iterator().next());
+                .orElse(rangeMap.getExampleNumbers().values().iterator().next());
         callingCodeData.setExampleNumber(exampleNumber.toString());
       } else {
         logger.atWarning().log("[cc=%s] No available example number", cc);

@@ -16,6 +16,7 @@ import {
     DigitSequence,
     PhoneNumberFormatter,
     FormatType,
+    PhoneNumberRegions,
     MatchResult } from "../src/index";
 import { RawClassifier } from "../src/internal";
 import goldenDataJson from "./lpn_golden_data.json"
@@ -40,6 +41,7 @@ class TestClassifier extends AbstractPhoneNumberClassifier {
   private readonly regionMatcher: Matcher<string>;
   private readonly nationalFormatter: PhoneNumberFormatter;
   private readonly internationalFormatter: PhoneNumberFormatter;
+  readonly regionInfo: PhoneNumberRegions;
 
   constructor(path: string) {
     super(fs.readFileSync(path, { encoding: "utf8", flag: "r" }));
@@ -48,6 +50,7 @@ class TestClassifier extends AbstractPhoneNumberClassifier {
     this.regionMatcher = super.forStrings("REGION").matcher();
     this.nationalFormatter = super.getFormatter(FormatType.NATIONAL);
     this.internationalFormatter = super.getFormatter(FormatType.INTERNATIONAL);
+    this.regionInfo = super.getRegionInfo();
   }
 
   rawClassifierForTests(): RawClassifier {
@@ -59,7 +62,7 @@ class TestClassifier extends AbstractPhoneNumberClassifier {
   }
 
   formatForTests(cc: DigitSequence, nn: DigitSequence, type: string): string {
-    let number: PhoneNumber = PhoneNumber.fromE164("+" + cc + nn);
+    let number: PhoneNumber = e164("+" + cc + nn);
     switch (type) {
       case "NATIONAL_FORMAT":
         return this.nationalFormatter.format(number);
@@ -94,6 +97,10 @@ function seq(s: string): DigitSequence {
   return DigitSequence.parse(s);
 }
 
+function e164(s: string): PhoneNumber {
+  return PhoneNumber.fromE164(s);
+}
+
 describe("PhoneNumber", () => {
   test("testParse", () => {
     assertDigits(seq(""));
@@ -121,7 +128,7 @@ describe("PhoneNumber", () => {
 
 describe("PhoneNumber", () => {
   test("testFromE164", () => {
-    let number: PhoneNumber = PhoneNumber.fromE164("+44123456789");
+    let number: PhoneNumber = e164("+44123456789");
     expect(number.length()).toEqual(11);
     expect(number.toString()).toEqual("+44123456789");
   });
@@ -135,24 +142,24 @@ describe("PhoneNumber", () => {
   });
 
   test("testCallingCodeAndNationalNumber", () => {
-    let oneDigitCc: PhoneNumber = PhoneNumber.fromE164("+15515817989");
+    let oneDigitCc: PhoneNumber = e164("+15515817989");
     expect(oneDigitCc.getCallingCode()).toEqual(seq("1"));
     expect(oneDigitCc.getNationalNumber()).toEqual(seq("5515817989"));
 
-    let twoDigitCc: PhoneNumber = PhoneNumber.fromE164("+447471920002");
+    let twoDigitCc: PhoneNumber = e164("+447471920002");
     expect(twoDigitCc.getCallingCode()).toEqual(seq("44"));
     expect(twoDigitCc.getNationalNumber()).toEqual(seq("7471920002"));
 
-    let threeDigitCc: PhoneNumber = PhoneNumber.fromE164("+962707952933");
+    let threeDigitCc: PhoneNumber = e164("+962707952933");
     expect(threeDigitCc.getCallingCode()).toEqual(seq("962"));
     expect(threeDigitCc.getNationalNumber()).toEqual(seq("707952933"));
   });
 
   test("testEquality", () => {
-    let number: PhoneNumber = PhoneNumber.fromE164("+447471920002");
+    let number: PhoneNumber = e164("+447471920002");
     // Parse from same input is equal.
-    expect(number).toEqual(PhoneNumber.fromE164("+447471920002"));
-    expect(number).not.toEqual(PhoneNumber.fromE164("+447471929999"));
+    expect(number).toEqual(e164("+447471920002"));
+    expect(number).not.toEqual(e164("+447471929999"));
   });
 });
 
@@ -160,12 +167,17 @@ const pnc = new TestClassifier("tests/lpn_dfa_compact.json");
 
 describe("AbstractPhoneNumberClassifier", () => {
   test('testGetPossibleValues', () => {
-    expect(pnc.forRegion().getPossibleValues(PhoneNumber.fromE164("+447700112345")))
+    expect(pnc.forRegion().getPossibleValues(e164("+447700112345")))
       .toEqual(new Set(["GB"]));
-    expect(pnc.forRegion().getPossibleValues(PhoneNumber.fromE164("+447700312345")))
+    expect(pnc.forRegion().getPossibleValues(e164("+447700312345")))
       .toEqual(new Set(["JE"]));
-    expect(pnc.forRegion().getPossibleValues(PhoneNumber.fromE164("+447700")))
+    expect(pnc.forRegion().getPossibleValues(e164("+447700")))
       .toEqual(new Set(["GB", "JE"]));
+  });
+
+  test('testGetMainRegion', () => {
+    expect(pnc.getMainRegion(seq("1"))).toEqual("US");
+    expect(pnc.getMainRegion(seq("44"))).toEqual("GB");
   });
 
   test('testGetNationalPrefixes', () => {
@@ -177,34 +189,49 @@ describe("AbstractPhoneNumberClassifier", () => {
   test('testGetExampleNumber', () => {
     let cc = seq("44");
     let exampleNumber: PhoneNumber|null = pnc.getExampleNumber(cc);
-    expect(exampleNumber).toEqual(PhoneNumber.fromE164("+447400123456"));
+    expect(exampleNumber).toEqual(e164("+447400123456"));
     expect(pnc.match(exampleNumber!)).toEqual(MatchResult.Matched);
   });
 });
 
 describe("PhoneNumberFormatter", () => {
   test('testCompleteNumberFormatting', () => {
-    expect(pnc.formatNational(PhoneNumber.fromE164("+447700112345"))).toEqual("07700 112345");
-    expect(pnc.formatInternational(PhoneNumber.fromE164("+447700112345"))).toEqual("+44 7700 112345");
+    expect(pnc.formatNational(e164("+447700112345"))).toEqual("07700 112345");
+    expect(pnc.formatInternational(e164("+447700112345"))).toEqual("+44 7700 112345");
   });
   test('testOptionalGroupFormatting', () => {
     // Use RU toll free numbers since they have an optional group in the middle.
-    expect(pnc.formatNational(PhoneNumber.fromE164("+55800123456"))).toEqual("0800 12 3456");
-    expect(pnc.formatNational(PhoneNumber.fromE164("+558001234567"))).toEqual("0800 123 4567");
+    expect(pnc.formatNational(e164("+55800123456"))).toEqual("0800 12 3456");
+    expect(pnc.formatNational(e164("+558001234567"))).toEqual("0800 123 4567");
   });
   test('testAsYouTypeFormatting', () => {
     // Use BR variable cost numbers since they have an optional group in the middle ("#XXX XX* XXXX").
-    expect(pnc.formatNational(PhoneNumber.fromE164("+5580"))).toEqual("080");
-    expect(pnc.formatNational(PhoneNumber.fromE164("+55800"))).toEqual("0800");
-    expect(pnc.formatNational(PhoneNumber.fromE164("+558001"))).toEqual("0800 1");
-    expect(pnc.formatNational(PhoneNumber.fromE164("+5580012"))).toEqual("0800 12");
-    expect(pnc.formatNational(PhoneNumber.fromE164("+55800123"))).toEqual("0800 12 3");
-    expect(pnc.formatNational(PhoneNumber.fromE164("+558001234"))).toEqual("0800 12 34");
-    expect(pnc.formatNational(PhoneNumber.fromE164("+5580012345"))).toEqual("0800 12 345");
-    expect(pnc.formatNational(PhoneNumber.fromE164("+55800123456"))).toEqual("0800 12 3456");
-    expect(pnc.formatNational(PhoneNumber.fromE164("+558001234567"))).toEqual("0800 123 4567");
-    expect(pnc.formatNational(PhoneNumber.fromE164("+5580012345678"))).toEqual("0800 123 45678");
-    expect(pnc.formatNational(PhoneNumber.fromE164("+55800123456789"))).toEqual("0800 123 456789");
+    expect(pnc.formatNational(e164("+5580"))).toEqual("080");
+    expect(pnc.formatNational(e164("+55800"))).toEqual("0800");
+    expect(pnc.formatNational(e164("+558001"))).toEqual("0800 1");
+    expect(pnc.formatNational(e164("+5580012"))).toEqual("0800 12");
+    expect(pnc.formatNational(e164("+55800123"))).toEqual("0800 12 3");
+    expect(pnc.formatNational(e164("+558001234"))).toEqual("0800 12 34");
+    expect(pnc.formatNational(e164("+5580012345"))).toEqual("0800 12 345");
+    expect(pnc.formatNational(e164("+55800123456"))).toEqual("0800 12 3456");
+    expect(pnc.formatNational(e164("+558001234567"))).toEqual("0800 123 4567");
+    expect(pnc.formatNational(e164("+5580012345678"))).toEqual("0800 123 45678");
+    expect(pnc.formatNational(e164("+55800123456789"))).toEqual("0800 123 456789");
+  });
+});
+
+describe("PhoneNumberRegions", () => {
+  test('testRegions', () => {
+    expect(pnc.regionInfo.getRegions(seq("1"))).toEqual([
+        "US", "AG", "AI", "AS", "BB", "BM", "BS", "CA", "DM", "DO", "GD", "GU",
+        "JM", "KN", "KY", "LC", "MP", "MS", "PR", "SX", "TC", "TT", "VC", "VG", "VI"]);
+    expect(pnc.regionInfo.getRegions(seq("44"))).toEqual(["GB", "GG", "IM", "JE"]);
+  });
+  test('testCallingCode', () => {
+    expect(pnc.regionInfo.getCallingCode("US")).toEqual(seq("1"));
+    expect(pnc.regionInfo.getCallingCode("CA")).toEqual(seq("1"));
+    expect(pnc.regionInfo.getCallingCode("GB")).toEqual(seq("44"));
+    expect(pnc.regionInfo.getCallingCode("JE")).toEqual(seq("44"));
   });
 });
 
@@ -212,8 +239,8 @@ describe("GoldenDataTest", () => {
   test('testGoldenData', () => {
     let raw: RawClassifier = pnc.rawClassifierForTests();
     goldenDataJson.testdata.forEach(gd => {
-      let cc: DigitSequence = DigitSequence.parse(gd.cc);
-      let nn: DigitSequence = DigitSequence.parse(gd.number);
+      let cc: DigitSequence = seq(gd.cc);
+      let nn: DigitSequence = seq(gd.number);
       gd.result.forEach(r => {
         expect(raw.classify(cc, nn, r.type)).toEqual(new Set(r.values));
       });

@@ -13,6 +13,7 @@ import { DigitSequence, Digits } from "./digit-sequence.js";
 import { RawClassifier, ValueMatcher, ReturnType } from "./raw-classifier.js";
 import { MatchResult, LengthResult } from "./match-results.js";
 import { PhoneNumberFormatter, FormatType } from "./phone-number-formatter.js";
+import { PhoneNumberRegions } from "./phone-number-regions.js";
 
 /**
  * A base class from which custom, type-safe classifiers can be derived.
@@ -82,6 +83,17 @@ export abstract class AbstractPhoneNumberClassifier {
 
   protected getFormatter(type: FormatType): PhoneNumberFormatter {
     return new PhoneNumberFormatter(this.getRawClassifier(), type);
+  }
+
+  protected getRegionInfo(): PhoneNumberRegions {
+    if (this.rawClassifier.getSupportedNumberTypes().has("REGION")) {
+      return new PhoneNumberRegions(this.getRawClassifier());
+    }
+    throw new Error("Region information not present in underlying metadata");
+  }
+
+  getMainRegion(callingCode: DigitSequence): string {
+    return this.rawClassifier.getMainRegion(callingCode);
   }
 
   getExampleNumber(callingCode: DigitSequence): PhoneNumber|null {

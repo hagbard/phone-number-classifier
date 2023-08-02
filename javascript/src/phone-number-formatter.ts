@@ -79,7 +79,7 @@ export class PhoneNumberFormatter {
     let bestResult: MatchResult = MatchResult.Invalid;
     let matcher: ValueMatcher =
         this.rawClassifier.getValueMatcher(phoneNumber.getCallingCode(), this.type);
-    for (var v of this.rawClassifier.getPossibleValues(this.type)) {
+    for (let v of this.rawClassifier.getPossibleValues(this.type)) {
       let r = matcher.matchValues(phoneNumber.getNationalNumber(), v);
       if (r < bestResult) {
         bestResult = r;

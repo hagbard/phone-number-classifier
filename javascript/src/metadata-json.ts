@@ -118,8 +118,17 @@ export interface CallingCodeJson {
   c: number;
 
   /**
+   * Primary CLDR region code index. This exists in all data to provide the most basic region
+   * information, but if additional information is needed to resolve regions, then the REGION
+   * classifier should be included in the metadata.
+   */
+  r: number
+
+  /**
    * Index of national prefix(es) for this calling code. Most regions have either one or no national
-   * prefix, but some can have several. The first listed prefix is the default for formatting.
+   * prefix, but some can have several. The first listed prefix is the default for formatting. This
+   * can be an arbitrary digit sequence (e.g. "00") so must index to a string rather than being a
+   * value.
    */
   p: number[] | number;
 
@@ -138,7 +147,7 @@ export interface CallingCodeJson {
    * However, since the original data can often includes many ranges which are not associated with
    * "active"/callable numbers, users should not treat false-positives with any great significance.
    */
-  r?: number[] | number;
+  v?: number[] | number;
 
   /**
    * Classifiers for different phone number types. This list has a one-to-one association with the
