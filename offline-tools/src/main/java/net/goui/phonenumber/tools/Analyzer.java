@@ -136,7 +136,7 @@ public class Analyzer {
   }
 
   private static void printRegex(Metadata original, Metadata simplified) {
-    for (DigitSequence cc : original.getAvailableCallingCodes()) {
+    for (DigitSequence cc : simplified.getAvailableCallingCodes()) {
       System.out.println("<<<< " + cc);
       System.out.println(CharMatcher.whitespace().removeFrom(getRegex(original, cc)));
       System.out.println(">>>> " + cc);
