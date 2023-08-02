@@ -41,7 +41,7 @@ abstract class RangeMap {
   /** A builder for a {@link RangeMap} with which classifiers can be mapped from types. */
   static final class Builder {
     private final Map<ClassifierType, RangeClassifier> map = new LinkedHashMap<>();
-    private PhoneRegion mainRegion;
+    private PhoneRegion mainRegion = PhoneRegion.getUnknown();
     private ImmutableList<DigitSequence> nationalPrefixes = ImmutableList.of();
     private ImmutableMap<ValidNumberType, DigitSequence> exampleNumbers = ImmutableMap.of();
 
