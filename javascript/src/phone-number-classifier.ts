@@ -77,14 +77,45 @@ export abstract class AbstractPhoneNumberClassifier {
         (_, g1: string, g2: string) => g1.toUpperCase() + (g2 ? "_" + g2 : ""));
   }
 
+  /**
+   * Returns the underlying raw classifier. This is potentially useful for subclasses which wish to
+   * implement custom business logic using the data, but should generally not be exposed as part of
+   * public facing API.
+   */
   protected getRawClassifier(): RawClassifier {
     return this.rawClassifier;
   }
 
+  /**
+   * Returns a formatting API for the specified format type. This method should be invoked during
+   * the subclass initialization to obtain and cache a formatter instance.
+   *
+   * This method will fail if the underlying format metadata for the number type is not present,
+   * but since a classifier subclass should know what metadata its schema defines to be present,
+   * this should not be an issue (the subclass can test for formatting data before invoking this
+   * if necessary).
+   *
+   * ----
+   * this.nationalFormatter = super.getFormatter(FormatType.NATIONAL);
+   * this.internationalFormatter = super.getFormatter(FormatType.INTERNATIONAL);
+   * ----
+   */
   protected getFormatter(type: FormatType): PhoneNumberFormatter {
     return new PhoneNumberFormatter(this.getRawClassifier(), type);
   }
 
+  /**
+   * Returns a region code API. This method should be invoked during subclass initialization to
+   * obtain and cache the API instance.
+   *
+   * This method will fail if the underlying region metadata is not present, but since a
+   * classifier subclass should know what metadata its schema defines to be present, this should
+   * not be an issue (the subclass can test for formatting data before invoking this if necessary).
+   *
+   * ----
+   * this.regionInfo = super.getRegionInfo();
+   * ----
+   */
   protected getRegionInfo(): PhoneNumberRegions {
     if (this.rawClassifier.getSupportedNumberTypes().has("REGION")) {
       return new PhoneNumberRegions(this.getRawClassifier());
@@ -92,10 +123,19 @@ export abstract class AbstractPhoneNumberClassifier {
     throw new Error("Region information not present in underlying metadata");
   }
 
+  /**
+   * Returns the "main" CLDR region code associated with the given calling code. This method will
+   * work even when no region data was explicitly added to the underlying metadata.
+   */
   getMainRegion(callingCode: DigitSequence): string {
     return this.rawClassifier.getMainRegion(callingCode);
   }
 
+  /**
+   * Returns an example number for the given calling code. The returned number will be valid,
+   * but need not be of any specific number type (though common number types are likely). The
+   * returned number is deterministic, and should not be callable.
+   */
   getExampleNumber(callingCode: DigitSequence): PhoneNumber|null {
     let nn = this.rawClassifier.getExampleNationalNumber(callingCode);
     return nn ? PhoneNumber.of(callingCode, nn) : null;

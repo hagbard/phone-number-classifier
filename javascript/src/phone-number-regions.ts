@@ -8,10 +8,8 @@
  SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-import { PhoneNumber } from "./phone-number.js";
-import { DigitSequence, Digits } from "./digit-sequence.js";
-import { RawClassifier, ValueMatcher, ReturnType } from "./raw-classifier.js";
-import { MatchResult, LengthResult } from "./match-results.js";
+import { DigitSequence } from "./digit-sequence.js";
+import { RawClassifier } from "./raw-classifier.js";
 
 /**
  * Provides information about the mapping between country calling codes and CLDR region codes.
