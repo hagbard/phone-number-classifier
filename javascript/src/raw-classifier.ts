@@ -25,6 +25,7 @@ export enum ReturnType {
 
 export interface ValueMatcher {
   matchValues(nationalNumber: DigitSequence, ...values: string[]): MatchResult;
+  getPossibleValues(): string[];
 }
 
 export class RawClassifier {
@@ -35,7 +36,8 @@ export class RawClassifier {
     let version: VersionJson = json.ver;
     // Token decoding function.
     let decode: (i: number) => string = (i) => json.tok[i];
-    let callingCodes: ReadonlySet<string> = new Set(json.ccd.map(ccd => ccd.c.toString()));
+    let callingCodes: ReadonlySet<DigitSequence> =
+        new Set(json.ccd.map(ccd => DigitSequence.parse(ccd.c.toString())));
     let typeList = json.typ !== undefined ? json.typ : [];
     let types: Map<string, number> = new Map(typeList.map((t, i) => [decode(t), i]));
     let singleValuedTypeMask: number = json.svm !== undefined ? json.svm : 0;
@@ -61,7 +63,7 @@ export class RawClassifier {
   }
 
   constructor(
-      private readonly callingCodes: ReadonlySet<string>,
+      private readonly callingCodes: ReadonlySet<DigitSequence>,
       private readonly types: Map<string, number>,
       private readonly singleValuedTypeMask: number,
       private readonly classifierOnlyTypeMask: number,
@@ -73,7 +75,7 @@ export class RawClassifier {
    * different promises about which calling codes are supported, and without knowledge of the schema
    * being used, there are no guarantees about what is in this set.
    */
-  getSupportedCallingCodes(): ReadonlySet<string> {
+  getSupportedCallingCodes(): ReadonlySet<DigitSequence> {
     return this.callingCodes;
   }
 
