@@ -14,15 +14,10 @@ import { RawClassifier, ValueMatcher, ReturnType } from "./raw-classifier.js";
 import { MatchResult, LengthResult } from "./match-results.js";
 
 /**
- * Provides a format function for phone numbers based on a specific format type.
+ * Provides information about the mapping between country calling codes and CLDR region codes.
  *
- * When a metadata schema supports formatter metadata, an instance of this class can be returned to
- * the user from a subclass of `AbstractPhoneNumberClassifier`. Instances of this class cannot be
- * created for classifiers which do not have the required metadata.
- *
- * This class is deliberately lightweight and avoids holding pre-computed format data so that it can
- * be instantiated on demand (if needed). All formatting information is encoded into the format
- * specifier strings obtained from the raw classifier.
+ * This functionality is only available if the REGION classifier was included in the underlying
+ * metadata.
  */
 export class PhoneNumberRegions {
   private readonly regionCodeMap: Map<string, ReadonlyArray<string>>;
@@ -48,6 +43,14 @@ export class PhoneNumberRegions {
     }
   }
 
+  /**
+   * Returns a sorted list of the CLDR region codes for the given country calling code.
+   *
+   * This list is sorted alphabetically, with the exception of the first element, which is always
+   * the "main region" associated with the calling code (e.g. "US" for "1", "GB" for "44").
+   *
+   * If the given calling code is not supported by the underlying metadata, an error is thrown.
+   */
   getRegions(callingCode: DigitSequence): ReadonlyArray<string> {
     let regions = this.regionCodeMap.get(callingCode.toString());
     if (regions) {
@@ -56,6 +59,11 @@ export class PhoneNumberRegions {
     throw new Error(`Unsupported calling code: ${callingCode}`);
   }
 
+  /**
+   * Returns the country calling code for the specified CLDR region code.
+   *
+   * If the given region code is not supported by the underlying metadata, an error is thrown.
+   */
   getCallingCode(regionCode: string): DigitSequence {
     let cc = this.callingCodeMap.get(regionCode);
     if (cc) {
