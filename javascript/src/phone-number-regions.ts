@@ -10,6 +10,7 @@
 
 import { DigitSequence } from "./digit-sequence.js";
 import { RawClassifier } from "./raw-classifier.js";
+import { Converter } from "./converter.js";
 
 /**
  * Provides information about the mapping between country calling codes and CLDR region codes.
@@ -17,11 +18,12 @@ import { RawClassifier } from "./raw-classifier.js";
  * This functionality is only available if the REGION classifier was included in the underlying
  * metadata.
  */
-export class PhoneNumberRegions {
-  private readonly regionCodeMap: Map<string, ReadonlyArray<string>>;
+export class PhoneNumberRegions<T> {
+  private readonly regionCodeMap: Map<string, ReadonlyArray<T>>;
   private readonly callingCodeMap: Map<string, DigitSequence>;
 
-  constructor(rawClassifier: RawClassifier) {
+  constructor(rawClassifier: RawClassifier, private readonly converter: Converter<T>) {
+    converter.ensureValues(rawClassifier.getPossibleValues("REGION"));
     this.regionCodeMap = new Map();
     this.callingCodeMap = new Map();
     for (let cc of rawClassifier.getSupportedCallingCodes()) {
@@ -34,7 +36,7 @@ export class PhoneNumberRegions {
       }
       regionCodes.splice(idx, 1);
       regionCodes.unshift(mainRegion);
-      this.regionCodeMap.set(cc.toString(), regionCodes);
+      this.regionCodeMap.set(cc.toString(), regionCodes.map(s => this.converter.fromString(s)));
       for (let r of regionCodes) {
         this.callingCodeMap.set(r, cc);
       }
@@ -44,29 +46,24 @@ export class PhoneNumberRegions {
   /**
    * Returns a sorted list of the CLDR region codes for the given country calling code.
    *
-   * This list is sorted alphabetically, with the exception of the first element, which is always
-   * the "main region" associated with the calling code (e.g. "US" for "1", "GB" for "44").
+   * This list is sorted alphabetically, except the first element, which is always the "main
+   * region" associated with the calling code (e.g. "US" for "1", "GB" for "44").
    *
-   * If the given calling code is not supported by the underlying metadata, an error is thrown.
+   * If the given calling code is not supported by the underlying metadata, the empty array is
+   * returned.
    */
-  getRegions(callingCode: DigitSequence): ReadonlyArray<string> {
+  getRegions(callingCode: DigitSequence): ReadonlyArray<T> {
     let regions = this.regionCodeMap.get(callingCode.toString());
-    if (regions) {
-      return regions;
-    }
-    throw new Error(`Unsupported calling code: ${callingCode}`);
+    return regions ? regions : [];
   }
 
   /**
    * Returns the country calling code for the specified CLDR region code.
    *
-   * If the given region code is not supported by the underlying metadata, an error is thrown.
+   * If the given region code is not supported by the underlying metadata, null is returned.
    */
-  getCallingCode(regionCode: string): DigitSequence {
-    let cc = this.callingCodeMap.get(regionCode);
-    if (cc) {
-      return cc;
-    }
-    throw new Error(`Unsupported region code: ${regionCode}`);
+  getCallingCode(regionCode: T): DigitSequence|null {
+    let cc = this.callingCodeMap.get(this.converter.toString(regionCode));
+    return cc ? cc : null;
   }
 }

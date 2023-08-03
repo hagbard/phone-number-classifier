@@ -14,6 +14,7 @@ import { RawClassifier, ValueMatcher, ReturnType } from "./raw-classifier.js";
 import { MatchResult, LengthResult } from "./match-results.js";
 import { PhoneNumberFormatter, FormatType } from "./phone-number-formatter.js";
 import { PhoneNumberRegions } from "./phone-number-regions.js";
+import { Converter } from "./converter.js";
 
 /**
  * A base class from which custom, type-safe classifiers can be derived.
@@ -70,13 +71,6 @@ export abstract class AbstractPhoneNumberClassifier {
     return this.rawClassifier.match(number.getCallingCode(), number.getNationalNumber());
   }
 
-  // Converts "UpperCamelCase" enum names to "UPPER_SNAKE_CASE" number type names.
-  private static toRawTypeName(camelCase: string) {
-    return camelCase.replace(
-        /([a-z]+)([A-Z]|$)/g,
-        (_, g1: string, g2: string) => g1.toUpperCase() + (g2 ? "_" + g2 : ""));
-  }
-
   /**
    * Returns the underlying raw classifier. This is potentially useful for subclasses which wish to
    * implement custom business logic using the data, but should generally not be exposed as part of
@@ -95,40 +89,13 @@ export abstract class AbstractPhoneNumberClassifier {
    * this should not be an issue (the subclass can test for formatting data before invoking this
    * if necessary).
    *
-   * ----
+   * ```
    * this.nationalFormatter = super.getFormatter(FormatType.NATIONAL);
    * this.internationalFormatter = super.getFormatter(FormatType.INTERNATIONAL);
-   * ----
+   * ```
    */
-  protected getFormatter(type: FormatType): PhoneNumberFormatter {
+  protected createFormatter(type: FormatType): PhoneNumberFormatter {
     return new PhoneNumberFormatter(this.getRawClassifier(), type);
-  }
-
-  /**
-   * Returns a region code API. This method should be invoked during subclass initialization to
-   * obtain and cache the API instance.
-   *
-   * This method will fail if the underlying region metadata is not present, but since a
-   * classifier subclass should know what metadata its schema defines to be present, this should
-   * not be an issue (the subclass can test for formatting data before invoking this if necessary).
-   *
-   * ----
-   * this.regionInfo = super.getRegionInfo();
-   * ----
-   */
-  protected getRegionInfo(): PhoneNumberRegions {
-    if (this.rawClassifier.getSupportedNumberTypes().has("REGION")) {
-      return new PhoneNumberRegions(this.getRawClassifier());
-    }
-    throw new Error("Region information not present in underlying metadata");
-  }
-
-  /**
-   * Returns the "main" CLDR region code associated with the given calling code. This method will
-   * work even when no region data was explicitly added to the underlying metadata.
-   */
-  getMainRegion(callingCode: DigitSequence): string {
-    return this.rawClassifier.getMainRegion(callingCode);
   }
 
   /**
@@ -142,7 +109,7 @@ export abstract class AbstractPhoneNumberClassifier {
   }
 
   /**
-   * Returns a new classifier factory which can be used to obtain a type-safe matcher or classifier
+   * Returns a new converter which can be used to obtain a type-safe matcher or classifier
    * for the given string based enum. The enum used MUST use constant names which match the
    * underlying metadata values (after case conversion):
    *
@@ -155,32 +122,22 @@ export abstract class AbstractPhoneNumberClassifier {
    *
    * In typical usage this is expected to look something like:
    *
-   * `private readonly myMatcher: Matcher<MyEnum> = forNumericEnum("MY_TYPE", MyEnum).matcher();`
+   * ```
+   * private readonly myTypedMatcher: Matcher<MyEnum>;
+   * ...
+   * this.myTypedMatcher = super.forValues("MY:TYPE", super.ofNumericEnum(MyEnum)).matcher();
+   * ```
    *
    * Where the returned classifier factory is just used as part of the fluent expression to obtain
    * the desired matcher/classifier.
    */
-  // https://github.com/microsoft/TypeScript/issues/30611#issuecomment-570773496
-  protected forNumericEnum<T extends string, V extends number>(
-      numberType: string, enumType: { [key in T]: V }): ClassifierFactory<V> {
-    // Numeric enums are "double mapped" objects, so:
-    //   enum MyEnum { Foo, Bar }
-    // ends up as:
-    //   { "Foo": 0, "Bar": 1, "0": "Foo", "1": "Bar" }
-    // Note that numeric values are number, but when reversed they are strings.
-    let keys: string[] =
-        Object.keys(enumType).filter(key => typeof enumType[key as T] === "number");
-    let map: Map<V, string> =
-        new Map(keys.map(k =>
-            [enumType[k as T] as V, AbstractPhoneNumberClassifier.toRawTypeName(k)]));
-    let converter: Converter<V> =
-        Converter.fromMap(map, this.rawClassifier.getPossibleValues(numberType));
-    return new ClassifierFactory<V>(
-        () => new TypedClassifier<V>(this.rawClassifier, numberType, converter));
+  protected ofNumericEnum<T extends string, V extends number>(
+      enumType: { [key in T]: V }): Converter<V> {
+    return Converter.fromNumericEnum(enumType);
   }
 
   /**
-   * Returns a new classifier factory which can be used to obtain a type-safe matcher or classifier
+   * Returns a new converter which can be used to obtain a type-safe matcher or classifier
    * for the given string based enum. The enum used MUST have string values which match the
    * underlying metadata values (using `UPPER_SNAKE_CASE`):
    *
@@ -193,86 +150,78 @@ export abstract class AbstractPhoneNumberClassifier {
    *
    * In typical usage this is expected to look something like:
    *
-   * `private readonly myMatcher: Matcher<MyEnum> = forStringEnum("MY_TYPE", MyEnum).matcher();`
+   * ```
+   * private readonly myTypedMatcher: Matcher<MyEnum>;
+   * ...
+   * this.myTypedMatcher = super.forValues("MY:TYPE", super.ofStringEnum(MyEnum)).matcher();
+   * ```
    *
    * Where the returned classifier factory is just used as part of the fluent expression to obtain
    * the desired matcher/classifier.
    */
-  protected forStringEnum<T extends string, V extends string>(
-      numberType: string, enumType: { [key in T]: V }): ClassifierFactory<V> {
-    // String enums just map the keys to the values:
-    //   enum MyEnum { Foo = "FOO", Bar = "BAR" }
-    // ends up as:
-    //   { "Foo": "FOO", "Bar": "BAR" }
-    // they do NOT provide a double mapping.
-    //
-    // We say that users should define the string value as the raw value name, but we can convert
-    // from UpperCamelCase as well.
-    let keys: string[] = Object.keys(enumType);
-    let map: Map<V, string> =
-        new Map(keys.map(k =>
-            [enumType[k as T] as V, AbstractPhoneNumberClassifier.toRawTypeName(k)]));
-    let converter: Converter<V> =
-        Converter.fromMap(map, this.rawClassifier.getPossibleValues(numberType));
+  protected ofStringEnum<T extends string, V extends string>(
+      enumType: { [key in T]: V }): Converter<V> {
+    return Converter.fromStringEnum(enumType);
+  }
+
+  /**
+   * Returns a new classifier factory which can be used to obtain a type-safe matcher or classifier
+   * instance. In typical usage a subclass would create and store a classifier/matcher in its
+   * constructor, using a suitable converter instance:
+   *
+   * ```
+   * private readonly myTypedMatcher: Matcher<MyEnum>;
+   * ...
+   * this.myTypedMatcher = super.forValues("MY:TYPE", super.ofStringEnum(MyEnum)).matcher();
+   * ```
+   *
+   * Where the returned classifier factory is just used as part of the fluent expression to obtain
+   * the desired matcher/classifier.
+   */
+  protected forValues<V>(numberType: string, converter: Converter<V>): ClassifierFactory<V> {
     return new ClassifierFactory<V>(
-        () => new TypedClassifier<V>(this.rawClassifier, numberType, converter));
+        () => new TypedClassifier(this.rawClassifier, numberType, converter));
   }
 
   /**
    * Returns a new classifier factory which can be used to obtain a string based (non type-safe)
    * matcher or classifier instance. This matcher must be used with keys which match the underlying
-   * metadata values (e.g. "FIXED_LINE").
+   * metadata values (e.g. "FIXED_LINE"). In general it is better to use a type safe classifier.
    *
    * In typical usage this is expected to look something like:
    *
-   * `private myMatcher: Matcher<string> = forStrings("MY_TYPE").matcher();`
+   * ```
+   * private readonly myStringMatcher: Matcher<string>;
+   * ...
+   * this.myStringMatcher = super.forStrings("MY_TYPE").matcher();
+   * ```
    *
    * Where the returned classifier factory is just used as part of the fluent expression to obtain
    * the desired matcher/classifier.
    */
-   protected forStrings(numberType: string): ClassifierFactory<string> {
-    return new ClassifierFactory<string>(
-        () => new TypedClassifier(this.rawClassifier, numberType, Converter.identity()));
-  }
-}
-
-class Converter<V> {
-  static fromMap<V>(map: Map<V, string>, requiredValues: ReadonlySet<string>): Converter<V> {
-    let inverse: Map<string, V> = new Map(Array.from(map.keys()).map(k => [map.get(k)!, k]));
-    if (map.size != inverse.size) {
-      throw new Error(`enum map is not a bijection: ${map}`);
-    }
-    // The enum is allowed to have more values than a possible in any given piece of metadata.
-    for (let s of requiredValues) {
-      if (!inverse.has(s)) {
-        throw new Error(`raw value '${s}' is not correctly mapped by enum map: ${map}`);
-      }
-    }
-    return new Converter<V>((v: V) => map.get(v), (s: string) => inverse.get(s));
+  protected forStrings(numberType: string): ClassifierFactory<string> {
+    return this.forValues<string>(numberType, Converter.identity());
   }
 
-  static identity(): Converter<string> {
-    return new Converter<string>((s: string) => s, (s: string) => s);
-  }
-
-  constructor(
-      private readonly forward: (v: V) => string | undefined,
-      private readonly backward: (s: string) => V | undefined) {}
-
-  doForward(v: V): string {
-    let s = this.forward(v);
-    if (s !== undefined) {
-      return s;
+  /**
+   * Returns a region code API. This method should be invoked during subclass initialization to
+   * obtain and cache the API instance.
+   *
+   * This method will fail if the underlying "REGION" metadata is not present, but since a
+   * classifier subclass should know what metadata its schema defines to be present, this should
+   * not be an issue (the subclass can test for region data before invoking this if necessary).
+   *
+   * ```
+   * private readonly regionInfo: PhoneNumberRegions<MyRegionEnum>;
+   * ...
+   * this.regionInfo = super.createRegionInfo(super.ofStringEnum(MyRegionEnum));
+   * ```
+   */
+  protected createRegionInfo<V>(converter: Converter<V>): PhoneNumberRegions<V> {
+    if (this.rawClassifier.getSupportedNumberTypes().has("REGION")) {
+      return new PhoneNumberRegions(this.getRawClassifier(), converter);
     }
-    throw new Error(`illegal value for converter: ${v}`);
-  }
-
-  doBackward(s: string): V {
-    let v = this.backward(s);
-    if (v !== undefined) {
-      return v;
-    }
-    throw new Error(`unexpected raw value for converter: ${s}`);
+    throw new Error("Region information not present in underlying metadata");
   }
 }
 
@@ -283,10 +232,12 @@ class TypedClassifier<V> implements SingleValuedMatcher<V> {
   constructor(
       private readonly rawClassifier: RawClassifier,
       private readonly numberType: string,
-      private readonly converter: Converter<V>) {}
+      private readonly converter: Converter<V>) {
+    converter.ensureValues(rawClassifier.getPossibleValues(numberType));
+  }
 
   ensureMatcher(): TypedClassifier<V> {
-    if (this.rawClassifier.isClassifierOnly(this.numberType)) {
+    if (!this.rawClassifier.supportsValueMatcher(this.numberType)) {
       throw new Error(
           `underlying classifier does not support partial matching for: ${this.numberType}`);
     }
@@ -294,7 +245,7 @@ class TypedClassifier<V> implements SingleValuedMatcher<V> {
   }
 
   ensureSingleValued(): TypedClassifier<V> {
-    if (this.rawClassifier.getClassifierReturnType(this.numberType) != ReturnType.SingleValued) {
+    if (!this.rawClassifier.isSingleValued(this.numberType)) {
       throw new Error(`underlying classifier is not single valued for: ${this.numberType}`);
     }
     return this;
@@ -303,7 +254,7 @@ class TypedClassifier<V> implements SingleValuedMatcher<V> {
   classify(number: PhoneNumber): ReadonlySet<V> {
     let rawSet: ReadonlySet<string> = this.rawClassifier.classify(
         number.getCallingCode(), number.getNationalNumber(), this.numberType);
-    return new Set<V>(Array.from(rawSet).map(s => this.converter.doBackward(s)));
+    return new Set<V>(Array.from(rawSet).map(s => this.converter.fromString(s)));
   }
 
   getPossibleValues(number: PhoneNumber): ReadonlySet<V> {
@@ -311,11 +262,11 @@ class TypedClassifier<V> implements SingleValuedMatcher<V> {
         this.rawClassifier.getValueMatcher(number.getCallingCode(), this.numberType);
     return new Set(Array.from(this.rawClassifier.getPossibleValues(this.numberType))
         .filter(v => matcher.matchValues(number.getNationalNumber(), v) <= MatchResult.PartialMatch)
-        .map((s: string) => this.converter.doBackward(s)));
+        .map((s: string) => this.converter.fromString(s)));
   }
 
   matchValues(number: PhoneNumber, ...values: V[]): MatchResult {
-    let rawValues: string[] = values.map(v => this.converter.doForward(v));
+    let rawValues: string[] = values.map(v => this.converter.toString(v));
     let matcher: ValueMatcher =
         this.rawClassifier.getValueMatcher(number.getCallingCode(), this.numberType);
     return matcher.matchValues(number.getNationalNumber(), ...rawValues);
@@ -324,7 +275,7 @@ class TypedClassifier<V> implements SingleValuedMatcher<V> {
   identify(number: PhoneNumber): V | null {
     let rawValue = this.rawClassifier.classifyUniquely(
         number.getCallingCode(), number.getNationalNumber(), this.numberType);
-    return rawValue ? this.converter.doBackward(rawValue) : null;
+    return rawValue ? this.converter.fromString(rawValue) : null;
   }
 }
 

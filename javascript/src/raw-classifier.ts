@@ -91,6 +91,14 @@ export class RawClassifier {
     return new Set(this.types.keys());
   }
 
+  /**
+   * Returns the "main" CLDR region code associated with the given calling code. This method will
+   * work even when no region data was explicitly added to the underlying metadata.
+   *
+   * Since a subclass of `AbstractPhoneNumberClassifier` may choose to implement region codes via
+   * strongly typed values, this method is not reflected in the API of
+   * `AbstractPhoneNumberClassifier` by default.
+   */
   getMainRegion(callingCode: DigitSequence): string {
     return this.getCallingCodeClassifier(callingCode).getMainRegion();
   }
@@ -99,11 +107,22 @@ export class RawClassifier {
     return this.getCallingCodeClassifier(callingCode).getNationalPrefixes();
   }
 
+  /**
+   * Returns an example number for the given calling code. The returned number will be valid, but
+   * need not be of any specific number type (though common number types are likely). The returned
+   * number is deterministic, and should not be callable.
+   */
   getExampleNationalNumber(callingCode: DigitSequence): DigitSequence|null {
     return this.getCallingCodeClassifier(callingCode).getExampleNationalNumber();
   }
 
-  /** A fast test of a phone number against all possible lengths of a country calling code. */
+  /**
+   * Returns whether a phone number could be valid according only to its length.
+   *
+   * This is a fast test, but it can produce significant false positive results (e.g. suggesting
+   * that invalid numbers are possible). It should only be used to reject impossible numbers before
+   * further checking is performed.
+   */
   testLength(callingCode: DigitSequence, nationalNumber: DigitSequence): LengthResult {
     return this.getCallingCodeClassifier(callingCode).testLength(nationalNumber);
   }
@@ -114,19 +133,23 @@ export class RawClassifier {
   }
 
   /**
-   * Returns whether this classifier is single- or multi- valued. A multi-valued classifier does not
-   * support the `classifyUniquely(DigitSequence, DigitSequence, string)`` method, and any attempt
-   * to call it will fail.
+   * Returns whether this classifier is single- or multi- valued. This is used to ensure that the
+   * APIs available to users are correct for the underlying metadata, but users should never need
+   * to call this method directly.
    */
-  getClassifierReturnType(numberType: string): ReturnType {
+  isSingleValued(numberType: string): boolean {
     let idx: number = this.getTypeClassifierIndex(numberType);
-    return ((this.singleValuedTypeMask & (1 << idx)) != 0)
-        ? ReturnType.SingleValued : ReturnType.MultiValued;
+    return (this.singleValuedTypeMask & (1 << idx)) != 0;
   }
 
-  isClassifierOnly(numberType: string): boolean {
+  /**
+   * Returns whether this classifier supports matching operations on partial numbers via the
+   * `ValueMatcher` interface. This is used to ensure that the APIs available to users are correct
+   * for the underlying metadata, but users should never need to call this method directly.
+   */
+  supportsValueMatcher(numberType: string): boolean {
     let idx: number = this.getTypeClassifierIndex(numberType);
-    return ((this.classifierOnlyTypeMask & (1 << idx)) != 0)
+    return ((this.classifierOnlyTypeMask & (1 << idx)) == 0)
   }
 
   /**

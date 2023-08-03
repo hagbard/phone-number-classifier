@@ -12,6 +12,7 @@ package net.goui.phonenumber;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import net.goui.phonenumber.DigitSequence.Digits;
 import net.goui.phonenumber.metadata.RawClassifier;
@@ -73,9 +74,11 @@ public class PhoneNumberFormatter {
    * Constructs a formatter using the metadata from the given classifier. Formatter instances should
    * only need to be constructed in a subclass of `AbstractPhoneNumberClassifier`, to expose the
    * functionality implied by the expected metadata schema.
+   *
+   * @throws IllegalStateException if the format type is not present in the underlying metadata.
    */
   PhoneNumberFormatter(RawClassifier rawClassifier, FormatType type) {
-    checkArgument(
+    checkState(
         canFormat(rawClassifier, type), "No format data available for %s formatting", type);
     this.rawClassifier = checkNotNull(rawClassifier);
     this.type = checkNotNull(type);

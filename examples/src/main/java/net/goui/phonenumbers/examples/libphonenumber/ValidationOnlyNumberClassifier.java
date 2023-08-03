@@ -24,8 +24,8 @@ public final class ValidationOnlyNumberClassifier extends AbstractPhoneNumberCla
         AbstractPhoneNumberClassifier.loadRawClassifier(version, rest));
   }
 
-  private final PhoneNumberFormatter nationalFormatter = getFormatter(NATIONAL);
-  private final PhoneNumberFormatter internationalFormatter = getFormatter(INTERNATIONAL);
+  private final PhoneNumberFormatter nationalFormatter = createFormatter(NATIONAL);
+  private final PhoneNumberFormatter internationalFormatter = createFormatter(INTERNATIONAL);
 
   private ValidationOnlyNumberClassifier(RawClassifier rawClassifier) {
     super(rawClassifier);

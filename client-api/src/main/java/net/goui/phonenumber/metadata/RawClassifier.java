@@ -12,13 +12,11 @@ package net.goui.phonenumber.metadata;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
 import java.util.Optional;
 import java.util.Set;
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.LengthResult;
 import net.goui.phonenumber.MatchResult;
-import net.goui.phonenumber.PhoneNumber;
 
 /**
  * The underlying classifier API from which type-safe user-facing phone number APIs can be built.
@@ -59,48 +57,80 @@ public interface RawClassifier {
      * MatchResult#combine(MatchResult, MatchResult)}.
      */
     MatchResult matchValue(DigitSequence nationalNumber, String value);
+
+    /**
+     * Returns the possible values for this matcher (i.e. values for which {@link
+     * #matchValue(DigitSequence, String)} could return something other than {@link
+     * MatchResult#INVALID}).
+     */
+    ImmutableSet<String> getPossibleValues();
   }
 
-  /** The version information of the underlying metadata used to build the raw classifier. */
+  /**
+   * Returns the version information of the underlying metadata used to build the raw classifier.
+   */
   VersionInfo getVersion();
 
   /**
-   * The country calling codes supported by the metadata schema. Different metadata schemas can make
-   * different promises about which calling codes are supported, and without knowledge of the schema
-   * being used, there are no guarantees about what is in this set.
+   * Returns the country calling codes supported by the metadata schema. Different metadata schemas
+   * can make different promises about which calling codes are supported, and without knowledge of
+   * the schema being used, there are no guarantees about what is in this set.
    */
   ImmutableSet<DigitSequence> getSupportedCallingCodes();
 
   /**
-   * The names of the number types supported by the metadata schema. Types are either the "built in"
-   * basic types (e.g. "TYPE", "TARIFF", "REGION") or custom type names of the form "PREFIX:TYPE".
+   * Returns the names of the number types supported by the metadata schema. Types are either the
+   * "built in" basic types (e.g. "TYPE", "TARIFF", "REGION") or custom type names of the form
+   * "PREFIX:TYPE".
    *
    * <p>Users should never need to know about this information since it is expected that they will
-   * used a type-safe API derived from {@code AbstractPhoneNumberClassifier}, where there's no need
+   * use a type-safe API derived from {@code AbstractPhoneNumberClassifier}, where there is no need
    * to enumerate the available types.
    */
   ImmutableSet<String> getSupportedNumberTypes();
 
+  /**
+   * Returns the "main" CLDR region code associated with the given calling code. This method will
+   * work even when no region data was explicitly added to the underlying metadata.
+   *
+   * <p>Since a subclass of {@code AbstractPhoneNumberClassifier} may choose to implement region
+   * codes via strongly typed values, such as {@code com.ibm.icu.util.Region}, this method is not
+   * reflected in the API of {@code AbstractPhoneNumberClassifier} by default.
+   */
+  String getMainRegion(DigitSequence callingCode);
+
   ImmutableList<DigitSequence> getNationalPrefixes(DigitSequence callingCode);
 
+  /**
+   * Returns an example number for the given calling code. The returned number will be valid, but
+   * need not be of any specific number type (though common number types are likely). The returned
+   * number is deterministic, and should not be callable.
+   */
   Optional<DigitSequence> getExampleNationalNumber(DigitSequence callingCode);
 
-  /** A fast test of a phone number against all possible lengths of a country calling code. */
+  /**
+   * Returns whether a phone number could be valid according only to its length.
+   *
+   * <p>This is a fast test, but it can produce significant false positive results (e.g. suggesting
+   * that invalid numbers are possible). It should only be used to reject impossible numbers before
+   * further checking is performed.
+   */
   LengthResult testLength(DigitSequence callingCode, DigitSequence nationalNumber);
 
   /** Matches a phone number against all valid ranges of a country calling code. */
   MatchResult match(DigitSequence callingCode, DigitSequence nationalNumber);
 
   /**
-   * Returns whether this classifier is single- or multi- valued. A multi-valued classifier does not
-   * support the {@link #classifyUniquely(DigitSequence, DigitSequence, String)} method, and any
-   * attempt to call it will fail.
+   * Returns whether this classifier is single- or multi- valued. This is used to ensure that the
+   * APIs available to users are correct for the underlying metadata, but users should never need to
+   * call this method directly.
    */
   boolean isSingleValued(String numberType);
 
   /**
-   * Returns whether this classifier supports matching operations on partial numbers via the
-   * {@link ValueMatcher} interface.
+   * Returns whether this classifier supports matching operations on partial numbers via the {@link
+   * ValueMatcher} interface. This is used to ensure that the APIs available to users are correct
+   * for the underlying metadata, but users should never need to call this method directly.
    */
   boolean supportsValueMatcher(String numberType);
 

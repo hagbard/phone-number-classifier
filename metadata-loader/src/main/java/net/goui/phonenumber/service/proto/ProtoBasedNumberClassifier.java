@@ -10,21 +10,20 @@
 
 package net.goui.phonenumber.service.proto;
 
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static java.util.Comparator.naturalOrder;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.ImmutableSortedMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.LengthResult;
 import net.goui.phonenumber.MatchResult;
@@ -32,94 +31,23 @@ import net.goui.phonenumber.metadata.RawClassifier;
 import net.goui.phonenumber.metadata.VersionInfo;
 import net.goui.phonenumber.proto.Metadata;
 import net.goui.phonenumber.proto.Metadata.MetadataProto;
-import net.goui.phonenumber.proto.Metadata.NationalNumberDataProto;
 
 final class ProtoBasedNumberClassifier implements RawClassifier {
   private final VersionInfo version;
-  // TODO: Create encapsulation of CallingCodeData and migrate everything.
-  private final ImmutableMap<DigitSequence, MatcherFunction> validityMatchers;
-  private final ImmutableTable<DigitSequence, String, NationalNumberClassifier> classifierTable;
-  private final ImmutableMap<DigitSequence, DigitSequence> exampleNumberMap;
-  private final ImmutableListMultimap<DigitSequence, DigitSequence> nationalPrefixMap;
-  private final ImmutableSet<String> singleValuedTypes;
-  private final ImmutableSet<String> classifierOnlyTypes;
-  private final ImmutableSetMultimap<String, String> possibleValues;
+  private final ImmutableMap<DigitSequence, CallingCodeClassifier> classifiers;
+  private final ImmutableMap<String, TypeInfo> typeInfoMap;
 
   public ProtoBasedNumberClassifier(MetadataProto metadataProto) {
     this.version = versionOf(metadataProto);
 
     List<String> tokens = metadataProto.getTokenList();
-    List<String> typeNames =
+    ImmutableList<String> typeNames =
         metadataProto.getTypeList().stream().map(tokens::get).collect(toImmutableList());
-    ImmutableMap.Builder<DigitSequence, MatcherFunction> validityMatchers = ImmutableMap.builder();
-    ImmutableTable.Builder<DigitSequence, String, NationalNumberClassifier> classifiers =
-        ImmutableTable.builder();
-    classifiers.orderRowsBy(naturalOrder()).orderColumnsBy(naturalOrder());
-    ImmutableMap.Builder<DigitSequence, DigitSequence> exampleNumberMap = ImmutableMap.builder();
-    ImmutableListMultimap.Builder<DigitSequence, DigitSequence> nationalPrefixMap =
-        ImmutableListMultimap.builder();
-    for (Metadata.CallingCodeProto callingCodeProto : metadataProto.getCallingCodeDataList()) {
-      DigitSequence cc = getCallingCode(callingCodeProto);
-
-      ImmutableList<DigitSequence> nationalPrefixes =
-          callingCodeProto.getNationalPrefixList().stream()
-              .map(tokens::get)
-              .map(DigitSequence::parse)
-              .collect(toImmutableList());
-      nationalPrefixMap.putAll(cc, nationalPrefixes);
-
-      String example = callingCodeProto.getExampleNumber();
-      if (!example.isEmpty()) {
-        exampleNumberMap.put(cc, DigitSequence.parse(example));
-      }
-
-      ImmutableList<MatcherFunction> matchers =
-          callingCodeProto.getMatcherDataList().stream()
-              .map(MatcherFunction::fromProto)
-              .collect(toImmutableList());
-      // For now, assume that if there are no validity matcher indices, we just use 0.
-      Function<List<Integer>, MatcherFunction> matcherFactory =
-          indices -> indices.isEmpty() ? matchers.get(0) : combinedMatcherOf(matchers, indices);
-
-      List<Integer> validityMatcherIndexList = callingCodeProto.getValidityMatcherIndexList();
-      validityMatchers.put(cc, matcherFactory.apply(validityMatcherIndexList));
-      List<NationalNumberDataProto> nnd = callingCodeProto.getNationalNumberDataList();
-      checkState(
-          nnd.size() == typeNames.size(),
-          "invalid phone number metadata (unexpected national number data): %s",
-          callingCodeProto);
-      for (int i = 0; i < typeNames.size(); i++) {
-        classifiers.put(
-            cc,
-            typeNames.get(i),
-            NationalNumberClassifier.create(nnd.get(i), tokens::get, matcherFactory));
-      }
-    }
-    this.validityMatchers = validityMatchers.build();
-    this.classifierTable = classifiers.build();
-    this.nationalPrefixMap = nationalPrefixMap.build();
-    this.exampleNumberMap = exampleNumberMap.buildOrThrow();
-
-    this.singleValuedTypes =
-        metadataProto.getSingleValuedTypeList().stream()
-            .map(typeNames::get)
-            .collect(toImmutableSet());
-    this.classifierOnlyTypes =
-        metadataProto.getClassifierOnlyTypeList().stream()
-            .map(typeNames::get)
-            .collect(toImmutableSet());
-
-    ImmutableSetMultimap.Builder<String, String> possibleValues = ImmutableSetMultimap.builder();
-    possibleValues.orderKeysBy(naturalOrder()).orderValuesBy(naturalOrder());
-    this.classifierTable
-        .cellSet()
-        .forEach(c -> possibleValues.putAll(c.getColumnKey(), c.getValue().getPossibleValues()));
-    this.possibleValues = possibleValues.build();
-  }
-
-  private MatcherFunction combinedMatcherOf(
-      ImmutableList<MatcherFunction> matchers, List<Integer> indices) {
-    return MatcherFunction.combine(indices.stream().map(matchers::get).collect(toImmutableList()));
+    this.classifiers = buildCallingCodeClassifiers(metadataProto, typeNames.size(), tokens::get);
+    this.typeInfoMap =
+        IntStream.range(0, typeNames.size())
+            .boxed()
+            .collect(toImmutableMap(typeNames::get, i -> getTypeInfo(metadataProto, i)));
   }
 
   private static VersionInfo versionOf(MetadataProto proto) {
@@ -128,8 +56,29 @@ final class ProtoBasedNumberClassifier implements RawClassifier {
         v.getDataSchemaUri(), v.getDataSchemaVersion(), v.getMajorVersion(), v.getMinorVersion());
   }
 
-  private static DigitSequence getCallingCode(Metadata.CallingCodeProto ccp) {
-    return DigitSequence.parse(Integer.toString(ccp.getCallingCode()));
+  private static ImmutableSortedMap<DigitSequence, CallingCodeClassifier>
+      buildCallingCodeClassifiers(
+          MetadataProto metadataProto, int typeCount, IntFunction<String> tokenDecoder) {
+    ImmutableSortedMap.Builder<DigitSequence, CallingCodeClassifier> classifiers =
+        ImmutableSortedMap.naturalOrder();
+    for (Metadata.CallingCodeProto callingCodeProto : metadataProto.getCallingCodeDataList()) {
+      DigitSequence cc = DigitSequence.parse(Integer.toString(callingCodeProto.getCallingCode()));
+      CallingCodeClassifier classifier =
+          CallingCodeClassifier.from(callingCodeProto, typeCount, tokenDecoder);
+      classifiers.put(cc, classifier);
+    }
+    return classifiers.buildOrThrow();
+  }
+
+  private TypeInfo getTypeInfo(MetadataProto metadataProto, int i) {
+    boolean isSingleValued = metadataProto.getSingleValuedTypeList().contains(i);
+    boolean supportsPartialMatcher = !metadataProto.getClassifierOnlyTypeList().contains(i);
+    ImmutableSet<String> possibleValues =
+        classifiers.values().stream()
+            .map(c -> c.getTypeClassifier(i))
+            .flatMap(c -> c.getPossibleValues().stream())
+            .collect(toImmutableSet());
+    return new TypeInfo(i, possibleValues, isSingleValued, supportsPartialMatcher);
   }
 
   @Override
@@ -139,47 +88,54 @@ final class ProtoBasedNumberClassifier implements RawClassifier {
 
   @Override
   public ImmutableSet<DigitSequence> getSupportedCallingCodes() {
-    return classifierTable.rowKeySet();
-  }
-
-  @Override
-  public ImmutableList<DigitSequence> getNationalPrefixes(DigitSequence callingCode) {
-    return nationalPrefixMap.get(callingCode);
-  }
-
-  @Override
-  public Optional<DigitSequence> getExampleNationalNumber(DigitSequence callingCode) {
-    return Optional.ofNullable(exampleNumberMap.get(callingCode));
+    return classifiers.keySet();
   }
 
   @Override
   public ImmutableSet<String> getSupportedNumberTypes() {
-    return classifierTable.columnKeySet();
+    return typeInfoMap.keySet();
+  }
+
+  @Override
+  public ImmutableList<DigitSequence> getNationalPrefixes(DigitSequence callingCode) {
+    return getClassifier(callingCode).getNationalPrefixes();
+  }
+
+  @Override
+  public Optional<DigitSequence> getExampleNationalNumber(DigitSequence callingCode) {
+    return getClassifier(callingCode).getExampleNumber();
+  }
+
+  @Override
+  public String getMainRegion(DigitSequence callingCode) {
+    return getClassifier(callingCode).getMainRegion();
   }
 
   @Override
   public boolean isSingleValued(String numberType) {
-    return singleValuedTypes.contains(numberType);
+    return getTypeInfo(numberType).isSingleValued;
   }
 
   @Override
   public boolean supportsValueMatcher(String numberType) {
-    return !classifierOnlyTypes.contains(numberType);
+    return getTypeInfo(numberType).supportsValueMatcher;
   }
 
   @Override
   public ImmutableSet<String> getPossibleValues(String numberType) {
-    return possibleValues.get(numberType);
+    return getTypeInfo(numberType).possibleValues;
   }
 
   @Override
   public Set<String> classify(
       DigitSequence callingCode, DigitSequence nationalNumber, String numberType) {
-    if (getValidityMatcher(callingCode).isMatch(nationalNumber)) {
+    CallingCodeClassifier ccClassifier = getClassifier(callingCode);
+    int typeIndex = getTypeIndex(numberType);
+    if (ccClassifier.getValidityMatcher().isMatch(nationalNumber)) {
       // Single valued and multivalued data is slightly different, and we cannot just call
       // classifyMultiValue() on single-valued data. Instead, we call classifyUniquely() and
       // put the result into a singleton set.
-      NationalNumberClassifier classifier = getClassifier(callingCode, numberType);
+      TypeClassifier classifier = ccClassifier.getTypeClassifier(typeIndex);
       return isSingleValued(numberType)
           ? classifier.classifySingleValueAsSet(nationalNumber)
           : classifier.classifyMultiValue(nationalNumber);
@@ -190,48 +146,65 @@ final class ProtoBasedNumberClassifier implements RawClassifier {
   @Override
   public String classifyUniquely(
       DigitSequence callingCode, DigitSequence nationalNumber, String numberType) {
-    if (!getValidityMatcher(callingCode).isMatch(nationalNumber)) {
-      return "";
-    }
     if (!isSingleValued(numberType)) {
       throw new UnsupportedOperationException(
           "unique classification of a multi-valued type is not supported: " + numberType);
     }
-    return getClassifier(callingCode, numberType).classifySingleValue(nationalNumber);
+    CallingCodeClassifier ccClassifier = getClassifier(callingCode);
+    int typeIndex = getTypeIndex(numberType);
+    if (!ccClassifier.getValidityMatcher().isMatch(nationalNumber)) {
+      return "";
+    }
+    return ccClassifier.getTypeClassifier(typeIndex).classifySingleValue(nationalNumber);
   }
 
   @Override
   public LengthResult testLength(DigitSequence callingCode, DigitSequence nationalNumber) {
-    return getValidityMatcher(callingCode).testLength(nationalNumber);
+    return getClassifier(callingCode).getValidityMatcher().testLength(nationalNumber);
   }
 
   @Override
   public MatchResult match(DigitSequence callingCode, DigitSequence nationalNumber) {
-    MatcherFunction matcher = validityMatchers.get(callingCode);
-    return matcher != null ? matcher.match(nationalNumber) : MatchResult.INVALID;
+    return getClassifier(callingCode).getValidityMatcher().match(nationalNumber);
   }
 
   @Override
   public ValueMatcher getValueMatcher(DigitSequence callingCode, String numberType) {
-    return getClassifier(callingCode, numberType);
+    int typeIndex = getTypeIndex(numberType);
+    return getClassifier(callingCode).getTypeClassifier(typeIndex);
   }
 
-  private MatcherFunction getValidityMatcher(DigitSequence callingCode) {
-    MatcherFunction matcher = validityMatchers.get(callingCode);
-    if (matcher != null) {
-      return matcher;
-    }
-    throw new IllegalArgumentException(String.format("unsupported calling code: %s", callingCode));
+  private CallingCodeClassifier getClassifier(DigitSequence callingCode) {
+    CallingCodeClassifier classifier = classifiers.get(callingCode);
+    checkArgument(classifier != null, "unsupported calling code: %s", callingCode);
+    return classifier;
   }
 
-  private NationalNumberClassifier getClassifier(DigitSequence callingCode, String numberType) {
-    NationalNumberClassifier classifier = classifierTable.get(callingCode, numberType);
-    if (classifier != null) {
-      return classifier;
+  private int getTypeIndex(String typeName) {
+    return getTypeInfo(typeName).index;
+  }
+
+  private TypeInfo getTypeInfo(String typeName) {
+    TypeInfo typeInfo = typeInfoMap.get(typeName);
+    checkArgument(typeInfo != null, "unsupported type: %s", typeName);
+    return typeInfo;
+  }
+
+  private static class TypeInfo {
+    final int index;
+    final boolean isSingleValued;
+    final boolean supportsValueMatcher;
+    final ImmutableSet<String> possibleValues;
+
+    TypeInfo(
+        int index,
+        ImmutableSet<String> possibleValues,
+        boolean isSingleValued,
+        boolean supportsValueMatcher) {
+      this.index = index;
+      this.possibleValues = possibleValues;
+      this.isSingleValued = isSingleValued;
+      this.supportsValueMatcher = supportsValueMatcher;
     }
-    throw new IllegalArgumentException(
-        !classifierTable.containsRow(callingCode)
-            ? String.format("unsupported calling code: %s", callingCode)
-            : String.format("unsupported number type: %s", numberType));
   }
 }

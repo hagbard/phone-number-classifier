@@ -19,6 +19,7 @@ import {
     PhoneNumberRegions,
     MatchResult } from "../src/index";
 import { RawClassifier } from "../src/internal";
+import { Converter } from "../src/converter";
 import goldenDataJson from "./lpn_golden_data.json"
 const fs = require("fs");
 
@@ -41,16 +42,17 @@ class TestClassifier extends AbstractPhoneNumberClassifier {
   private readonly regionMatcher: Matcher<string>;
   private readonly nationalFormatter: PhoneNumberFormatter;
   private readonly internationalFormatter: PhoneNumberFormatter;
-  readonly regionInfo: PhoneNumberRegions;
+  readonly regionInfo: PhoneNumberRegions<string>;
 
   constructor(path: string) {
     super(fs.readFileSync(path, { encoding: "utf8", flag: "r" }));
-    this.typeMatcher = super.forNumericEnum("LPN:TYPE", LpnType).singleValuedMatcher();
+    this.typeMatcher =
+        super.forValues("LPN:TYPE", super.ofNumericEnum(LpnType)).singleValuedMatcher();
     // We don't have a region code enum to hand, so use strings directly.
     this.regionMatcher = super.forStrings("REGION").matcher();
-    this.nationalFormatter = super.getFormatter(FormatType.NATIONAL);
-    this.internationalFormatter = super.getFormatter(FormatType.INTERNATIONAL);
-    this.regionInfo = super.getRegionInfo();
+    this.nationalFormatter = super.createFormatter(FormatType.NATIONAL);
+    this.internationalFormatter = super.createFormatter(FormatType.INTERNATIONAL);
+    this.regionInfo = super.createRegionInfo(Converter.identity());
   }
 
   rawClassifierForTests(): RawClassifier {
@@ -83,6 +85,10 @@ class TestClassifier extends AbstractPhoneNumberClassifier {
 
   formatInternational(number: PhoneNumber): string {
     return this.internationalFormatter.format(number);
+  }
+
+  getMainRegion(callingCode: DigitSequence): string {
+    return this.rawClassifierForTests().getMainRegion(callingCode);
   }
 }
 
@@ -221,6 +227,10 @@ describe("PhoneNumberFormatter", () => {
 });
 
 describe("PhoneNumberRegions", () => {
+  test('testMainRegion', () => {
+    expect(pnc.getMainRegion(seq("1"))).toEqual("US");
+    expect(pnc.getMainRegion(seq("44"))).toEqual("GB");
+  });
   test('testRegions', () => {
     expect(pnc.regionInfo.getRegions(seq("1"))).toEqual([
         "US", "AG", "AI", "AS", "BB", "BM", "BS", "CA", "DM", "DO", "GD", "GU",

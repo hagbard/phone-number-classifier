@@ -29,8 +29,8 @@ public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifie
       forEnum("LPN:TYPE", NumberType.class).singleValuedMatcher();
   private final Matcher<Region> regionMatcher =
       forType("REGION", Region.class, Region::getInstance, Object::toString).matcher();
-  private final PhoneNumberFormatter nationalFormatter = getFormatter(NATIONAL);
-  private final PhoneNumberFormatter internationalFormatter = getFormatter(INTERNATIONAL);
+  private final PhoneNumberFormatter nationalFormatter = createFormatter(NATIONAL);
+  private final PhoneNumberFormatter internationalFormatter = createFormatter(INTERNATIONAL);
 
   private LibPhoneNumberClassifier(RawClassifier rawClassifier) {
     super(rawClassifier);

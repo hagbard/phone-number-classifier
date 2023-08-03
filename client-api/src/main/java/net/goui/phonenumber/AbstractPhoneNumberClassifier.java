@@ -12,12 +12,10 @@ package net.goui.phonenumber;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static java.util.function.Function.identity;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -186,16 +184,12 @@ public abstract class AbstractPhoneNumberClassifier {
   }
 
   private final RawClassifier rawClassifier;
-  private final ImmutableMap<Integer, DigitSequence> callingCodes;
 
   /**
    * @param rawClassifier a raw classifier matching the expected schema used by the subclass.
    */
   protected AbstractPhoneNumberClassifier(RawClassifier rawClassifier) {
     this.rawClassifier = checkNotNull(rawClassifier);
-    this.callingCodes =
-        rawClassifier.getSupportedCallingCodes().stream()
-            .collect(toImmutableMap(AbstractPhoneNumberClassifier::intValueOf, identity()));
   }
 
   // Protected so subclasses can expose it for regression testing.
@@ -203,10 +197,46 @@ public abstract class AbstractPhoneNumberClassifier {
     return rawClassifier;
   }
 
-  protected PhoneNumberFormatter getFormatter(FormatType type) {
+  /**
+   * Returns a formatter for the given format type.
+   *
+   * <p>Subclasses are expected to create and cache formatter instances during construction to avoid
+   * users risking runtime exceptions later.
+   *
+   * <p>This method will fail if the underlying format metadata for the number type is not present,
+   * but since a classifier subclass should know what metadata its schema defines to be present,
+   * this should not be an issue (the subclass can test for formatting data before invoking this if
+   * necessary).
+   *
+   * @throws IllegalStateException if the format type is not present in the underlying metadata.
+   */
+  protected PhoneNumberFormatter createFormatter(FormatType type) {
     return new PhoneNumberFormatter(rawClassifier, type);
   }
 
+  /**
+   * Returns region information for this classifier.
+   *
+   * <p>Subclasses are expected to create and cache region information during construction to avoid
+   * users risking runtime exceptions later.
+   *
+   * <p>This method will fail if the underlying region metadata is not present, but since a
+   * classifier subclass should know what metadata its schema defines to be present, this should not
+   * be an issue (the subclass can test for region data before invoking this if necessary).
+   *
+   * @throws IllegalStateException if region information is not present in the underlying metadata.
+   */
+  protected <T> PhoneNumberRegions<T> createRegionInfo(Function<String, T> converter) {
+    return new PhoneNumberRegions<>(rawClassifier, converter);
+  }
+
+  /**
+   * Returns an example phone number for the given calling code (if available).
+   *
+   * <p>It is not always possible to guarantee example numbers will exist for every metadata
+   * configuration, and it is unsafe to invent example numbers at random (since they might be
+   * accidentally callable, which can cause problems).
+   */
   public Optional<PhoneNumber> getExampleNumber(DigitSequence callingCode) {
     return rawClassifier
         .getExampleNationalNumber(callingCode)
@@ -268,7 +298,7 @@ public abstract class AbstractPhoneNumberClassifier {
     }
 
     /**
-     * Returns a simple (non partial matching) classifier. It is necessary to use this API when the
+     * Returns a simple (non-partial matching) classifier. It is necessary to use this API when the
      * underlying metadata has disabled partial matching.
      */
     public Classifier<V> classifier() {
@@ -348,7 +378,7 @@ public abstract class AbstractPhoneNumberClassifier {
     return new TypeClassifier<>(this, typeName, toValue, toString, typeClass);
   }
 
-  /** Simple (non partial matching) classifier API supported by all classifiers. */
+  /** Simple (non-partial matching) classifier API supported by all classifiers. */
   public interface Classifier<V> {
     /**
      * Classifies a complete phone number into a set of possible values for a number type.
