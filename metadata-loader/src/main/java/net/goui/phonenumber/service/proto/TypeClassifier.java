@@ -21,26 +21,28 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.IntFunction;
+
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.MatchResult;
 import net.goui.phonenumber.metadata.RawClassifier.ValueMatcher;
 import net.goui.phonenumber.proto.Metadata.MatcherFunctionProto;
 import net.goui.phonenumber.proto.Metadata.NationalNumberDataProto;
 
-final class NationalNumberClassifier implements ValueMatcher {
-  public static NationalNumberClassifier create(
+final class TypeClassifier implements ValueMatcher {
+  public static TypeClassifier create(
       NationalNumberDataProto proto,
-      Function<Integer, String> tokenDecoder,
+      IntFunction<String> tokenDecoder,
       Function<List<Integer>, MatcherFunction> matcherFactory) {
-    return new NationalNumberClassifier(proto, tokenDecoder, matcherFactory);
+    return new TypeClassifier(proto, tokenDecoder, matcherFactory);
   }
 
   private final MatcherFunction[] matchers;
   private final ImmutableMap<String, Integer> indexLookup;
 
-  private NationalNumberClassifier(
+  private TypeClassifier(
       NationalNumberDataProto proto,
-      Function<Integer, String> tokenDecoder,
+      IntFunction<String> tokenDecoder,
       Function<List<Integer>, MatcherFunction> matcherFactory) {
     ImmutableMap.Builder<String, Integer> indexLookup = ImmutableMap.builder();
     int matcherCount = proto.getMatcherCount();
@@ -72,6 +74,7 @@ final class NationalNumberClassifier implements ValueMatcher {
     return index != null ? matchers[index].match(nationalNumber) : INVALID;
   }
 
+  @Override
   public ImmutableSet<String> getPossibleValues() {
     return indexLookup.keySet();
   }
