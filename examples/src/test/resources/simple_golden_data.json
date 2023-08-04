@@ -1,0 +1,2075 @@
+{
+  "testdata": [
+    {
+      "cc": "1",
+      "number": "2839383151",
+      "result": [{"type": "REGION", "values": ["US"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(283) 938-3151"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+1 283-938-3151"}
+      ]
+    },
+    {
+      "cc": "1",
+      "number": "5284538738",
+      "result": [
+        {
+          "type": "REGION",
+          "values": [
+            "AG",
+            "AI",
+            "AS",
+            "BB",
+            "BM",
+            "BS",
+            "CA",
+            "DM",
+            "DO",
+            "GD",
+            "GU",
+            "JM",
+            "KN",
+            "KY",
+            "LC",
+            "MP",
+            "MS",
+            "PR",
+            "SX",
+            "TC",
+            "TT",
+            "US",
+            "VC",
+            "VG",
+            "VI"
+          ]
+        }
+      ],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(528) 453-8738"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+1 528-453-8738"}
+      ]
+    },
+    {
+      "cc": "1",
+      "number": "6475089155",
+      "result": [{"type": "REGION", "values": ["CA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(647) 508-9155"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+1 647-508-9155"}
+      ]
+    },
+    {
+      "cc": "20",
+      "number": "8002847610",
+      "result": [{"type": "REGION", "values": ["EG"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0800 284 7610"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+20 800 284 7610"}
+      ]
+    },
+    {
+      "cc": "211",
+      "number": "984252037",
+      "result": [{"type": "REGION", "values": ["SS"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0984 252 037"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+211 984 252 037"}
+      ]
+    },
+    {
+      "cc": "212",
+      "number": "632578769",
+      "result": [{"type": "REGION", "values": ["EH", "MA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0632-578769"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+212 632-578769"}
+      ]
+    },
+    {
+      "cc": "212",
+      "number": "540306431",
+      "result": [{"type": "REGION", "values": ["MA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0540 30 64 31"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+212 540 30 64 31"}
+      ]
+    },
+    {
+      "cc": "213",
+      "number": "654759344",
+      "result": [{"type": "REGION", "values": ["DZ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0654 75 93 44"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+213 654 75 93 44"}
+      ]
+    },
+    {
+      "cc": "216",
+      "number": "96858087",
+      "result": [{"type": "REGION", "values": ["TN"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "96 858 087"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+216 96 858 087"}
+      ]
+    },
+    {
+      "cc": "218",
+      "number": "960776116",
+      "result": [{"type": "REGION", "values": ["LY"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "096-0776116"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+218 96-0776116"}
+      ]
+    },
+    {
+      "cc": "220",
+      "number": "3049383",
+      "result": [{"type": "REGION", "values": ["GM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "304 9383"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+220 304 9383"}
+      ]
+    },
+    {
+      "cc": "221",
+      "number": "768778413",
+      "result": [{"type": "REGION", "values": ["SN"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "76 877 84 13"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+221 76 877 84 13"}
+      ]
+    },
+    {
+      "cc": "222",
+      "number": "40189225",
+      "result": [{"type": "REGION", "values": ["MR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "40 18 92 25"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+222 40 18 92 25"}
+      ]
+    },
+    {
+      "cc": "223",
+      "number": "67288511",
+      "result": [{"type": "REGION", "values": ["ML"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "67 28 85 11"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+223 67 28 85 11"}
+      ]
+    },
+    {
+      "cc": "224",
+      "number": "624889439",
+      "result": [{"type": "REGION", "values": ["GN"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "624 88 94 39"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+224 624 88 94 39"}
+      ]
+    },
+    {
+      "cc": "225",
+      "number": "0720372287",
+      "result": [{"type": "REGION", "values": ["CI"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "07 20 37 2287"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+225 07 20 37 2287"}
+      ]
+    },
+    {
+      "cc": "226",
+      "number": "65989041",
+      "result": [{"type": "REGION", "values": ["BF"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "65 98 90 41"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+226 65 98 90 41"}
+      ]
+    },
+    {
+      "cc": "227",
+      "number": "94450655",
+      "result": [{"type": "REGION", "values": ["NE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "94 45 06 55"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+227 94 45 06 55"}
+      ]
+    },
+    {
+      "cc": "228",
+      "number": "79721838",
+      "result": [{"type": "REGION", "values": ["TG"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "79 72 18 38"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+228 79 72 18 38"}
+      ]
+    },
+    {
+      "cc": "229",
+      "number": "52195455",
+      "result": [{"type": "REGION", "values": ["BJ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "52 19 54 55"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+229 52 19 54 55"}
+      ]
+    },
+    {
+      "cc": "230",
+      "number": "3949716",
+      "result": [{"type": "REGION", "values": ["MU"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "394 9716"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+230 394 9716"}
+      ]
+    },
+    {
+      "cc": "231",
+      "number": "5273901",
+      "result": [{"type": "REGION", "values": ["LR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "05 273 901"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+231 5 273 901"}
+      ]
+    },
+    {
+      "cc": "232",
+      "number": "79896248",
+      "result": [{"type": "REGION", "values": ["SL"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(079) 896248"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+232 79 896248"}
+      ]
+    },
+    {
+      "cc": "233",
+      "number": "558412505",
+      "result": [{"type": "REGION", "values": ["GH"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "055 841 2505"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+233 55 841 2505"}
+      ]
+    },
+    {
+      "cc": "234",
+      "number": "70077207343656",
+      "result": [{"type": "REGION", "values": ["NG"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0700 77207 343656"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+234 700 77207 343656"}
+      ]
+    },
+    {
+      "cc": "235",
+      "number": "97253470",
+      "result": [{"type": "REGION", "values": ["TD"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "97 25 34 70"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+235 97 25 34 70"}
+      ]
+    },
+    {
+      "cc": "236",
+      "number": "76309999",
+      "result": [{"type": "REGION", "values": ["CF"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "76 30 99 99"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+236 76 30 99 99"}
+      ]
+    },
+    {
+      "cc": "237",
+      "number": "665397028",
+      "result": [{"type": "REGION", "values": ["CM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "6 65 39 70 28"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+237 6 65 39 70 28"}
+      ]
+    },
+    {
+      "cc": "238",
+      "number": "4581280",
+      "result": [{"type": "REGION", "values": ["CV"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "458 12 80"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+238 458 12 80"}
+      ]
+    },
+    {
+      "cc": "239",
+      "number": "2218246",
+      "result": [{"type": "REGION", "values": ["ST"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "221 8246"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+239 221 8246"}
+      ]
+    },
+    {
+      "cc": "240",
+      "number": "805309675",
+      "result": [{"type": "REGION", "values": ["GQ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "805 309675"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+240 805 309675"}
+      ]
+    },
+    {
+      "cc": "241",
+      "number": "06059194",
+      "result": [{"type": "REGION", "values": ["GA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "06 05 91 94"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+241 06 05 91 94"}
+      ]
+    },
+    {
+      "cc": "242",
+      "number": "055883594",
+      "result": [{"type": "REGION", "values": ["CG"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "05 588 3594"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+242 05 588 3594"}
+      ]
+    },
+    {
+      "cc": "243",
+      "number": "123873405",
+      "result": [{"type": "REGION", "values": ["CD"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "012 387 3405"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+243 12 387 3405"}
+      ]
+    },
+    {
+      "cc": "244",
+      "number": "919217718",
+      "result": [{"type": "REGION", "values": ["AO"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "919 217 718"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+244 919 217 718"}
+      ]
+    },
+    {
+      "cc": "245",
+      "number": "959599749",
+      "result": [{"type": "REGION", "values": ["GW"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "959 599 749"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+245 959 599 749"}
+      ]
+    },
+    {
+      "cc": "246",
+      "number": "3790481",
+      "result": [{"type": "REGION", "values": ["IO"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "379 0481"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+246 379 0481"}
+      ]
+    },
+    {
+      "cc": "247",
+      "number": "873584",
+      "result": [{"type": "REGION", "values": ["AC"]}],
+      "format": []
+    },
+    {
+      "cc": "248",
+      "number": "2705412",
+      "result": [{"type": "REGION", "values": ["SC"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "2 705 412"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+248 2 705 412"}
+      ]
+    },
+    {
+      "cc": "249",
+      "number": "105726522",
+      "result": [{"type": "REGION", "values": ["SD"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "010 572 6522"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+249 10 572 6522"}
+      ]
+    },
+    {
+      "cc": "250",
+      "number": "287498410",
+      "result": [{"type": "REGION", "values": ["RW"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "287 498 410"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+250 287 498 410"}
+      ]
+    },
+    {
+      "cc": "251",
+      "number": "933968769",
+      "result": [{"type": "REGION", "values": ["ET"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "093 396 8769"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+251 93 396 8769"}
+      ]
+    },
+    {
+      "cc": "252",
+      "number": "667001046",
+      "result": [{"type": "REGION", "values": ["SO"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "66 7001046"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+252 66 7001046"}
+      ]
+    },
+    {
+      "cc": "253",
+      "number": "21247466",
+      "result": [{"type": "REGION", "values": ["DJ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "21 24 74 66"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+253 21 24 74 66"}
+      ]
+    },
+    {
+      "cc": "254",
+      "number": "750133624",
+      "result": [{"type": "REGION", "values": ["KE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0750 133624"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+254 750 133624"}
+      ]
+    },
+    {
+      "cc": "255",
+      "number": "412587813",
+      "result": [{"type": "REGION", "values": ["TZ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "041 258 7813"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+255 41 258 7813"}
+      ]
+    },
+    {
+      "cc": "256",
+      "number": "474139405",
+      "result": [{"type": "REGION", "values": ["UG"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0474 139405"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+256 474 139405"}
+      ]
+    },
+    {
+      "cc": "257",
+      "number": "69819290",
+      "result": [{"type": "REGION", "values": ["BI"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "69 81 92 90"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+257 69 81 92 90"}
+      ]
+    },
+    {
+      "cc": "258",
+      "number": "833390411",
+      "result": [{"type": "REGION", "values": ["MZ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "83 339 0411"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+258 83 339 0411"}
+      ]
+    },
+    {
+      "cc": "260",
+      "number": "766683715",
+      "result": [{"type": "REGION", "values": ["ZM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "076 6683715"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+260 76 6683715"}
+      ]
+    },
+    {
+      "cc": "261",
+      "number": "378310270",
+      "result": [{"type": "REGION", "values": ["MG"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "037 83 102 70"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+261 37 83 102 70"}
+      ]
+    },
+    {
+      "cc": "262",
+      "number": "693437086",
+      "result": [{"type": "REGION", "values": ["RE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0693 43 70 86"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+262 693 43 70 86"}
+      ]
+    },
+    {
+      "cc": "262",
+      "number": "805644729",
+      "result": [{"type": "REGION", "values": ["RE", "YT"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0805 64 47 29"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+262 805 64 47 29"}
+      ]
+    },
+    {
+      "cc": "263",
+      "number": "2279969648",
+      "result": [{"type": "REGION", "values": ["ZW"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0227 996 9648"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+263 227 996 9648"}
+      ]
+    },
+    {
+      "cc": "264",
+      "number": "813067450",
+      "result": [{"type": "REGION", "values": ["NA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "081 306 7450"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+264 81 306 7450"}
+      ]
+    },
+    {
+      "cc": "265",
+      "number": "898368643",
+      "result": [{"type": "REGION", "values": ["MW"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0898 36 86 43"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+265 898 36 86 43"}
+      ]
+    },
+    {
+      "cc": "266",
+      "number": "25375089",
+      "result": [{"type": "REGION", "values": ["LS"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "2537 5089"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+266 2537 5089"}
+      ]
+    },
+    {
+      "cc": "267",
+      "number": "73452325",
+      "result": [{"type": "REGION", "values": ["BW"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "73 452 325"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+267 73 452 325"}
+      ]
+    },
+    {
+      "cc": "268",
+      "number": "25311994",
+      "result": [{"type": "REGION", "values": ["SZ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "2531 1994"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+268 2531 1994"}
+      ]
+    },
+    {
+      "cc": "269",
+      "number": "7721777",
+      "result": [{"type": "REGION", "values": ["KM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "772 17 77"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+269 772 17 77"}
+      ]
+    },
+    {
+      "cc": "27",
+      "number": "171855387",
+      "result": [{"type": "REGION", "values": ["ZA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "017 185 5387"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+27 17 185 5387"}
+      ]
+    },
+    {
+      "cc": "290",
+      "number": "69534",
+      "result": [{"type": "REGION", "values": ["SH"]}],
+      "format": []
+    },
+    {
+      "cc": "290",
+      "number": "8542",
+      "result": [{"type": "REGION", "values": ["TA"]}],
+      "format": []
+    },
+    {
+      "cc": "291",
+      "number": "7852609",
+      "result": [{"type": "REGION", "values": ["ER"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "07 852 609"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+291 7 852 609"}
+      ]
+    },
+    {
+      "cc": "297",
+      "number": "6402416",
+      "result": [{"type": "REGION", "values": ["AW"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "640 2416"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+297 640 2416"}
+      ]
+    },
+    {
+      "cc": "298",
+      "number": "284786",
+      "result": [{"type": "REGION", "values": ["FO"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "284786"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+298 284786"}
+      ]
+    },
+    {
+      "cc": "299",
+      "number": "236399",
+      "result": [{"type": "REGION", "values": ["GL"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "23 63 99"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+299 23 63 99"}
+      ]
+    },
+    {
+      "cc": "30",
+      "number": "800668319603",
+      "result": [{"type": "REGION", "values": ["GR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "800 6683 19603"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+30 800 6683 19603"}
+      ]
+    },
+    {
+      "cc": "31",
+      "number": "97006630957",
+      "result": [{"type": "REGION", "values": ["NL"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0970 066 30957"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+31 970 066 30957"}
+      ]
+    },
+    {
+      "cc": "32",
+      "number": "483917685",
+      "result": [{"type": "REGION", "values": ["BE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0483 91 76 85"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+32 483 91 76 85"}
+      ]
+    },
+    {
+      "cc": "33",
+      "number": "284679124",
+      "result": [{"type": "REGION", "values": ["FR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "02 84 67 91 24"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+33 2 84 67 91 24"}
+      ]
+    },
+    {
+      "cc": "34",
+      "number": "955489184",
+      "result": [{"type": "REGION", "values": ["ES"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "955 48 91 84"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+34 955 48 91 84"}
+      ]
+    },
+    {
+      "cc": "350",
+      "number": "54620754",
+      "result": [{"type": "REGION", "values": ["GI"]}],
+      "format": []
+    },
+    {
+      "cc": "351",
+      "number": "228679117",
+      "result": [{"type": "REGION", "values": ["PT"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "22 867 9117"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+351 22 867 9117"}
+      ]
+    },
+    {
+      "cc": "352",
+      "number": "59269844231",
+      "result": [{"type": "REGION", "values": ["LU"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "59 26 98 44231"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+352 59 26 98 44231"}
+      ]
+    },
+    {
+      "cc": "353",
+      "number": "530632399",
+      "result": [{"type": "REGION", "values": ["IE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(053) 063 2399"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+353 53 063 2399"}
+      ]
+    },
+    {
+      "cc": "354",
+      "number": "4743870",
+      "result": [{"type": "REGION", "values": ["IS"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "474 3870"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+354 474 3870"}
+      ]
+    },
+    {
+      "cc": "355",
+      "number": "43590811",
+      "result": [{"type": "REGION", "values": ["AL"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "04 359 0811"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+355 4 359 0811"}
+      ]
+    },
+    {
+      "cc": "356",
+      "number": "22382218",
+      "result": [{"type": "REGION", "values": ["MT"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "2238 2218"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+356 2238 2218"}
+      ]
+    },
+    {
+      "cc": "357",
+      "number": "95891149",
+      "result": [{"type": "REGION", "values": ["CY"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "95 891149"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+357 95 891149"}
+      ]
+    },
+    {
+      "cc": "358",
+      "number": "4318693990",
+      "result": [{"type": "REGION", "values": ["AX", "FI"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "043 18693990"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+358 43 18693990"}
+      ]
+    },
+    {
+      "cc": "358",
+      "number": "249015738",
+      "result": [{"type": "REGION", "values": ["FI"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "02 49015738"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+358 2 49015738"}
+      ]
+    },
+    {
+      "cc": "359",
+      "number": "877275214",
+      "result": [{"type": "REGION", "values": ["BG"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "087 727 5214"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+359 87 727 5214"}
+      ]
+    },
+    {
+      "cc": "36",
+      "number": "303290525",
+      "result": [{"type": "REGION", "values": ["HU"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "06 30 329 0525"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+36 30 329 0525"}
+      ]
+    },
+    {
+      "cc": "370",
+      "number": "52930127",
+      "result": [{"type": "REGION", "values": ["LT"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(8-529) 30127"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+370 529 30127"}
+      ]
+    },
+    {
+      "cc": "371",
+      "number": "63005106",
+      "result": [{"type": "REGION", "values": ["LV"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "63 005 106"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+371 63 005 106"}
+      ]
+    },
+    {
+      "cc": "372",
+      "number": "59901434",
+      "result": [{"type": "REGION", "values": ["EE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "5990 1434"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+372 5990 1434"}
+      ]
+    },
+    {
+      "cc": "373",
+      "number": "21690856",
+      "result": [{"type": "REGION", "values": ["MD"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0216 90 856"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+373 216 90 856"}
+      ]
+    },
+    {
+      "cc": "374",
+      "number": "25535256",
+      "result": [{"type": "REGION", "values": ["AM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(0255) 35256"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+374 255 35256"}
+      ]
+    },
+    {
+      "cc": "375",
+      "number": "82022021912",
+      "result": [{"type": "REGION", "values": ["BY"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "8 820 2202 1912"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+375 820 2202 1912"}
+      ]
+    },
+    {
+      "cc": "376",
+      "number": "308621",
+      "result": [{"type": "REGION", "values": ["AD"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "308 621"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+376 308 621"}
+      ]
+    },
+    {
+      "cc": "377",
+      "number": "38317306",
+      "result": [{"type": "REGION", "values": ["MC"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "38 31 73 06"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+377 38 31 73 06"}
+      ]
+    },
+    {
+      "cc": "378",
+      "number": "51171215",
+      "result": [{"type": "REGION", "values": ["SM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "51 17 12 15"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+378 51 17 12 15"}
+      ]
+    },
+    {
+      "cc": "380",
+      "number": "373898577",
+      "result": [{"type": "REGION", "values": ["UA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "03738 98577"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+380 3738 98577"}
+      ]
+    },
+    {
+      "cc": "381",
+      "number": "354341654885",
+      "result": [{"type": "REGION", "values": ["RS"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "035 4341654885"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+381 35 4341654885"}
+      ]
+    },
+    {
+      "cc": "382",
+      "number": "31712935",
+      "result": [{"type": "REGION", "values": ["ME"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "031 712 935"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+382 31 712 935"}
+      ]
+    },
+    {
+      "cc": "383",
+      "number": "28879033",
+      "result": [{"type": "REGION", "values": ["XK"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "028 879 033"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+383 28 879 033"}
+      ]
+    },
+    {
+      "cc": "385",
+      "number": "986034743",
+      "result": [{"type": "REGION", "values": ["HR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "098 603 4743"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+385 98 603 4743"}
+      ]
+    },
+    {
+      "cc": "386",
+      "number": "27238546",
+      "result": [{"type": "REGION", "values": ["SI"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(02) 723 85 46"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+386 2 723 85 46"}
+      ]
+    },
+    {
+      "cc": "387",
+      "number": "51983572",
+      "result": [{"type": "REGION", "values": ["BA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "051 983-572"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+387 51 983-572"}
+      ]
+    },
+    {
+      "cc": "389",
+      "number": "77784834",
+      "result": [{"type": "REGION", "values": ["MK"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "077 784 834"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+389 77 784 834"}
+      ]
+    },
+    {
+      "cc": "39",
+      "number": "325647083273",
+      "result": [{"type": "REGION", "values": ["IT", "VA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "325 6470 83273"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+39 325 6470 83273"}
+      ]
+    },
+    {
+      "cc": "39",
+      "number": "7081643124",
+      "result": [{"type": "REGION", "values": ["IT"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "708 164 3124"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+39 708 164 3124"}
+      ]
+    },
+    {
+      "cc": "40",
+      "number": "314495723",
+      "result": [{"type": "REGION", "values": ["RO"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "031 449 5723"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+40 31 449 5723"}
+      ]
+    },
+    {
+      "cc": "41",
+      "number": "860511564455",
+      "result": [{"type": "REGION", "values": ["CH"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0860 51 156 44 55"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+41 860 51 156 44 55"}
+      ]
+    },
+    {
+      "cc": "420",
+      "number": "962142310344",
+      "result": [{"type": "REGION", "values": ["CZ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "962 142 310 344"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+420 962 142 310 344"}
+      ]
+    },
+    {
+      "cc": "421",
+      "number": "242356843",
+      "result": [{"type": "REGION", "values": ["SK"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "02/423 568 43"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+421 2/423 568 43"}
+      ]
+    },
+    {
+      "cc": "423",
+      "number": "652353067",
+      "result": [{"type": "REGION", "values": ["LI"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "652 353 067"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+423 652 353 067"}
+      ]
+    },
+    {
+      "cc": "43",
+      "number": "1298109063992",
+      "result": [{"type": "REGION", "values": ["AT"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "01 298109063992"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+43 1 298109063992"}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "3777389529",
+      "result": [{"type": "REGION", "values": ["GB", "GG"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0377 738 9529"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+44 377 738 9529"}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "7110397675",
+      "result": [{"type": "REGION", "values": ["GB"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "07110 397675"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+44 7110 397675"}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "7040587014",
+      "result": [{"type": "REGION", "values": ["GB", "GG", "IM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "070 4058 7014"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+44 70 4058 7014"}
+      ]
+    },
+    {
+      "cc": "44",
+      "number": "3375035759",
+      "result": [{"type": "REGION", "values": ["GB", "GG", "IM", "JE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0337 503 5759"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+44 337 503 5759"}
+      ]
+    },
+    {
+      "cc": "45",
+      "number": "69827593",
+      "result": [{"type": "REGION", "values": ["DK"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "69 82 75 93"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+45 69 82 75 93"}
+      ]
+    },
+    {
+      "cc": "46",
+      "number": "252064343789",
+      "result": [{"type": "REGION", "values": ["SE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0252-06 434 37 89"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+46 252 06 434 37 89"}
+      ]
+    },
+    {
+      "cc": "47",
+      "number": "40537750",
+      "result": [{"type": "REGION", "values": ["NO", "SJ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "40 53 77 50"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+47 40 53 77 50"}
+      ]
+    },
+    {
+      "cc": "47",
+      "number": "31110254",
+      "result": [{"type": "REGION", "values": ["NO"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "31 11 02 54"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+47 31 11 02 54"}
+      ]
+    },
+    {
+      "cc": "47",
+      "number": "79627256",
+      "result": [{"type": "REGION", "values": ["SJ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "79 62 72 56"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+47 79 62 72 56"}
+      ]
+    },
+    {
+      "cc": "48",
+      "number": "8005996793",
+      "result": [{"type": "REGION", "values": ["PL"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "800 599 6793"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+48 800 599 6793"}
+      ]
+    },
+    {
+      "cc": "49",
+      "number": "793258642652178",
+      "result": [{"type": "REGION", "values": ["DE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "07932 58642652178"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+49 7932 58642652178"}
+      ]
+    },
+    {
+      "cc": "500",
+      "number": "64965",
+      "result": [{"type": "REGION", "values": ["FK"]}],
+      "format": []
+    },
+    {
+      "cc": "501",
+      "number": "08001177476",
+      "result": [{"type": "REGION", "values": ["BZ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0-800-1177-476"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+501 0-800-1177-476"}
+      ]
+    },
+    {
+      "cc": "502",
+      "number": "18112578685",
+      "result": [{"type": "REGION", "values": ["GT"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "1811 257 8685"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+502 1811 257 8685"}
+      ]
+    },
+    {
+      "cc": "503",
+      "number": "25806189",
+      "result": [{"type": "REGION", "values": ["SV"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "2580 6189"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+503 2580 6189"}
+      ]
+    },
+    {
+      "cc": "504",
+      "number": "71352879",
+      "result": [{"type": "REGION", "values": ["HN"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "7135-2879"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+504 7135-2879"}
+      ]
+    },
+    {
+      "cc": "505",
+      "number": "25096295",
+      "result": [{"type": "REGION", "values": ["NI"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "2509 6295"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+505 2509 6295"}
+      ]
+    },
+    {
+      "cc": "506",
+      "number": "63433452",
+      "result": [{"type": "REGION", "values": ["CR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "6343 3452"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+506 6343 3452"}
+      ]
+    },
+    {
+      "cc": "507",
+      "number": "8003872882",
+      "result": [{"type": "REGION", "values": ["PA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "800 387 2882"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+507 800 387 2882"}
+      ]
+    },
+    {
+      "cc": "508",
+      "number": "802972949",
+      "result": [{"type": "REGION", "values": ["PM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0802 97 29 49"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+508 802 97 29 49"}
+      ]
+    },
+    {
+      "cc": "509",
+      "number": "80308438",
+      "result": [{"type": "REGION", "values": ["HT"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "80 30 8438"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+509 80 30 8438"}
+      ]
+    },
+    {
+      "cc": "51",
+      "number": "73521969",
+      "result": [{"type": "REGION", "values": ["PE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(073) 521969"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+51 73 521969"}
+      ]
+    },
+    {
+      "cc": "52",
+      "number": "7387730456",
+      "result": [{"type": "REGION", "values": ["MX"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "738 773 0456"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+52 738 773 0456"}
+      ]
+    },
+    {
+      "cc": "53",
+      "number": "58016418",
+      "result": [{"type": "REGION", "values": ["CU"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "05 8016418"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+53 5 8016418"}
+      ]
+    },
+    {
+      "cc": "54",
+      "number": "3805572480",
+      "result": [{"type": "REGION", "values": ["AR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0380 557-2480"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+54 380 557-2480"}
+      ]
+    },
+    {
+      "cc": "55",
+      "number": "6871992425",
+      "result": [{"type": "REGION", "values": ["BR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(68) 7199-2425"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+55 68 7199-2425"}
+      ]
+    },
+    {
+      "cc": "56",
+      "number": "586362771",
+      "result": [{"type": "REGION", "values": ["CL"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(58) 636 2771"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+56 58 636 2771"}
+      ]
+    },
+    {
+      "cc": "57",
+      "number": "6066279282",
+      "result": [{"type": "REGION", "values": ["CO"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(606) 6279282"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+57 606 6279282"}
+      ]
+    },
+    {
+      "cc": "58",
+      "number": "2864945539",
+      "result": [{"type": "REGION", "values": ["VE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0286-4945539"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+58 286-4945539"}
+      ]
+    },
+    {
+      "cc": "590",
+      "number": "690854797",
+      "result": [{"type": "REGION", "values": ["BL", "GP", "MF"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0690 85 47 97"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+590 690 85 47 97"}
+      ]
+    },
+    {
+      "cc": "590",
+      "number": "590457000",
+      "result": [{"type": "REGION", "values": ["GP"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0590 45 70 00"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+590 590 45 70 00"}
+      ]
+    },
+    {
+      "cc": "591",
+      "number": "44802814",
+      "result": [{"type": "REGION", "values": ["BO"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "4 4802814"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+591 4 4802814"}
+      ]
+    },
+    {
+      "cc": "592",
+      "number": "6655591",
+      "result": [{"type": "REGION", "values": ["GY"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "665 5591"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+592 665 5591"}
+      ]
+    },
+    {
+      "cc": "593",
+      "number": "18002320310",
+      "result": [{"type": "REGION", "values": ["EC"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "1800 232 0310"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+593 1800 232 0310"}
+      ]
+    },
+    {
+      "cc": "594",
+      "number": "802502624",
+      "result": [{"type": "REGION", "values": ["GF"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0802 50 26 24"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+594 802 50 26 24"}
+      ]
+    },
+    {
+      "cc": "595",
+      "number": "784926129",
+      "result": [{"type": "REGION", "values": ["PY"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0784 926 129"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+595 784 926 129"}
+      ]
+    },
+    {
+      "cc": "596",
+      "number": "800178716",
+      "result": [{"type": "REGION", "values": ["MQ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0800 17 87 16"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+596 800 17 87 16"}
+      ]
+    },
+    {
+      "cc": "597",
+      "number": "8632746",
+      "result": [{"type": "REGION", "values": ["SR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "863-2746"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+597 863-2746"}
+      ]
+    },
+    {
+      "cc": "598",
+      "number": "4244057053",
+      "result": [{"type": "REGION", "values": ["UY"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0424 405 7053"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+598 424 405 7053"}
+      ]
+    },
+    {
+      "cc": "599",
+      "number": "95201610",
+      "result": [{"type": "REGION", "values": ["CW"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "9 520 1610"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+599 9 520 1610"}
+      ]
+    },
+    {
+      "cc": "599",
+      "number": "7961385",
+      "result": [{"type": "REGION", "values": ["BQ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "796 1385"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+599 796 1385"}
+      ]
+    },
+    {
+      "cc": "60",
+      "number": "1172304889",
+      "result": [{"type": "REGION", "values": ["MY"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "011-7230 4889"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+60 11-7230 4889"}
+      ]
+    },
+    {
+      "cc": "61",
+      "number": "328581650",
+      "result": [{"type": "REGION", "values": ["AU"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(03) 2858 1650"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+61 3 2858 1650"}
+      ]
+    },
+    {
+      "cc": "61",
+      "number": "428165509",
+      "result": [{"type": "REGION", "values": ["AU", "CC", "CX"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0428 165 509"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+61 428 165 509"}
+      ]
+    },
+    {
+      "cc": "62",
+      "number": "823152572858",
+      "result": [{"type": "REGION", "values": ["ID"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0823-1525-72858"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+62 823-1525-72858"}
+      ]
+    },
+    {
+      "cc": "63",
+      "number": "1800399204453",
+      "result": [{"type": "REGION", "values": ["PH"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "1800 39 920 4453"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+63 1800 39 920 4453"}
+      ]
+    },
+    {
+      "cc": "64",
+      "number": "2828594622",
+      "result": [{"type": "REGION", "values": ["NZ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "028 2859 4622"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+64 28 2859 4622"}
+      ]
+    },
+    {
+      "cc": "65",
+      "number": "93621636",
+      "result": [{"type": "REGION", "values": ["SG"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "9362 1636"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+65 9362 1636"}
+      ]
+    },
+    {
+      "cc": "66",
+      "number": "647959741",
+      "result": [{"type": "REGION", "values": ["TH"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "064 795 9741"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+66 64 795 9741"}
+      ]
+    },
+    {
+      "cc": "670",
+      "number": "2447396",
+      "result": [{"type": "REGION", "values": ["TL"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "244 7396"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+670 244 7396"}
+      ]
+    },
+    {
+      "cc": "672",
+      "number": "128808",
+      "result": [{"type": "REGION", "values": ["NF"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "12 8808"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+672 12 8808"}
+      ]
+    },
+    {
+      "cc": "673",
+      "number": "8830728",
+      "result": [{"type": "REGION", "values": ["BN"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "883 0728"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+673 883 0728"}
+      ]
+    },
+    {
+      "cc": "674",
+      "number": "8506321",
+      "result": [{"type": "REGION", "values": ["NR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "850 6321"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+674 850 6321"}
+      ]
+    },
+    {
+      "cc": "675",
+      "number": "70424339",
+      "result": [{"type": "REGION", "values": ["PG"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "7042 4339"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+675 7042 4339"}
+      ]
+    },
+    {
+      "cc": "676",
+      "number": "7019638",
+      "result": [{"type": "REGION", "values": ["TO"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "701 9638"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+676 701 9638"}
+      ]
+    },
+    {
+      "cc": "677",
+      "number": "8995775",
+      "result": [{"type": "REGION", "values": ["SB"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "89 95775"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+677 89 95775"}
+      ]
+    },
+    {
+      "cc": "678",
+      "number": "8272494",
+      "result": [{"type": "REGION", "values": ["VU"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "827 2494"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+678 827 2494"}
+      ]
+    },
+    {
+      "cc": "679",
+      "number": "08001216954",
+      "result": [{"type": "REGION", "values": ["FJ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0800 121 6954"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+679 0800 121 6954"}
+      ]
+    },
+    {
+      "cc": "680",
+      "number": "6202184",
+      "result": [{"type": "REGION", "values": ["PW"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "620 2184"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+680 620 2184"}
+      ]
+    },
+    {
+      "cc": "681",
+      "number": "805988431",
+      "result": [{"type": "REGION", "values": ["WF"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "805 98 84 31"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+681 805 98 84 31"}
+      ]
+    },
+    {
+      "cc": "682",
+      "number": "22372",
+      "result": [{"type": "REGION", "values": ["CK"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "22 372"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+682 22 372"}
+      ]
+    },
+    {
+      "cc": "683",
+      "number": "8884649",
+      "result": [{"type": "REGION", "values": ["NU"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "888 4649"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+683 888 4649"}
+      ]
+    },
+    {
+      "cc": "685",
+      "number": "8912287198",
+      "result": [{"type": "REGION", "values": ["WS"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "891 2287198"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+685 891 2287198"}
+      ]
+    },
+    {
+      "cc": "686",
+      "number": "63349715",
+      "result": [{"type": "REGION", "values": ["KI"]}],
+      "format": []
+    },
+    {
+      "cc": "687",
+      "number": "891621",
+      "result": [{"type": "REGION", "values": ["NC"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "89.16.21"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+687 89.16.21"}
+      ]
+    },
+    {
+      "cc": "688",
+      "number": "7055145",
+      "result": [{"type": "REGION", "values": ["TV"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "70 55145"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+688 70 55145"}
+      ]
+    },
+    {
+      "cc": "689",
+      "number": "40651922",
+      "result": [{"type": "REGION", "values": ["PF"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "40 65 19 22"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+689 40 65 19 22"}
+      ]
+    },
+    {
+      "cc": "690",
+      "number": "4133918",
+      "result": [{"type": "REGION", "values": ["TK"]}],
+      "format": []
+    },
+    {
+      "cc": "691",
+      "number": "9750699",
+      "result": [{"type": "REGION", "values": ["FM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "975 0699"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+691 975 0699"}
+      ]
+    },
+    {
+      "cc": "692",
+      "number": "4575404",
+      "result": [{"type": "REGION", "values": ["MH"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "457-5404"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+692 457-5404"}
+      ]
+    },
+    {
+      "cc": "7",
+      "number": "81089752882807",
+      "result": [{"type": "REGION", "values": ["KZ", "RU"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "8 (8108) 9752 882 807"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+7 8108 9752 882 807"}
+      ]
+    },
+    {
+      "cc": "7",
+      "number": "4115723544",
+      "result": [{"type": "REGION", "values": ["RU"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "8 (411) 572-35-44"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+7 411 572-35-44"}
+      ]
+    },
+    {
+      "cc": "800",
+      "number": "19511284",
+      "result": [{"type": "REGION", "values": ["001"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "1951 1284"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+800 1951 1284"}
+      ]
+    },
+    {
+      "cc": "81",
+      "number": "00669375408560582",
+      "result": [{"type": "REGION", "values": ["JP"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0066-937540-8560582"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+81 00669375408560582"}
+      ]
+    },
+    {
+      "cc": "82",
+      "number": "00798250842809",
+      "result": [{"type": "REGION", "values": ["KR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "00798 25 084 2809"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+82 00798250842809"}
+      ]
+    },
+    {
+      "cc": "84",
+      "number": "2273903045",
+      "result": [{"type": "REGION", "values": ["VN"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0227 3903 045"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+84 227 3903 045"}
+      ]
+    },
+    {
+      "cc": "850",
+      "number": "1916344097",
+      "result": [{"type": "REGION", "values": ["KP"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0191 634 4097"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+850 191 634 4097"}
+      ]
+    },
+    {
+      "cc": "852",
+      "number": "54247151",
+      "result": [{"type": "REGION", "values": ["HK"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "5424 7151"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+852 5424 7151"}
+      ]
+    },
+    {
+      "cc": "853",
+      "number": "82235261",
+      "result": [{"type": "REGION", "values": ["MO"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "8223 5261"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+853 8223 5261"}
+      ]
+    },
+    {
+      "cc": "855",
+      "number": "91916581",
+      "result": [{"type": "REGION", "values": ["KH"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "091 916 581"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+855 91 916 581"}
+      ]
+    },
+    {
+      "cc": "856",
+      "number": "2097154998",
+      "result": [{"type": "REGION", "values": ["LA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "020 97 154 998"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+856 20 97 154 998"}
+      ]
+    },
+    {
+      "cc": "86",
+      "number": "76959886411",
+      "result": [{"type": "REGION", "values": ["CN"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0769 5988 6411"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+86 769 5988 6411"}
+      ]
+    },
+    {
+      "cc": "870",
+      "number": "585842696",
+      "result": [{"type": "REGION", "values": ["001"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "585 842 696"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+870 585 842 696"}
+      ]
+    },
+    {
+      "cc": "878",
+      "number": "105751524408",
+      "result": [{"type": "REGION", "values": ["001"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "10 57515 24408"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+878 10 57515 24408"}
+      ]
+    },
+    {
+      "cc": "880",
+      "number": "1907777750",
+      "result": [{"type": "REGION", "values": ["BD"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "01907-777750"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+880 1907-777750"}
+      ]
+    },
+    {
+      "cc": "881",
+      "number": "646166123",
+      "result": [{"type": "REGION", "values": ["001"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "6 461 66123"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+881 6 461 66123"}
+      ]
+    },
+    {
+      "cc": "882",
+      "number": "508949233789",
+      "result": [{"type": "REGION", "values": ["001"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "50 89492 33789"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+882 50 89492 33789"}
+      ]
+    },
+    {
+      "cc": "883",
+      "number": "130777064667",
+      "result": [{"type": "REGION", "values": ["001"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "130 777 064667"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+883 130 777 064667"}
+      ]
+    },
+    {
+      "cc": "886",
+      "number": "7068792580",
+      "result": [{"type": "REGION", "values": ["TW"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "070 6879 2580"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+886 70 6879 2580"}
+      ]
+    },
+    {
+      "cc": "888",
+      "number": "44219894471",
+      "result": [{"type": "REGION", "values": ["001"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "442 198 94471"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+888 442 198 94471"}
+      ]
+    },
+    {
+      "cc": "90",
+      "number": "8009509870823",
+      "result": [{"type": "REGION", "values": ["TR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0800 950 9870823"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+90 800 950 9870823"}
+      ]
+    },
+    {
+      "cc": "91",
+      "number": "3374040210",
+      "result": [{"type": "REGION", "values": ["IN"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "033 7404 0210"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+91 33 7404 0210"}
+      ]
+    },
+    {
+      "cc": "92",
+      "number": "2249843935",
+      "result": [{"type": "REGION", "values": ["PK"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "(022) 49843935"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+92 22 49843935"}
+      ]
+    },
+    {
+      "cc": "93",
+      "number": "428281429",
+      "result": [{"type": "REGION", "values": ["AF"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "042 828 1429"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+93 42 828 1429"}
+      ]
+    },
+    {
+      "cc": "94",
+      "number": "719564190",
+      "result": [{"type": "REGION", "values": ["LK"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "071 956 4190"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+94 71 956 4190"}
+      ]
+    },
+    {
+      "cc": "95",
+      "number": "852499110",
+      "result": [{"type": "REGION", "values": ["MM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "085 249 9110"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+95 85 249 9110"}
+      ]
+    },
+    {
+      "cc": "960",
+      "number": "8006483001",
+      "result": [{"type": "REGION", "values": ["MV"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "800 648 3001"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+960 800 648 3001"}
+      ]
+    },
+    {
+      "cc": "961",
+      "number": "3165273",
+      "result": [{"type": "REGION", "values": ["LB"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "03 165 273"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+961 3 165 273"}
+      ]
+    },
+    {
+      "cc": "962",
+      "number": "795784144",
+      "result": [{"type": "REGION", "values": ["JO"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "07 9578 4144"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+962 7 9578 4144"}
+      ]
+    },
+    {
+      "cc": "963",
+      "number": "925189891",
+      "result": [{"type": "REGION", "values": ["SY"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0925 189 891"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+963 925 189 891"}
+      ]
+    },
+    {
+      "cc": "964",
+      "number": "7797224036",
+      "result": [{"type": "REGION", "values": ["IQ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0779 722 4036"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+964 779 722 4036"}
+      ]
+    },
+    {
+      "cc": "965",
+      "number": "93334410",
+      "result": [{"type": "REGION", "values": ["KW"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "9333 4410"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+965 9333 4410"}
+      ]
+    },
+    {
+      "cc": "966",
+      "number": "172599027",
+      "result": [{"type": "REGION", "values": ["SA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "017 259 9027"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+966 17 259 9027"}
+      ]
+    },
+    {
+      "cc": "967",
+      "number": "712048519",
+      "result": [{"type": "REGION", "values": ["YE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0712 048 519"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+967 712 048 519"}
+      ]
+    },
+    {
+      "cc": "968",
+      "number": "23560056",
+      "result": [{"type": "REGION", "values": ["OM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "23 560056"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+968 23 560056"}
+      ]
+    },
+    {
+      "cc": "970",
+      "number": "569622952",
+      "result": [{"type": "REGION", "values": ["PS"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0569 622 952"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+970 569 622 952"}
+      ]
+    },
+    {
+      "cc": "971",
+      "number": "800285904061",
+      "result": [{"type": "REGION", "values": ["AE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "800 285904061"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+971 800 285904061"}
+      ]
+    },
+    {
+      "cc": "972",
+      "number": "153276958949",
+      "result": [{"type": "REGION", "values": ["IL"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "153-27 695-8949"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+972 153-27 695-8949"}
+      ]
+    },
+    {
+      "cc": "973",
+      "number": "13117626",
+      "result": [{"type": "REGION", "values": ["BH"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "1311 7626"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+973 1311 7626"}
+      ]
+    },
+    {
+      "cc": "974",
+      "number": "30583475",
+      "result": [{"type": "REGION", "values": ["QA"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "3058 3475"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+974 3058 3475"}
+      ]
+    },
+    {
+      "cc": "975",
+      "number": "4518008",
+      "result": [{"type": "REGION", "values": ["BT"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "4 518 008"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+975 4 518 008"}
+      ]
+    },
+    {
+      "cc": "976",
+      "number": "2581951810",
+      "result": [{"type": "REGION", "values": ["MN"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "02581 951810"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+976 2581 951810"}
+      ]
+    },
+    {
+      "cc": "977",
+      "number": "9743786429",
+      "result": [{"type": "REGION", "values": ["NP"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "974-3786429"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+977 974-3786429"}
+      ]
+    },
+    {
+      "cc": "98",
+      "number": "8771469167",
+      "result": [{"type": "REGION", "values": ["IR"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "087 7146 9167"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+98 87 7146 9167"}
+      ]
+    },
+    {
+      "cc": "992",
+      "number": "961761419",
+      "result": [{"type": "REGION", "values": ["TJ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "96 176 1419"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+992 96 176 1419"}
+      ]
+    },
+    {
+      "cc": "993",
+      "number": "68380705",
+      "result": [{"type": "REGION", "values": ["TM"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "8 68 380705"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+993 68 380705"}
+      ]
+    },
+    {
+      "cc": "994",
+      "number": "504083167",
+      "result": [{"type": "REGION", "values": ["AZ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "050 408 31 67"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+994 50 408 31 67"}
+      ]
+    },
+    {
+      "cc": "995",
+      "number": "432475140",
+      "result": [{"type": "REGION", "values": ["GE"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0432 47 51 40"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+995 432 47 51 40"}
+      ]
+    },
+    {
+      "cc": "996",
+      "number": "518579070",
+      "result": [{"type": "REGION", "values": ["KG"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "0518 579 070"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+996 518 579 070"}
+      ]
+    },
+    {
+      "cc": "998",
+      "number": "882734155",
+      "result": [{"type": "REGION", "values": ["UZ"]}],
+      "format": [
+        {"type": "NATIONAL_FORMAT", "value": "8 88 273 41 55"},
+        {"type": "INTERNATIONAL_FORMAT", "value": "+998 88 273 41 55"}
+      ]
+    }
+  ]
+}
