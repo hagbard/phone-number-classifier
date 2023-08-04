@@ -30,8 +30,12 @@ export class PhoneNumberRegions<T> {
       let mainRegion = rawClassifier.getMainRegion(cc);
       let regions: string[] =
           [...rawClassifier.getValueMatcher(cc, "REGION").getPossibleValues()];
-      if (regions.length === 0) {
-        throw new Error(`Missing region data for calling code: ${cc}`);
+      // Note: Since region data is associated with ranges, and ranges can be restricted by
+      // configuration, it's possible to get a calling codes in which some or all of the original
+      // region code are missing. This is fine for classification, but this API promises to have
+      // the "main" region present in the list, so we make sure (if it's missing) to add it here.
+      if (!regions.includes(mainRegion)) {
+        regions.push(mainRegion);
       }
       // Region 001 is treated specially since it's the only region with more than one calling code
       // so it cannot be put into the calling code map. It's also not expected to ever appear with
@@ -42,14 +46,13 @@ export class PhoneNumberRegions<T> {
         if (hasWorldRegion) {
           throw new Error(`Region 001 must never appear with other region codes: ${regions}`);
         }
-        // Sort regions, and then move the main region to the front.
+        // Sort regions, and then move the main region to the front (if not already there).
         regions.sort();
         let idx = regions.indexOf(mainRegion);
-        if (idx === -1) {
-          throw new Error(`Error in region data; ${mainRegion} should be in: ${regions}`);
+        if (idx > 0) {
+          regions.splice(idx, 1);
+          regions.unshift(mainRegion);
         }
-        regions.splice(idx, 1);
-        regions.unshift(mainRegion);
       }
       // At this point, if (hasWorldRegion == true) it's the only region,
       // so we aren't dropping any other regions here.

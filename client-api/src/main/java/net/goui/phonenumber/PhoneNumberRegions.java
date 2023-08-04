@@ -1,11 +1,13 @@
 package net.goui.phonenumber;
 
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.Comparator.naturalOrder;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -25,21 +27,29 @@ public final class PhoneNumberRegions<T> {
     for (DigitSequence cc : rawClassifier.getSupportedCallingCodes()) {
       String mainRegion = rawClassifier.getMainRegion(cc);
       List<String> regions =
-          rawClassifier.getValueMatcher(cc, "REGION").getPossibleValues().asList();
-      checkState(!regions.isEmpty(), "Missing region data for calling code: %s", cc);
+          new ArrayList<>(rawClassifier.getValueMatcher(cc, "REGION").getPossibleValues());
+      // Note: Since region data is associated with ranges, and ranges can be restricted by
+      // configuration, it's possible to get a calling codes in which some or all of the original
+      // region code are missing. This is fine for classification, but this API promises to have
+      // the "main" region present in the list, so we make sure (if it's missing) to add it here.
+      if (!regions.contains(mainRegion)) {
+        regions.add(mainRegion);
+      }
       // Region 001 is treated specially since it's the only region with more than one calling code,
       // so it cannot be put into the calling code map. It's also not expected to ever appear with
       // any other region codes in the data.
       boolean hasWorldRegion = regions.contains("001");
       // We only need to do any work if there's more than one region for this calling code.
       if (regions.size() > 1) {
-        checkState(!hasWorldRegion, "Region 001 must never appear with other region codes: %s", regions);
-
-        // Sort regions, with the main region at the front.
-        List<String> orderedRegions = new ArrayList<>();
-        orderedRegions.add(mainRegion);
-        regions.stream().filter(r -> !r.equals(mainRegion)).sorted().forEach(orderedRegions::add);
-        regions = orderedRegions;
+        checkState(
+            !hasWorldRegion, "Region 001 must never appear with other region codes: %s", regions);
+        // Sort regions, and then move the main region to the front (if not already there).
+        regions.sort(naturalOrder());
+        int idx = regions.indexOf(mainRegion);
+        if (idx > 0) {
+          regions.remove(idx);
+          regions.add(0, mainRegion);
+        }
       }
       for (String regionString : regions) {
         T regionCode = converter.apply(regionString);
