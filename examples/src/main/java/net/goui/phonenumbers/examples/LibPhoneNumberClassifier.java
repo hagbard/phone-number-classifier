@@ -1,28 +1,54 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
+Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
 
- This program and the accompanying materials are made available under the terms of the
- Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
- Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
+This program and the accompanying materials are made available under the terms of the
+Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
+Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
 
- SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-package net.goui.phonenumbers.examples.libphonenumber;
+package net.goui.phonenumbers.examples;
 
 import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.INTERNATIONAL;
 import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.NATIONAL;
 
+import com.google.common.base.Ascii;
 import com.ibm.icu.util.Region;
 import net.goui.phonenumber.AbstractPhoneNumberClassifier;
 import net.goui.phonenumber.PhoneNumberFormatter;
+import net.goui.phonenumber.PhoneNumberRegions;
 import net.goui.phonenumber.metadata.RawClassifier;
 
 public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifier {
 
-  public static LibPhoneNumberClassifier load(SchemaVersion version, SchemaVersion... rest) {
+  /** Duplicates of the number types defined in the configuration file. */
+  public enum NumberType {
+    PREMIUM_RATE,
+    TOLL_FREE,
+    SHARED_COST,
+    FIXED_LINE,
+    MOBILE,
+    FIXED_LINE_OR_MOBILE,
+    PAGER,
+    PERSONAL_NUMBER,
+    VOIP,
+    UAN,
+    VOICEMAIL
+  }
+
+  /** Specifier for the available metadata versions. */
+  public enum MetadataVariant {
+    PRECISE,
+    COMPACT;
+  }
+
+  public static LibPhoneNumberClassifier load(MetadataVariant version) {
+    SchemaVersion schemaVersion =
+        SchemaVersion.of(
+            "goui.net/libphonenumber/examples/lpn/dfa/" + Ascii.toLowerCase(version.name()), 1);
     return new LibPhoneNumberClassifier(
-        AbstractPhoneNumberClassifier.loadRawClassifier(version, rest));
+        AbstractPhoneNumberClassifier.loadRawClassifier(schemaVersion));
   }
 
   private final SingleValuedMatcher<NumberType> typeMatcher =
@@ -31,6 +57,7 @@ public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifie
       forType("REGION", Region.class, Region::getInstance, Object::toString).matcher();
   private final PhoneNumberFormatter nationalFormatter = createFormatter(NATIONAL);
   private final PhoneNumberFormatter internationalFormatter = createFormatter(INTERNATIONAL);
+  private final PhoneNumberRegions<Region> regionInfo = createRegionInfo(Region::getInstance);
 
   private LibPhoneNumberClassifier(RawClassifier rawClassifier) {
     super(rawClassifier);
@@ -54,5 +81,9 @@ public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifie
 
   public PhoneNumberFormatter international() {
     return internationalFormatter;
+  }
+
+  public PhoneNumberRegions<Region> getRegionInfo() {
+    return regionInfo;
   }
 }

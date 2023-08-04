@@ -307,6 +307,7 @@ final class MetadataSimplifier {
         BigInteger.valueOf(range.size())
             .multiply(BigInteger.valueOf(100 + maxFalsePositivePercent))
             .divide(BigInteger.valueOf(100))
+            .min(BigInteger.valueOf(Long.MAX_VALUE))
             .longValueExact();
     long lastSize;
     do {

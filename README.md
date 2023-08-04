@@ -7,15 +7,15 @@ This is an in-development tool and should not be used by anyone yet.
 ### With Bazel installed:
 
 ```shell
-$ bazel build ...
-$ bazel test ...
+bazel build ...
+bazel test ...
 ```
 
 ### With Maven installed:
 
 ```shell
-$ mvn package
-$ mvn test
+mvn install -DskipTests
+mvn test
 ```
 
 ## To build JavaScript code (from `<root>/javascript/` directory)
@@ -23,14 +23,14 @@ $ mvn test
 ### First time only:
 
 ```shell
-$ yarn
+yarn
 ```
 
 ### Subsequent build/test:
 
 ```shell
-$ tsc -p .
-$ yarn jest dist/tests/index.test.js
+tsc -p .
+yarn jest dist/tests/index.test.js
 ```
 
 Obviously you need Yarn and the TypeScript compiler (tsc) installed first.

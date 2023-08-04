@@ -1,8 +1,15 @@
 # proto-file:
 # proto-message: MetadataConfigProto
 
-# A configuration for classifiers which matches the semantics of libphonenumber's TYPE and
-# REGION information.
+# A configuration for classifiers which matches the semantics of Libphonenumber's TYPE and
+# REGION information with exactly the same precision as Libphonenumber.
+#
+# Data size:
+# Protocol buffer: 150kB (93kB zipped)
+# Json:            234kB (111kB zipped)
+#
+# For comparison, note that Libphonenumber's data, in its binary form (protocol buffers), is
+# 225kB in size, and Libphonenumber provides no mechanism for simplifying the data.
 version {
   # The data version is tied to how the metadata is packaged. This will change as the
   # metadata encoding changes, but that should be rare.
@@ -12,7 +19,7 @@ version {
   # and must be explicitly understood by any library using it. Many alternative schema versions
   # can exist any it is expected that anyone providing a fundamentally new schema will also
   # provide client code to handle it.
-  data_schema_uri: "goui.net/libphonenumber/dfa/precise"
+  data_schema_uri: "goui.net/phonenumbers/examples/lpn/dfa/precise"
   data_schema_version: 1
 }
 

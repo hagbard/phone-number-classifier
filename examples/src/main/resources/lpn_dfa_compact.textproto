@@ -3,6 +3,10 @@
 
 # A configuration for classifiers which matches the semantics of libphonenumber's TYPE and
 # REGION information, with simplified (smaller) data.
+#
+# Data size:
+# Protocol buffer: 104kB (63.5kB zipped)
+# Json:            173kB (73kB zipped)
 version {
   # The data version is tied to how the metadata is packaged. This will change as the
   # metadata encoding changes, but that should be rare.
@@ -12,7 +16,7 @@ version {
   # and must be explicitly understood by any library using it. Many alternative schema versions
   # can exist any it is expected that anyone providing a fundamentally new schema will also
   # provide client code to handle it.
-  data_schema_uri: "goui.net/libphonenumber/dfa/compact"
+  data_schema_uri: "goui.net/phonenumbers/examples/lpn/dfa/compact"
   data_schema_version: 1
 }
 # Encode metadata for use by the finite state "digit sequence matcher". This is smaller and
@@ -25,20 +29,12 @@ matcher_type: DIGIT_SEQUENCE_MATCHER
 #
 # This value can be any non-negative number (e.g. 1000%, 10000%), but it is expected that values
 # between 0% and 500% will be the most common.
-default_maximum_false_positive_percent: 100
+default_maximum_false_positive_percent: 500
 
 # When simplifying ranges, do not reduce range prefix length below this value (even if that means
 # not reaching the maximum false positive limit).
 # E.g. Do not simplify to "7xxx_xxx_xxx" if the ranges are really "7[2-6]xx_xxx_xxx".
 default_minimum_prefix_length: 3
-
-# Specific calling codes can be given overrides for simplification limits as needed.
-override {
-  # India (calling code 91) has very complex data, so be less aggressive about simplification.
-  calling_code: 91
-  maximum_false_positive_percent: 50
-  minimum_prefix_length: 3
-}
 
 # Define which formats are to be supported.
 format: NATIONAL
