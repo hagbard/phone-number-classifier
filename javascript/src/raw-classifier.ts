@@ -25,7 +25,7 @@ export enum ReturnType {
 
 export interface ValueMatcher {
   matchValues(nationalNumber: DigitSequence, ...values: string[]): MatchResult;
-  getPossibleValues(): string[];
+  getPossibleValues(): ReadonlyArray<string>;
 }
 
 export class RawClassifier {
