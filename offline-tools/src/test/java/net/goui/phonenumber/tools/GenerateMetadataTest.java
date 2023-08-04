@@ -16,7 +16,6 @@ import static net.goui.phonenumber.tools.ClassifierType.VALIDITY;
 
 import com.google.i18n.phonenumbers.metadata.RangeSpecification;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
-import com.google.i18n.phonenumbers.metadata.i18n.PhoneRegion;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 import java.util.Arrays;

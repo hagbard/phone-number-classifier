@@ -24,7 +24,7 @@ java_library(
     name = "tests",
     testonly = 1,
     srcs = glob(["src/test/java/**/*.java"]),
-    resources = ["src/test/resources/lpn_golden_data.json"],
+    resources = glob(["src/test/resources/*.json"]),
     deps = [
         ":examples",
         "//client-api:phonenumbers",

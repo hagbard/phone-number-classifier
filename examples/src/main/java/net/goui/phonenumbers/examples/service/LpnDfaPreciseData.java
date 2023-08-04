@@ -16,8 +16,10 @@ import net.goui.phonenumber.metadata.VersionInfo;
 import net.goui.phonenumber.service.proto.AbstractResourceClassifierService;
 
 @AutoService(ClassifierService.class)
-public class PreciseData extends AbstractResourceClassifierService {
-  public PreciseData() {
-    super(VersionInfo.of("goui.net/libphonenumber/dfa/precise", 1, 1, 0), "/lpn_dfa_precise.pb");
+public class LpnDfaPreciseData extends AbstractResourceClassifierService {
+  public LpnDfaPreciseData() {
+    super(
+        VersionInfo.of("goui.net/phonenumbers/examples/lpn/dfa/precise", 1, 1, 0),
+        "/lpn_dfa_precise.pb");
   }
 }

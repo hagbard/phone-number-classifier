@@ -1,0 +1,19 @@
+# proto-file:
+# proto-message: MetadataConfigProto
+
+# A minimal classifier which only supports validation, and aggressively simplifies number ranges.
+# This data will give a lot of false-positive matches (e.g. matching an invalid number), but will
+# never give false-negative matches (e.g. if a number is valid, it will be matched).
+#
+# Data size:
+# Protocol buffer: 8.5kB (5kB zipped)
+# Json:            16.5kB (5kB zipped)
+version {
+  major_version: 1
+  minor_version: 0
+  data_schema_uri: "goui.net/phonenumbers/examples/smallest"
+  data_schema_version: 1
+}
+matcher_type: DIGIT_SEQUENCE_MATCHER
+default_maximum_false_positive_percent: 10000000
+default_minimum_prefix_length: 1
