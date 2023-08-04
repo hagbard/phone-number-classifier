@@ -28,18 +28,37 @@ export class PhoneNumberRegions<T> {
     this.callingCodeMap = new Map();
     for (let cc of rawClassifier.getSupportedCallingCodes()) {
       let mainRegion = rawClassifier.getMainRegion(cc);
-      let regionCodes: string[] =
-          rawClassifier.getValueMatcher(cc, "REGION").getPossibleValues().sort();
-      let idx = regionCodes.indexOf(mainRegion);
-      if (idx === -1) {
-        throw new Error(`Error in region data; ${mainRegion} should be in: ${regionCodes}`);
+      let regions: string[] =
+          [...rawClassifier.getValueMatcher(cc, "REGION").getPossibleValues()];
+      if (regions.length === 0) {
+        throw new Error(`Missing region data for calling code: ${cc}`);
       }
-      regionCodes.splice(idx, 1);
-      regionCodes.unshift(mainRegion);
-      this.regionCodeMap.set(cc.toString(), regionCodes.map(s => this.converter.fromString(s)));
-      for (let r of regionCodes) {
-        this.callingCodeMap.set(r, cc);
+      // Region 001 is treated specially since it's the only region with more than one calling code
+      // so it cannot be put into the calling code map. It's also not expected to ever appear with
+      // any other region codes in the data.
+      let hasWorldRegion: boolean = regions.includes("001");
+      // We only need to do any work if there's more than one region for this calling code.
+      if (regions.length > 1) {
+        if (hasWorldRegion) {
+          throw new Error(`Region 001 must never appear with other region codes: ${regions}`);
+        }
+        // Sort regions, and then move the main region to the front.
+        regions.sort();
+        let idx = regions.indexOf(mainRegion);
+        if (idx === -1) {
+          throw new Error(`Error in region data; ${mainRegion} should be in: ${regions}`);
+        }
+        regions.splice(idx, 1);
+        regions.unshift(mainRegion);
       }
+      // At this point, if (hasWorldRegion == true) it's the only region,
+      // so we aren't dropping any other regions here.
+      if (!hasWorldRegion) {
+        for (let r of regions) {
+          this.callingCodeMap.set(r, cc);
+        }
+      }
+      this.regionCodeMap.set(cc.toString(), regions.map(s => this.converter.fromString(s)));
     }
   }
 

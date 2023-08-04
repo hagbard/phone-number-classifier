@@ -23,20 +23,30 @@ public final class PhoneNumberRegions<T> {
     ImmutableListMultimap.Builder<DigitSequence, T> regionCodeMap = ImmutableListMultimap.builder();
     ImmutableMap.Builder<T, DigitSequence> callingCodeMap = ImmutableMap.builder();
     for (DigitSequence cc : rawClassifier.getSupportedCallingCodes()) {
-      List<String> regions = new ArrayList<>();
       String mainRegion = rawClassifier.getMainRegion(cc);
-      regions.add(mainRegion);
-      rawClassifier.getValueMatcher(cc, "REGION").getPossibleValues().stream()
-          .sorted()
-          .filter(r -> !r.equals(mainRegion))
-          .forEach(regions::add);
-      checkState(regions.size() == 1 || !regions.contains("001"),
-          "World region 001 must never appear with other region codes: %s", regions);
+      List<String> regions =
+          rawClassifier.getValueMatcher(cc, "REGION").getPossibleValues().asList();
+      checkState(!regions.isEmpty(), "Missing region data for calling code: %s", cc);
+      // Region 001 is treated specially since it's the only region with more than one calling code,
+      // so it cannot be put into the calling code map. It's also not expected to ever appear with
+      // any other region codes in the data.
+      boolean hasWorldRegion = regions.contains("001");
+      // We only need to do any work if there's more than one region for this calling code.
+      if (regions.size() > 1) {
+        checkState(!hasWorldRegion, "Region 001 must never appear with other region codes: %s", regions);
+
+        // Sort regions, with the main region at the front.
+        List<String> orderedRegions = new ArrayList<>();
+        orderedRegions.add(mainRegion);
+        regions.stream().filter(r -> !r.equals(mainRegion)).sorted().forEach(orderedRegions::add);
+        regions = orderedRegions;
+      }
       for (String regionString : regions) {
         T regionCode = converter.apply(regionString);
         regionCodeMap.put(cc, regionCode);
-        // The world region has more than one calling code so cannot be part of a single valued map.
-        if (!regionString.equals("001")) {
+        // At this point, if (hasWorldRegion == true) it's the only region,
+        // so we aren't dropping any other regions here.
+        if (!hasWorldRegion) {
           callingCodeMap.put(regionCode, cc);
         }
       }
