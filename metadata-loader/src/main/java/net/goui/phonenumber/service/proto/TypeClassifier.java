@@ -22,7 +22,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.MatchResult;
 import net.goui.phonenumber.metadata.RawClassifier.ValueMatcher;
