@@ -1,68 +1,59 @@
 package net.goui.phonenumber;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static java.util.Comparator.naturalOrder;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
 import java.util.Optional;
 import java.util.function.Function;
+import net.goui.phonenumber.metadata.ParserData;
 import net.goui.phonenumber.metadata.RawClassifier;
 
-public final class PhoneNumberRegions<T> {
+public final class PhoneNumberParser<T> {
   private final ImmutableListMultimap<DigitSequence, T> regionCodeMap;
   private final ImmutableMap<T, DigitSequence> callingCodeMap;
+  private final ImmutableSetMultimap<DigitSequence, DigitSequence> nationalPrefixMap;
+  private final ImmutableSet<DigitSequence> nationalPrefixOptional;
 
-  public PhoneNumberRegions(RawClassifier rawClassifier, Function<String, T> converter) {
-    checkState(
-        rawClassifier.getSupportedNumberTypes().contains("REGION"),
-        "Region information not present in underlying metadata");
-
+  public PhoneNumberParser(RawClassifier rawClassifier, Function<String, T> converter) {
+    T worldRegion = checkNotNull(converter.apply("001"));
     ImmutableListMultimap.Builder<DigitSequence, T> regionCodeMap = ImmutableListMultimap.builder();
     ImmutableMap.Builder<T, DigitSequence> callingCodeMap = ImmutableMap.builder();
+    ImmutableSetMultimap.Builder<DigitSequence, DigitSequence> nationalPrefixMap =
+        ImmutableSetMultimap.builder();
+    ImmutableSet.Builder<DigitSequence> nationalPrefixOptional = ImmutableSet.builder();
     for (DigitSequence cc : rawClassifier.getSupportedCallingCodes()) {
-      String mainRegion = rawClassifier.getMainRegion(cc);
-      List<String> regions =
-          new ArrayList<>(rawClassifier.getValueMatcher(cc, "REGION").getPossibleValues());
-      // Note: Since region data is associated with ranges, and ranges can be restricted by
-      // configuration, it's possible to get a calling codes in which some or all of the original
-      // region code are missing. This is fine for classification, but this API promises to have
-      // the "main" region present in the list, so we make sure (if it's missing) to add it here.
-      if (!regions.contains(mainRegion)) {
-        regions.add(mainRegion);
-      }
+      ParserData parserData = rawClassifier.getParserData(cc);
+      checkState(parserData != null, "Parser data unavailable for: " + cc);
+      ImmutableSet<T> regions =
+          parserData.getRegions().stream().map(converter).collect(toImmutableSet());
+
       // Region 001 is treated specially since it's the only region with more than one calling code,
-      // so it cannot be put into the calling code map. It's also not expected to ever appear with
-      // any other region codes in the data.
-      boolean hasWorldRegion = regions.contains("001");
-      // We only need to do any work if there's more than one region for this calling code.
-      if (regions.size() > 1) {
-        checkState(
-            !hasWorldRegion, "Region 001 must never appear with other region codes: %s", regions);
-        // Sort regions, and then move the main region to the front (if not already there).
-        regions.sort(naturalOrder());
-        int idx = regions.indexOf(mainRegion);
-        if (idx > 0) {
-          regions.remove(idx);
-          regions.add(0, mainRegion);
-        }
+      // so it cannot be put into the calling code map. It cannot also appear with other regions.
+      // region codes.
+      if (!regions.contains(worldRegion)) {
+        regions.forEach(r -> callingCodeMap.put(r, cc));
+      } else if (regions.size() > 1) {
+        throw new Error("Region 001 must never appear with other region codes: " + regions);
       }
-      for (String regionString : regions) {
-        T regionCode = converter.apply(regionString);
-        regionCodeMap.put(cc, regionCode);
-        // At this point, if (hasWorldRegion == true) it's the only region,
-        // so we aren't dropping any other regions here.
-        if (!hasWorldRegion) {
-          callingCodeMap.put(regionCode, cc);
+      regionCodeMap.putAll(cc, regions);
+
+      if (!parserData.getNationalPrefixes().isEmpty()) {
+        nationalPrefixMap.putAll(cc, parserData.getNationalPrefixes());
+        if (parserData.isNationalPrefixOptional()) {
+          nationalPrefixOptional.add(cc);
         }
       }
     }
     this.regionCodeMap = regionCodeMap.build();
     this.callingCodeMap = callingCodeMap.buildOrThrow();
+    this.nationalPrefixMap = nationalPrefixMap.build();
+    this.nationalPrefixOptional = nationalPrefixOptional.build();
   }
 
   /**
@@ -95,5 +86,13 @@ public final class PhoneNumberRegions<T> {
    */
   public Optional<DigitSequence> getCallingCode(T region) {
     return Optional.ofNullable(callingCodeMap.get(region));
+  }
+
+  public ImmutableSet<DigitSequence> getNationalPrefixes(DigitSequence callingCode) {
+    return nationalPrefixMap.get(callingCode);
+  }
+
+  public boolean isNationalPrefixOptional(DigitSequence callingCode) {
+    return nationalPrefixOptional.contains(callingCode);
   }
 }

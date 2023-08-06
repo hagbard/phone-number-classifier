@@ -16,7 +16,7 @@ import {
     DigitSequence,
     PhoneNumberFormatter,
     FormatType,
-    PhoneNumberRegions,
+    PhoneNumberParser,
     MatchResult } from "../src/index";
 import { RawClassifier } from "../src/internal";
 import { Converter } from "../src/converter";
@@ -42,7 +42,7 @@ class TestClassifier extends AbstractPhoneNumberClassifier {
   private readonly regionMatcher: Matcher<string>;
   private readonly nationalFormatter: PhoneNumberFormatter;
   private readonly internationalFormatter: PhoneNumberFormatter;
-  readonly regionInfo: PhoneNumberRegions<string>;
+  private readonly parser: PhoneNumberParser<string>;
 
   constructor(path: string) {
     super(fs.readFileSync(path, { encoding: "utf8", flag: "r" }));
@@ -52,15 +52,11 @@ class TestClassifier extends AbstractPhoneNumberClassifier {
     this.regionMatcher = super.forStrings("REGION").matcher();
     this.nationalFormatter = super.createFormatter(FormatType.NATIONAL);
     this.internationalFormatter = super.createFormatter(FormatType.INTERNATIONAL);
-    this.regionInfo = super.createRegionInfo(Converter.identity());
+    this.parser = super.createParser(Converter.identity());
   }
 
   rawClassifierForTests(): RawClassifier {
     return super.getRawClassifier();
-  }
-
-  getNationalPrefixes(callingCode: DigitSequence): DigitSequence[] {
-    return this.rawClassifierForTests().getNationalPrefixes(callingCode);
   }
 
   formatForTests(cc: DigitSequence, nn: DigitSequence, type: string): string {
@@ -87,8 +83,8 @@ class TestClassifier extends AbstractPhoneNumberClassifier {
     return this.internationalFormatter.format(number);
   }
 
-  getMainRegion(callingCode: DigitSequence): string {
-    return this.rawClassifierForTests().getMainRegion(callingCode);
+  getParser(): PhoneNumberParser<string> {
+    return this.parser;
   }
 }
 
@@ -181,17 +177,6 @@ describe("AbstractPhoneNumberClassifier", () => {
       .toEqual(new Set(["GB", "JE"]));
   });
 
-  test('testGetMainRegion', () => {
-    expect(pnc.getMainRegion(seq("1"))).toEqual("US");
-    expect(pnc.getMainRegion(seq("44"))).toEqual("GB");
-  });
-
-  test('testGetNationalPrefixes', () => {
-    expect(pnc.getNationalPrefixes(seq("1"))).toEqual([seq("1")]);
-    expect(pnc.getNationalPrefixes(seq("44"))).toEqual([seq("0")]);
-    expect(pnc.getNationalPrefixes(seq("375"))).toEqual([seq("8"), seq("0"), seq("80")]);
-  });
-
   test('testGetExampleNumber', () => {
     let cc = seq("44");
     let exampleNumber: PhoneNumber|null = pnc.getExampleNumber(cc);
@@ -226,23 +211,25 @@ describe("PhoneNumberFormatter", () => {
   });
 });
 
-describe("PhoneNumberRegions", () => {
-  test('testMainRegion', () => {
-    expect(pnc.getMainRegion(seq("1"))).toEqual("US");
-    expect(pnc.getMainRegion(seq("44"))).toEqual("GB");
-  });
+describe("PhoneNumberParser", () => {
   test('testRegions', () => {
-    expect(pnc.regionInfo.getRegions(seq("1"))).toEqual([
+    expect(pnc.getParser().getRegions(seq("1"))).toEqual([
         "US", "AG", "AI", "AS", "BB", "BM", "BS", "CA", "DM", "DO", "GD", "GU",
         "JM", "KN", "KY", "LC", "MP", "MS", "PR", "SX", "TC", "TT", "VC", "VG", "VI"]);
-    expect(pnc.regionInfo.getRegions(seq("44"))).toEqual(["GB", "GG", "IM", "JE"]);
+    expect(pnc.getParser().getRegions(seq("44"))).toEqual(["GB", "GG", "IM", "JE"]);
   });
   test('testCallingCode', () => {
-    expect(pnc.regionInfo.getCallingCode("US")).toEqual(seq("1"));
-    expect(pnc.regionInfo.getCallingCode("CA")).toEqual(seq("1"));
-    expect(pnc.regionInfo.getCallingCode("GB")).toEqual(seq("44"));
-    expect(pnc.regionInfo.getCallingCode("JE")).toEqual(seq("44"));
+    expect(pnc.getParser().getCallingCode("US")).toEqual(seq("1"));
+    expect(pnc.getParser().getCallingCode("CA")).toEqual(seq("1"));
+    expect(pnc.getParser().getCallingCode("GB")).toEqual(seq("44"));
+    expect(pnc.getParser().getCallingCode("JE")).toEqual(seq("44"));
   });
+  test('testGetNationalPrefixes', () => {
+    expect(pnc.getParser().getNationalPrefixes(seq("1"))).toEqual([seq("1")]);
+    expect(pnc.getParser().getNationalPrefixes(seq("44"))).toEqual([seq("0")]);
+    expect(pnc.getParser().getNationalPrefixes(seq("375"))).toEqual([seq("8"), seq("0"), seq("80")]);
+  });
+
 });
 
 describe("GoldenDataTest", () => {

@@ -206,11 +206,8 @@ public class Analyzer {
         field("values", jsArray(rangeMap.getClassifier(type).classify(nn), JSAPI::str)));
   }
 
-  private static String getPrimaryRegion(DigitSequence cc, DigitSequence nn, Metadata metadata) {
-    ImmutableSet<String> regions =
-        metadata.getRangeMap(cc).getClassifier(ClassifierType.REGION).classify(nn);
-    checkArgument(!regions.isEmpty(), "example numbers should classify to regions: +%s%s", cc, nn);
-    return regions.asList().get(0);
+  private static String getPrimaryRegion(DigitSequence cc) {
+    return PHONE_NUMBER_UTIL.getRegionCodeForCountryCode(Integer.parseUnsignedInt(cc.toString()));
   }
 
   private static JsObject format(
@@ -222,7 +219,7 @@ public class Analyzer {
       return null;
     }
 
-    String region = getPrimaryRegion(cc, nn, metadata);
+    String region = getPrimaryRegion(cc);
     DigitSequence np = getNationalPrefix(metadata, cc);
     Optional<PhoneNumber> optLpn = parseNationalNumber(cc, np.toString() + nn.toString(), region);
     if (optLpn.isEmpty()) {

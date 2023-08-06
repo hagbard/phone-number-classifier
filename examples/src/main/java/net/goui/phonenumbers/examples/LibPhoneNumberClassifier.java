@@ -17,7 +17,7 @@ import com.google.common.base.Ascii;
 import com.ibm.icu.util.Region;
 import net.goui.phonenumber.AbstractPhoneNumberClassifier;
 import net.goui.phonenumber.PhoneNumberFormatter;
-import net.goui.phonenumber.PhoneNumberRegions;
+import net.goui.phonenumber.PhoneNumberParser;
 import net.goui.phonenumber.metadata.RawClassifier;
 
 public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifier {
@@ -57,7 +57,7 @@ public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifie
       forType("REGION", Region.class, Region::getInstance, Object::toString).matcher();
   private final PhoneNumberFormatter nationalFormatter = createFormatter(NATIONAL);
   private final PhoneNumberFormatter internationalFormatter = createFormatter(INTERNATIONAL);
-  private final PhoneNumberRegions<Region> regionInfo = createRegionInfo(Region::getInstance);
+  private final PhoneNumberParser<Region> regionInfo = createParser(Region::getInstance);
 
   private LibPhoneNumberClassifier(RawClassifier rawClassifier) {
     super(rawClassifier);
@@ -83,7 +83,7 @@ public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifie
     return internationalFormatter;
   }
 
-  public PhoneNumberRegions<Region> getRegionInfo() {
+  public PhoneNumberParser<Region> getRegionInfo() {
     return regionInfo;
   }
 }

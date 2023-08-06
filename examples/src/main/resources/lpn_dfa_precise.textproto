@@ -5,8 +5,8 @@
 # REGION information with exactly the same precision as Libphonenumber.
 #
 # Data size:
-# Protocol buffer: 150kB (93kB zipped)
-# Json:            234kB (111kB zipped)
+# Protocol buffer: 151kB (93kB zipped)
+# Json:            238kB (111kB zipped)
 #
 # For comparison, note that Libphonenumber's data, in its binary form (protocol buffers), is
 # 225kB in size, and Libphonenumber provides no mechanism for simplifying the data.

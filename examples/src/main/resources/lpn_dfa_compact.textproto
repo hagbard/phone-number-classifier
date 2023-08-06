@@ -5,8 +5,8 @@
 # REGION information, with simplified (smaller) data.
 #
 # Data size:
-# Protocol buffer: 104kB (63.5kB zipped)
-# Json:            173kB (73kB zipped)
+# Protocol buffer: 105kB (63.5kB zipped)
+# Json:            176kB (72.5kB zipped)
 version {
   # The data version is tied to how the metadata is packaged. This will change as the
   # metadata encoding changes, but that should be rare.

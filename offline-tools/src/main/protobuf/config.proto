@@ -152,12 +152,22 @@ message MetadataConfigProto {
   // the "false positive" limit.
   int32 default_minimum_prefix_length = 8;
 
+  // If true, additional information necessary to implement phone number parsing will not be added
+  // to the metadata. This is included by default since it's a relatively small amount of data for
+  // a commonly used feature, but it can be excluded in cases where metadata size is critical.
+  bool exclude_parser_metadata = 9;
+
+  // If true, example numbers will not be added to the metadata. This is included by default since
+  // it's a relatively small amount of data for a commonly used feature, but it can be excluded in
+  // cases where metadata size is critical.
+  bool exclude_example_numbers = 10;
+
   // Available formats. A supplier may choose to provide matcher metadata with one or more of these
   // formats. Adding a single format is likely to increase metadata size noticeably, but adding a
   // second format is a minimal additional overhead.
   //
   // Note that E.164 formatting is always available in the client API (e.g. "+441923123456").
-  repeated NumberFormat format = 9;
+  repeated NumberFormat format = 11;
   enum NumberFormat {
     NUMBER_FORMAT_UNKNOWN = 0;
     // Enables formatting phone numbers for international dialling from outside the region (e.g.
@@ -202,7 +212,7 @@ message MetadataConfigProto {
   // }
   // ----------------------------------------------------------------------------------------------
   //
-  repeated ClassifierConfigProto classifier = 10;
+  repeated ClassifierConfigProto classifier = 12;
   message ClassifierConfigProto {
     string type_name = 1;
     CustomClassifierProto custom = 2;
@@ -258,7 +268,7 @@ message MetadataConfigProto {
   }
 
   // Overrides for specific calling codes to control the simplification in a fine-grained manner.
-  repeated ConfigOverrideProto override = 11;
+  repeated ConfigOverrideProto override = 13;
   message ConfigOverrideProto {
     // A non-empty list of calling codes to which this overridden configuration should apply.
     repeated uint32 calling_code = 1;

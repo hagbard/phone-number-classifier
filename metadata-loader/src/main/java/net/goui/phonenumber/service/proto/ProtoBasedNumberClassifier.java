@@ -27,6 +27,7 @@ import java.util.stream.IntStream;
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.LengthResult;
 import net.goui.phonenumber.MatchResult;
+import net.goui.phonenumber.metadata.ParserData;
 import net.goui.phonenumber.metadata.RawClassifier;
 import net.goui.phonenumber.metadata.VersionInfo;
 import net.goui.phonenumber.proto.Metadata;
@@ -97,18 +98,13 @@ final class ProtoBasedNumberClassifier implements RawClassifier {
   }
 
   @Override
-  public ImmutableList<DigitSequence> getNationalPrefixes(DigitSequence callingCode) {
-    return getClassifier(callingCode).getNationalPrefixes();
+  public ParserData getParserData(DigitSequence callingCode) {
+    return getClassifier(callingCode).getParserData();
   }
 
   @Override
   public Optional<DigitSequence> getExampleNationalNumber(DigitSequence callingCode) {
     return getClassifier(callingCode).getExampleNumber();
-  }
-
-  @Override
-  public String getMainRegion(DigitSequence callingCode) {
-    return getClassifier(callingCode).getMainRegion();
   }
 
   @Override

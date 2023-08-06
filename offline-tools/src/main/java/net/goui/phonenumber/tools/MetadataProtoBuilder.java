@@ -10,8 +10,13 @@
 
 package net.goui.phonenumber.tools;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema.EXTRA_REGIONS;
+import static com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema.MAIN_REGION;
+import static com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema.NATIONAL_PREFIX;
+import static com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema.NATIONAL_PREFIX_OPTIONAL;
 import static java.util.stream.Collectors.joining;
 import static net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.MatcherType.DIGIT_SEQUENCE_MATCHER;
 import static net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.MatcherType.REGULAR_EXPRESSION;
@@ -24,8 +29,10 @@ import com.google.common.primitives.Bytes;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
 import com.google.i18n.phonenumbers.metadata.finitestatematcher.compiler.MatcherCompiler;
+import com.google.i18n.phonenumbers.metadata.i18n.PhoneRegion;
 import com.google.i18n.phonenumbers.metadata.proto.Types.ValidNumberType;
 import com.google.i18n.phonenumbers.metadata.regex.RegexGenerator;
+import com.google.i18n.phonenumbers.metadata.table.MultiValue;
 import com.google.protobuf.ByteString;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -67,6 +74,9 @@ final class MetadataProtoBuilder {
 
   private final MetadataConfig config;
   private final LinkedHashMap<String, Integer> tokens = new LinkedHashMap<>();
+  // Map of builders for each calling code. This permits metadata to be built in multiple passes.
+  private final LinkedHashMap<DigitSequence, CallingCodeProto.Builder> callingCodeDataMap =
+      new LinkedHashMap<>();
 
   private MetadataProtoBuilder(MetadataConfig config) {
     this.config = config;
@@ -74,13 +84,37 @@ final class MetadataProtoBuilder {
     tokenize("");
   }
 
+  /** Tokenizes a string to allow sharing of values throughout the proto. */
   private int tokenize(String string) {
     return tokens.computeIfAbsent(string, s -> tokens.size());
   }
 
+  /** Sets up a builder for every calling code to be modified in successive passes. */
+  private void addCallingCodeProtos(MetadataProto.Builder outputProto, Metadata metadata) {
+    for (DigitSequence cc : metadata.getAvailableCallingCodes()) {
+      callingCodeDataMap.put(cc, outputProto.addCallingCodeDataBuilder());
+    }
+  }
+
+  /** Returns the build for modification during a pass. */
+  private CallingCodeProto.Builder callingCodeProto(DigitSequence cc) {
+    return checkNotNull(callingCodeDataMap.get(cc));
+  }
+
   private MetadataProto buildMetadata(Metadata metadata) {
     MetadataProto.Builder outputProto = MetadataProto.newBuilder();
+    addCallingCodeProtos(outputProto, metadata);
     outputProto.setVersion(config.getVersion());
+
+    // To ensure contiguous indices for region codes, this MUST come first. All region codes
+    // must be tokenized before anything else (which is why there are multiple passes to
+    // populate the builders).
+    if (config.includeParserInfo()) {
+      addParserData(metadata);
+    }
+    if (config.includeExampleNumbers()) {
+      addExampleNumbers(metadata);
+    }
 
     metadata.getTypes().stream()
         .map(ClassifierType::id)
@@ -90,30 +124,11 @@ final class MetadataProtoBuilder {
     Map<Integer, Boolean> singleValuedTypes = new HashMap<>();
     Map<Integer, Boolean> classifierOnlyTypes = new HashMap<>();
     for (DigitSequence cc : metadata.getAvailableCallingCodes()) {
-      CallingCodeProto.Builder callingCodeData = outputProto.addCallingCodeDataBuilder();
+      CallingCodeProto.Builder callingCodeData = callingCodeProto(cc);
       callingCodeData.setCallingCode(Integer.parseInt(cc.toString()));
 
       RangeMap rangeMap = metadata.getRangeMap(cc);
       RangeTree allRanges = rangeMap.getAllRanges();
-
-      callingCodeData.setPrimaryRegion(tokenize(rangeMap.getMainRegion().toString()));
-      rangeMap.getNationalPrefixes().stream()
-          .map(Object::toString)
-          .map(this::tokenize)
-          .forEach(callingCodeData::addNationalPrefix);
-
-      if (!rangeMap.getExampleNumbers().isEmpty()) {
-        DigitSequence exampleNumber =
-            PRIORITY_EXAMPLE_TYPES.stream()
-                .map(rangeMap.getExampleNumbers()::get)
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(rangeMap.getExampleNumbers().values().iterator().next());
-        callingCodeData.setExampleNumber(exampleNumber.toString());
-      } else {
-        logger.atWarning().log("[cc=%s] No available example number", cc);
-      }
-
       Map<RangeTree, Integer> rangesMap = new LinkedHashMap<>();
 
       // Adds shared matcher data, returning its index.
@@ -166,8 +181,65 @@ final class MetadataProtoBuilder {
         .map(Map.Entry::getKey)
         .sorted()
         .forEach(outputProto::addClassifierOnlyType);
+
     outputProto.addAllToken(tokens.keySet());
     return outputProto.build();
+  }
+
+  private void addParserData(Metadata metadata) {
+    for (DigitSequence cc : metadata.getAvailableCallingCodes()) {
+      CallingCodeProto.Builder callingCodeData = callingCodeProto(cc);
+      String mainRegion =
+          metadata
+              .root()
+              .get(cc, MAIN_REGION)
+              .map(Object::toString)
+              .orElseThrow(() -> new IllegalStateException("Missing main region for: " + cc));
+      callingCodeData.setMainRegion(tokenize(mainRegion));
+      ImmutableSet<PhoneRegion> extraRegions =
+          metadata
+              .root()
+              .get(cc, EXTRA_REGIONS)
+              .map(MultiValue::getValues)
+              .orElse(ImmutableSet.of());
+      extraRegions.stream().map(Object::toString).sorted().forEach(this::tokenize);
+      if (!extraRegions.isEmpty()) {
+        callingCodeData.setRegionCount(1 + extraRegions.size());
+      }
+    }
+    for (DigitSequence cc : metadata.getAvailableCallingCodes()) {
+      CallingCodeProto.Builder callingCodeData = callingCodeProto(cc);
+      ImmutableSet<DigitSequence> nationalPrefixes =
+          metadata
+              .root()
+              .get(cc, NATIONAL_PREFIX)
+              .map(MultiValue::getValues)
+              .orElse(ImmutableSet.of());
+      nationalPrefixes.stream()
+          .map(Object::toString)
+          .map(this::tokenize)
+          .forEach(callingCodeData::addNationalPrefix);
+      if (metadata.root().get(cc, NATIONAL_PREFIX_OPTIONAL).orElse(false)) {
+        callingCodeData.setNationalPrefixOptional(true);
+      }
+    }
+  }
+
+  private void addExampleNumbers(Metadata metadata) {
+    for (DigitSequence cc : metadata.getAvailableCallingCodes()) {
+      RangeMap rangeMap = metadata.getRangeMap(cc);
+      if (!rangeMap.getExampleNumbers().isEmpty()) {
+        DigitSequence exampleNumber =
+            PRIORITY_EXAMPLE_TYPES.stream()
+                .map(rangeMap.getExampleNumbers()::get)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(rangeMap.getExampleNumbers().values().iterator().next());
+        callingCodeProto(cc).setExampleNumber(exampleNumber.toString());
+      } else {
+        logger.atWarning().log("[cc=%s] No available example number", cc);
+      }
+    }
   }
 
   private NationalNumberDataProto buildNationalNumberData(

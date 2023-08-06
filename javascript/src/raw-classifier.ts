@@ -11,7 +11,13 @@
 import { DigitSequence, Digits } from "./digit-sequence.js";
 import { DigitSequenceMatcher } from "./digit-sequence-matcher.js";
 import { MatchResult, LengthResult } from "./match-results.js";
-import { MetadataJson, VersionJson, CallingCodeJson, NationalNumberDataJson, MatcherDataJson } from "./metadata-json.js";
+import {
+    MetadataJson,
+    VersionJson,
+    CallingCodeJson,
+    NationalNumberDataJson,
+    MatcherDataJson,
+    ParserDataJson } from "./metadata-json.js";
 import { Buffer } from 'buffer';
 
 export enum ReturnType {
@@ -92,25 +98,20 @@ export class RawClassifier {
   }
 
   /**
-   * Returns the "main" CLDR region code associated with the given calling code. This method will
-   * work even when no region data was explicitly added to the underlying metadata.
-   *
-   * Since a subclass of `AbstractPhoneNumberClassifier` may choose to implement region codes via
-   * strongly typed values, this method is not reflected in the API of
-   * `AbstractPhoneNumberClassifier` by default.
+   * Returns the parser data for the given calling code. This is either present for all calling
+   * codes, or omitted for all calling codes. The calling code should be implicitly aware (based
+   * on the metadata schema) as to whether this will return a value.
    */
-  getMainRegion(callingCode: DigitSequence): string {
-    return this.getCallingCodeClassifier(callingCode).getMainRegion();
-  }
-
-  getNationalPrefixes(callingCode: DigitSequence): DigitSequence[] {
-    return this.getCallingCodeClassifier(callingCode).getNationalPrefixes();
+  getParserData(callingCode: DigitSequence): ParserData|null {
+    return this.getCallingCodeClassifier(callingCode).getParserData();
   }
 
   /**
    * Returns an example number for the given calling code. The returned number will be valid, but
    * need not be of any specific number type (though common number types are likely). The returned
-   * number is deterministic, and should not be callable.
+   * number is deterministic, and should not be callable. This value is omitted in the unlikely
+   * event that no suitable example phone number was available (e.g. due to the classifier having
+   * a restricted validation range).
    */
   getExampleNationalNumber(callingCode: DigitSequence): DigitSequence|null {
     return this.getCallingCodeClassifier(callingCode).getExampleNationalNumber();
@@ -217,31 +218,24 @@ class CallingCodeClassifier {
     let typeClassifiers: NationalNumberClassifier[] =
         (json.n !== undefined)
             ? json.n.map(n => NationalNumberClassifier.create(n, decode, matcherFactory)) : [];
-    let mainRegion = decode(json.r);
+    let parserData = json.p ? ParserData.create(json.p, decode) : null;
     let exampleNumber = json.e ? DigitSequence.parse(json.e) : null;
-    let npi: number[] = Array.isArray(json.p) ? json.p : json.p ? [json.p] : [];
-    let nationalPrefixes: DigitSequence[] = npi.map(i => DigitSequence.parse(decode(i)));
     return new CallingCodeClassifier(
-        validityMatcher, typeClassifiers, mainRegion, nationalPrefixes, exampleNumber);
+        validityMatcher, typeClassifiers, parserData, exampleNumber);
   }
 
   constructor(
       private readonly validityMatcher: MatcherFunction,
       private readonly typeClassifiers: NationalNumberClassifier[],
-      private readonly mainRegion: string,
-      private readonly nationalPrefixes: DigitSequence[],
+      private readonly parserData: ParserData|null,
       private readonly exampleNationalNumber: DigitSequence|null) {}
 
-  getMainRegion(): string {
-    return this.mainRegion;
+  getParserData(): ParserData|null {
+    return this.parserData;
   }
 
   getExampleNationalNumber(): DigitSequence|null {
     return this.exampleNationalNumber;
-  }
-
-  getNationalPrefixes(): DigitSequence[] {
-    return this.nationalPrefixes;
   }
 
   testLength(nationalNumber: DigitSequence): LengthResult {
@@ -254,6 +248,37 @@ class CallingCodeClassifier {
 
   getTypeClassifier(index: number): NationalNumberClassifier {
     return this.typeClassifiers[index];
+  }
+}
+
+export class ParserData {
+  static create(json: ParserDataJson, decode: (i: number) => string) {
+    // Main region index, possibly followed by additional regions.
+    let r: number = json.r;
+    // Total number of regions (at least 1).
+    let n: number = json.n ? json.n : 1;
+    let regions: string[] = [...Array(n).keys()].map((i) => decode(r + i));
+    let npi: number[] = Array.isArray(json.p) ? json.p : json.p ? [json.p] : [];
+    let nationalPrefixes: DigitSequence[] = npi.map(i => DigitSequence.parse(decode(i)));
+    let nationalPrefixOptional: boolean = !!json.o;
+    return new ParserData(regions, nationalPrefixes, nationalPrefixOptional);
+  }
+
+  constructor(
+      private readonly regions: string[],
+      private readonly nationalPrefixes: DigitSequence[],
+      private readonly nationalPrefixOptional: boolean) {}
+
+  getRegions(): ReadonlyArray<string> {
+    return this.regions;
+  }
+
+  getNationalPrefixes(): ReadonlyArray<DigitSequence> {
+    return this.nationalPrefixes;
+  }
+
+  isNationalPrefixOptional(): boolean {
+    return this.nationalPrefixOptional;
   }
 }
 

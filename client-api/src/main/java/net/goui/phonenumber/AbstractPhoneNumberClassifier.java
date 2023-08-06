@@ -226,8 +226,8 @@ public abstract class AbstractPhoneNumberClassifier {
    *
    * @throws IllegalStateException if region information is not present in the underlying metadata.
    */
-  protected <T> PhoneNumberRegions<T> createRegionInfo(Function<String, T> converter) {
-    return new PhoneNumberRegions<>(rawClassifier, converter);
+  protected <T> PhoneNumberParser<T> createParser(Function<String, T> converter) {
+    return new PhoneNumberParser<>(rawClassifier, converter);
   }
 
   /**
@@ -275,15 +275,6 @@ public abstract class AbstractPhoneNumberClassifier {
    */
   public final MatchResult match(PhoneNumber number) {
     return rawClassifier.match(number.getCallingCode(), number.getNationalNumber());
-  }
-
-  private static int intValueOf(DigitSequence cc) {
-    checkArgument(
-        cc.length() >= 1 && cc.length() <= 3,
-        "calling codes should be between 1 and 3 digits: %s",
-        cc);
-    checkArgument(cc.getDigit(0) != 0, "calling codes must not have a leading zero: %s", cc);
-    return Integer.parseInt(cc.toString());
   }
 
   /**

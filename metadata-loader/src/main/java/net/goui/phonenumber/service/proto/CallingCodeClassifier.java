@@ -2,20 +2,24 @@ package net.goui.phonenumber.service.proto;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 import net.goui.phonenumber.DigitSequence;
-import net.goui.phonenumber.proto.Metadata;
+import net.goui.phonenumber.metadata.ParserData;
+import net.goui.phonenumber.proto.Metadata.CallingCodeProto;
+import net.goui.phonenumber.proto.Metadata.NationalNumberDataProto;
 
 final class CallingCodeClassifier {
 
   static CallingCodeClassifier from(
-      Metadata.CallingCodeProto callingCodeProto, int typeCount, IntFunction<String> tokenDecoder) {
+      CallingCodeProto callingCodeProto, int typeCount, IntFunction<String> tokenDecoder) {
     ImmutableList<MatcherFunction> matchers =
         callingCodeProto.getMatcherDataList().stream()
             .map(MatcherFunction::fromProto)
@@ -27,7 +31,7 @@ final class CallingCodeClassifier {
     MatcherFunction validityMatcher =
         matcherFactory.apply(callingCodeProto.getValidityMatcherIndexList());
 
-    List<Metadata.NationalNumberDataProto> nnd = callingCodeProto.getNationalNumberDataList();
+    List<NationalNumberDataProto> nnd = callingCodeProto.getNationalNumberDataList();
     checkState(
         nnd.size() == typeCount,
         "invalid phone number metadata (unexpected national number data): %s",
@@ -37,20 +41,26 @@ final class CallingCodeClassifier {
             .mapToObj(i -> TypeClassifier.create(nnd.get(i), tokenDecoder, matcherFactory))
             .collect(toImmutableList());
 
-    ImmutableList<DigitSequence> nationalPrefixes =
+    // An unset region count implies 1 region.
+    int regionCount = Math.max(callingCodeProto.getRegionCount(), 1);
+    int mainRegionIndex = callingCodeProto.getMainRegion();
+    ImmutableSet<String> regions =
+        IntStream.range(mainRegionIndex, mainRegionIndex + regionCount)
+            .mapToObj(tokenDecoder)
+            .collect(toImmutableSet());
+    ImmutableSet<DigitSequence> nationalPrefixes =
         callingCodeProto.getNationalPrefixList().stream()
             .map(tokenDecoder::apply)
             .map(DigitSequence::parse)
-            .collect(toImmutableList());
-
-    String mainRegion = tokenDecoder.apply(callingCodeProto.getPrimaryRegion());
+            .collect(toImmutableSet());
+    ParserData parserData =
+        ParserData.create(regions, nationalPrefixes, callingCodeProto.getNationalPrefixOptional());
 
     String example = callingCodeProto.getExampleNumber();
     Optional<DigitSequence> exampleNumber =
         !example.isEmpty() ? Optional.of(DigitSequence.parse(example)) : Optional.empty();
 
-    return new CallingCodeClassifier(
-        validityMatcher, typeClassifiers, nationalPrefixes, mainRegion, exampleNumber);
+    return new CallingCodeClassifier(validityMatcher, typeClassifiers, parserData, exampleNumber);
   }
 
   private static MatcherFunction combinedMatcherOf(
@@ -60,20 +70,17 @@ final class CallingCodeClassifier {
 
   private final MatcherFunction validityMatcher;
   private final ImmutableList<TypeClassifier> typeClassifiers;
-  private final ImmutableList<DigitSequence> nationalPrefixes;
-  private final String mainRegion;
+  private final ParserData parserData;
   private final Optional<DigitSequence> exampleNumber;
 
   private CallingCodeClassifier(
       MatcherFunction validityMatcher,
       ImmutableList<TypeClassifier> typeClassifiers,
-      ImmutableList<DigitSequence> nationalPrefixes,
-      String mainRegion,
+      ParserData parserData,
       Optional<DigitSequence> exampleNumber) {
     this.validityMatcher = validityMatcher;
     this.typeClassifiers = typeClassifiers;
-    this.nationalPrefixes = nationalPrefixes;
-    this.mainRegion = mainRegion;
+    this.parserData = parserData;
     this.exampleNumber = exampleNumber;
   }
 
@@ -85,15 +92,11 @@ final class CallingCodeClassifier {
     return typeClassifiers.get(typeIndex);
   }
 
-  public ImmutableList<DigitSequence> getNationalPrefixes() {
-    return nationalPrefixes;
+  public ParserData getParserData() {
+    return parserData;
   }
 
   public Optional<DigitSequence> getExampleNumber() {
     return exampleNumber;
-  }
-
-  public String getMainRegion() {
-    return mainRegion;
   }
 }

@@ -37,10 +37,8 @@ public final class SimpleExample {
       }
       System.out.format("Match Result          : %s\n", CLASSIFIER.match(number));
       System.out.format(
-          "Regions               : %s\n", CLASSIFIER.forRegion().getPossibleValues(number));
-      System.out.format(
           "Calling Code Region(s): %s\n",
-          CLASSIFIER.getRegionInfo().getRegions(number.getCallingCode()));
+          CLASSIFIER.getParser().getRegions(number.getCallingCode()));
       System.out.format("E.164 Format          : %s\n", number);
       System.out.format("National Format       : %s\n", CLASSIFIER.national().format(number));
       System.out.format("International Format  : %s\n", CLASSIFIER.international().format(number));

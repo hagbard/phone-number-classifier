@@ -99,6 +99,8 @@ abstract class MetadataConfig {
 
     return new AutoValue_MetadataConfig(
         version,
+        !configProto.getExcludeParserMetadata(),
+        !configProto.getExcludeExampleNumbers(),
         RangeMapTransformer.from(configProto),
         ImmutableMap.copyOf(configMap),
         implicitDefault,
@@ -115,6 +117,8 @@ abstract class MetadataConfig {
         CallingCodeConfig.of(maxFalsePositivePercent, minPrefixLength);
     return new AutoValue_MetadataConfig(
         VersionInfo.getDefaultInstance(),
+        /* includeParserInfo= */ true,
+        /* includeExampleNumbers= */ true,
         RangeMapTransformer.identity(classifierTypes),
         ImmutableMap.of(),
         Optional.of(defaultConfig),
@@ -135,6 +139,10 @@ abstract class MetadataConfig {
 
   /** Returns the schema version define in this configuration. */
   public abstract VersionInfo getVersion();
+
+  public abstract boolean includeParserInfo();
+
+  public abstract boolean includeExampleNumbers();
 
   /** Returns the transformer defined by the set of classifiers in the configuration */
   public abstract RangeMapTransformer getOutputTransformer();
