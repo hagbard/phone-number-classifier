@@ -138,16 +138,20 @@ public abstract class AbstractPhoneNumberClassifier {
    */
   @AutoValue
   public abstract static class SchemaVersion {
+    /** Creates a schema version with which to match metadata. */
     public static SchemaVersion of(String schema, int minVersion) {
       checkArgument(!schema.isEmpty(), "schema string must not be empty");
       checkArgument(minVersion >= 0, "schema minimum version must not be negative");
       return new AutoValue_AbstractPhoneNumberClassifier_SchemaVersion(schema, minVersion);
     }
 
+    /** Returns the schema URI (an arbitrary identifier string). */
     public abstract String schema();
 
+    /** Return the minimal schema version which would satisfy this version. */
     public abstract int minVersion();
 
+    /** Returns whether this version is satisfied by the given version. */
     final boolean isSatisfiedBy(VersionInfo version) {
       return version.getSchema().equals(schema()) && version.getSchemaVersion() >= minVersion();
     }

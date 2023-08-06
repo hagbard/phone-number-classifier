@@ -14,13 +14,17 @@ import java.util.function.Function;
 import net.goui.phonenumber.metadata.ParserData;
 import net.goui.phonenumber.metadata.RawClassifier;
 
+/**
+ * Phone number parsing API, available from subclasses of {@link AbstractPhoneNumberClassifier} when
+ * parser metadata is available.
+ */
 public final class PhoneNumberParser<T> {
   private final ImmutableListMultimap<DigitSequence, T> regionCodeMap;
   private final ImmutableMap<T, DigitSequence> callingCodeMap;
   private final ImmutableSetMultimap<DigitSequence, DigitSequence> nationalPrefixMap;
   private final ImmutableSet<DigitSequence> nationalPrefixOptional;
 
-  public PhoneNumberParser(RawClassifier rawClassifier, Function<String, T> converter) {
+  PhoneNumberParser(RawClassifier rawClassifier, Function<String, T> converter) {
     T worldRegion = checkNotNull(converter.apply("001"));
     ImmutableListMultimap.Builder<DigitSequence, T> regionCodeMap = ImmutableListMultimap.builder();
     ImmutableMap.Builder<T, DigitSequence> callingCodeMap = ImmutableMap.builder();
@@ -88,10 +92,20 @@ public final class PhoneNumberParser<T> {
     return Optional.ofNullable(callingCodeMap.get(region));
   }
 
+  /**
+   * Returns the national prefixes (possibly empty) for the given calling code. Most numbering plans
+   * have either one, or no national prefix, but some plans specify more than one. The first value
+   * in the returned list is the "preferred" prefix for formatting.
+   */
   public ImmutableSet<DigitSequence> getNationalPrefixes(DigitSequence callingCode) {
     return nationalPrefixMap.get(callingCode);
   }
 
+  /**
+   * Returns whether the national prefix for the given calling code is optional. In cases where a
+   * national prefix is optional, it need not be dialled at the start of a national number. National
+   * prefixes should never be dialled as part of an international number.
+   */
   public boolean isNationalPrefixOptional(DigitSequence callingCode) {
     return nationalPrefixOptional.contains(callingCode);
   }

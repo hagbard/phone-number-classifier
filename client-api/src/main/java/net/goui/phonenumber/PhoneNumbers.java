@@ -16,18 +16,35 @@ import com.google.auto.value.AutoValue;
 import com.google.auto.value.extension.memoized.Memoized;
 import com.google.common.base.CharMatcher;
 
-/** <a href="https://en.wikipedia.org/wiki/E.164">E.164 specification</a>. */
+/**
+ * Static factory class for obtaining {@link PhoneNumber} instances from E.164 strings.
+ *
+ * <p>See <a href="https://en.wikipedia.org/wiki/E.164">the E.164 specification</a>.
+ */
 public final class PhoneNumbers {
   private static final CharMatcher ASCII_DIGIT = CharMatcher.inRange('0', '9');
 
   // Obtained from running GenerateMetadata tool (encoded string is output to console).
   private static final String CC_MASK =
       "\u0082\uc810\ufb97\uf7fb\u0007\ufc56\u0004\u0000\u0000\u0000\u0000\u0000\u0000\uf538"
-      + "\uffff\uffff\u3ff7\u0000\u0e0c\u0000\u0000\uc000\u00ff\uf7fc\u002e\u0000\u00b0\u0000"
-      + "\u0000\u0000\u0000\u3ff0\u0000\u0000\u0000\u0000\uc000\u00ff\u0000\u0000\u0000\u4000"
-      + "\uefff\u001f\u0000\u0000\u0000\u0000\u0000\u0000\u0101\u0000\u0000\u01b4\u4040\u014f"
-      + "\u0000\u0000\u0000\u0000\ufdff\u000b\u005f";
+          + "\uffff\uffff\u3ff7\u0000\u0e0c\u0000\u0000\uc000\u00ff\uf7fc\u002e\u0000\u00b0\u0000"
+          + "\u0000\u0000\u0000\u3ff0\u0000\u0000\u0000\u0000\uc000\u00ff\u0000\u0000\u0000\u4000"
+          + "\uefff\u001f\u0000\u0000\u0000\u0000\u0000\u0000\u0101\u0000\u0000\u01b4\u4040\u014f"
+          + "\u0000\u0000\u0000\u0000\ufdff\u000b\u005f";
 
+  /**
+   * Returns a new phone number instance from the given E.164 formatted string. This method is the
+   * exact inverse of {@link PhoneNumber#toString()}.
+   *
+   * <p>This method does no specific parsing and will not do things like removing erroneously added
+   * national prefixes etc.
+   *
+   * <p><em>Note</em>: While E.164 is technically only defined for international numbers, this
+   * method will accept and correct parse any number of the form {@code
+   * "+<calling-code><national-number>"}, including things like national only free phone numbers
+   * etc. This is a slight abuse of the E.164 specification, but it is well-defined and never risks
+   * being ambiguous.
+   */
   public static PhoneNumber fromE164(String e164) {
     String toEncode = e164.startsWith("+") ? e164.substring(1) : e164;
     checkArgument(toEncode.length() >= 3, "E.164 numbers must have at least three digits");

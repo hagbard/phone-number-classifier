@@ -19,9 +19,25 @@ import net.goui.phonenumber.metadata.RawClassifier;
 import net.goui.phonenumber.metadata.VersionInfo;
 import net.goui.phonenumber.proto.Metadata.MetadataProto;
 
+/**
+ * Helper class to support easy loading of metadata from class resources. A subclass need only
+ * implement the constructor to provide version information and a resource path.
+ *
+ * <pre>{@code
+ * public LpnDfaPreciseData() {
+ *   super(<version>, "<resource-path>");
+ * }
+ * }</pre>
+ */
 public abstract class AbstractResourceClassifierService extends ClassifierService {
   private final String resourceName;
 
+  /**
+   * Constructs a {@link ClassifierService} for metadata held in a class resource.
+   *
+   * @param version a version compatible with the metadata referenced by {@code resourceName}.
+   * @param resourceName the name/path of the metadata resource (with respect to this class).
+   */
   protected AbstractResourceClassifierService(VersionInfo version, String resourceName) {
     super(version);
     this.resourceName = resourceName;

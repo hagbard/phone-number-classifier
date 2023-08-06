@@ -17,7 +17,12 @@ import java.util.Comparator;
 import java.util.ServiceLoader;
 import java.util.function.Predicate;
 
+/** A loader for {@link ClassifierService} instance provided via the service loader API. */
 public final class ClassifierLoader {
+  /**
+   * Load all available {@link ClassifierService} (via the service loader API) which satisfy the
+   * given version predicate. The returned services are ordered via the given ordering.
+   */
   public static ImmutableList<RawClassifier> loadMatchedVersions(
       Predicate<VersionInfo> predicate, Comparator<VersionInfo> ordering) {
     ImmutableList<ErrorOr<RawClassifier>> loaded =
@@ -27,13 +32,11 @@ public final class ClassifierLoader {
             .parallel()
             .map(ClassifierService::loadChecked)
             .collect(toImmutableList());
-
     if (loaded.stream().anyMatch(ErrorOr::isError)) {
       RuntimeException e = new RuntimeException("Error(s) loading classifier metadata.");
       loaded.stream().filter(ErrorOr::isError).map(ErrorOr::getError).forEach(e::addSuppressed);
       throw e;
     }
-
     return loaded.stream()
         .filter(ErrorOr::isSuccess)
         .map(ErrorOr::get)
