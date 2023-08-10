@@ -27,7 +27,7 @@ import java.util.Optional;
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.MatchResult;
 import net.goui.phonenumber.PhoneNumber;
-import net.goui.phonenumber.PhoneNumberRegions;
+import net.goui.phonenumber.PhoneNumberParser;
 import net.goui.phonenumber.PhoneNumbers;
 import net.goui.phonenumber.testing.RegressionTester;
 import org.junit.Rule;
@@ -61,29 +61,24 @@ public class SimpleClassifierTest {
   }
 
   @Test
-  public void testRegionMatcher() {
-    //A GB (U.K.) and JE (Jersey) number with the same prefix.
-    assertThat(SIMPLE_CLASSIFIER.forRegion().match(e164("+447700112345"), "GB")).isEqualTo(MATCHED);
-    assertThat(SIMPLE_CLASSIFIER.forRegion().match(e164("+447700312345"), "JE")).isEqualTo(MATCHED);
-    // Both regions partially match on the prefix.
-    assertThat(SIMPLE_CLASSIFIER.forRegion().match(e164("+447700"), "GB")).isEqualTo(PARTIAL_MATCH);
-    assertThat(SIMPLE_CLASSIFIER.forRegion().match(e164("+447700"), "JE")).isEqualTo(PARTIAL_MATCH);
-    // And both regions are the possible values for the prefix.
-    assertThat(SIMPLE_CLASSIFIER.forRegion().getPossibleValues(e164("+447700")))
-        .containsExactly("GB", "JE");
+  public void testParser() {
+    PhoneNumberParser<String> parser = SIMPLE_CLASSIFIER.getParser();
+    assertThat(parser.parseLeniently("(079) 555 1234", "CH")).hasValue(PhoneNumbers.fromE164("+41795551234"));
+    assertThat(parser.parseLeniently("(+41) 079 555-1234")).hasValue(PhoneNumbers.fromE164("+41795551234"));
+
   }
 
   @Test
-  public void testRegionInfo() {
-    PhoneNumberRegions<String> regionInfo = SIMPLE_CLASSIFIER.getRegionInfo();
-    assertThat(regionInfo.getRegions(seq("44"))).containsExactly("GB", "GG", "IM", "JE").inOrder();
-    assertThat(regionInfo.getRegions(seq("41"))).containsExactly("CH");
-    assertThat(regionInfo.getRegions(seq("888"))).containsExactly("001");
+  public void testParserRegions() {
+    PhoneNumberParser<String> parser = SIMPLE_CLASSIFIER.getParser();
+    assertThat(parser.getRegions(seq("44"))).containsExactly("GB", "GG", "IM", "JE").inOrder();
+    assertThat(parser.getRegions(seq("41"))).containsExactly("CH");
+    assertThat(parser.getRegions(seq("888"))).containsExactly("001");
 
-    assertThat(regionInfo.getCallingCode("IM")).hasValue(seq("44"));
-    assertThat(regionInfo.getCallingCode("CH")).hasValue(seq("41"));
+    assertThat(parser.getCallingCode("IM")).hasValue(seq("44"));
+    assertThat(parser.getCallingCode("CH")).hasValue(seq("41"));
     // Special case since there are several calling codes associated with "001".
-    assertThat(regionInfo.getCallingCode("001")).isEmpty();
+    assertThat(parser.getCallingCode("001")).isEmpty();
   }
 
   @Test

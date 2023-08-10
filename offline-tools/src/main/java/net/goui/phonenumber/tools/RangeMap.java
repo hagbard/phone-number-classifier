@@ -16,13 +16,11 @@ import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static net.goui.phonenumber.tools.ClassifierType.VALIDITY;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
-import com.google.i18n.phonenumbers.metadata.i18n.PhoneRegion;
 import com.google.i18n.phonenumbers.metadata.proto.Types.ValidNumberType;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,8 +39,6 @@ abstract class RangeMap {
   /** A builder for a {@link RangeMap} with which classifiers can be mapped from types. */
   static final class Builder {
     private final Map<ClassifierType, RangeClassifier> map = new LinkedHashMap<>();
-    private PhoneRegion mainRegion = PhoneRegion.getUnknown();
-    private ImmutableList<DigitSequence> nationalPrefixes = ImmutableList.of();
     private ImmutableMap<ValidNumberType, DigitSequence> exampleNumbers = ImmutableMap.of();
 
     Builder() {}
@@ -51,18 +47,6 @@ abstract class RangeMap {
     @CanIgnoreReturnValue
     public Builder put(ClassifierType type, RangeClassifier classifier) {
       map.put(type, classifier);
-      return this;
-    }
-
-    @CanIgnoreReturnValue
-    public Builder setMainRegion(PhoneRegion mainRegion) {
-      this.mainRegion = checkNotNull(mainRegion);
-      return this;
-    }
-
-    @CanIgnoreReturnValue
-    public Builder setNationalPrefixes(ImmutableList<DigitSequence> nationalPrefixes) {
-      this.nationalPrefixes = checkNotNull(nationalPrefixes);
       return this;
     }
 
@@ -85,7 +69,7 @@ abstract class RangeMap {
               .filter(e -> allRanges.contains(e.getValue()))
               .collect(toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
       return new AutoValue_RangeMap(
-          allRanges, trimmedMap, mainRegion, nationalPrefixes, filteredExamples);
+          allRanges, trimmedMap, filteredExamples);
     }
   }
 
@@ -94,10 +78,7 @@ abstract class RangeMap {
   }
 
   Builder toBuilder() {
-    return builder()
-        .setMainRegion(getMainRegion())
-        .setExampleNumbers(getExampleNumbers())
-        .setNationalPrefixes(getNationalPrefixes());
+    return builder().setExampleNumbers(getExampleNumbers());
   }
 
   /** Returns the bounding range for this range map. */
@@ -105,10 +86,6 @@ abstract class RangeMap {
 
   // Internal field (shouldn't be needed by outside this class).
   abstract ImmutableMap<ClassifierType, RangeClassifier> classifiers();
-
-  abstract PhoneRegion getMainRegion();
-
-  abstract ImmutableList<DigitSequence> getNationalPrefixes();
 
   abstract ImmutableMap<ValidNumberType, DigitSequence> getExampleNumbers();
 

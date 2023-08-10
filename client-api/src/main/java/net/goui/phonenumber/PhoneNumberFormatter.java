@@ -11,7 +11,8 @@ SPDX-License-EPL Identifier-2.0 OR Apache-2.0
 package net.goui.phonenumber;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static net.goui.phonenumber.MatchResult.INVALID;
+import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.INTERNATIONAL;
 
 import net.goui.phonenumber.DigitSequence.Digits;
 import net.goui.phonenumber.metadata.RawClassifier;
@@ -51,21 +52,6 @@ public class PhoneNumberFormatter {
   private static final int PARENTHESIZED_GROUP = 0x5 << 3;
   private static final int IGNORED_GROUP = 0x6 << 3;
 
-  /**
-   * Returns whether a classifier has the required format metadata for a type.
-   *
-   * <p>In general this should not be needed, since most metadata schemas should define whether
-   * specific format metadata is to be included. The associated `AbstractPhoneNumberClassifier`
-   * subclass should know implicitly if a format type is supported, so no runtime check should be
-   * needed.
-   *
-   * <p>However, it is foreseeable that some schemas could define formatting to be optional and fall
-   * back to simple block formatting for missing data.
-   */
-  static boolean canFormat(RawClassifier classifier, FormatType type) {
-    return classifier.getSupportedNumberTypes().contains(type.id);
-  }
-
   private final RawClassifier rawClassifier;
   private final FormatType type;
 
@@ -77,51 +63,59 @@ public class PhoneNumberFormatter {
    * @throws IllegalStateException if the format type is not present in the underlying metadata.
    */
   PhoneNumberFormatter(RawClassifier rawClassifier, FormatType type) {
-    checkState(
-        canFormat(rawClassifier, type), "No format data available for %s formatting", type);
     this.rawClassifier = checkNotNull(rawClassifier);
     this.type = checkNotNull(type);
   }
 
   /** Formats a phone number according to the type of this formatter. */
   public String format(PhoneNumber phoneNumber) {
-    String bestFormatSpec = "";
-    MatchResult bestResult = MatchResult.INVALID;
     ValueMatcher matcher = rawClassifier.getValueMatcher(phoneNumber.getCallingCode(), type.id);
-    for (String v : rawClassifier.getPossibleValues(type.id)) {
-      MatchResult r = matcher.matchValue(phoneNumber.getNationalNumber(), v);
-      if (r.compareTo(bestResult) < 0) {
-        bestResult = r;
-        bestFormatSpec = v;
-        if (r == MatchResult.MATCHED) {
+
+    // Fall back to INTERNATIONAL formatting if there are no format specifiers for the given type.
+    FormatType bestFormatType = this.type;
+    if (matcher.getPossibleValues().isEmpty() && bestFormatType != INTERNATIONAL) {
+      bestFormatType = INTERNATIONAL;
+      matcher = rawClassifier.getValueMatcher(phoneNumber.getCallingCode(), bestFormatType.id);
+    }
+
+    // Attempt to find the best format specifier by testing all values in order. A matched number
+    // can have only one value, but a partial number may match several format specifiers. This
+    // loop picks to specifier with the best match (favouring a first match).
+    String bestFormatSpec = "";
+    MatchResult bestResult = INVALID;
+    for (String spec : rawClassifier.getPossibleValues(bestFormatType.id)) {
+      MatchResult result = matcher.matchValue(phoneNumber.getNationalNumber(), spec);
+      if (result.compareTo(bestResult) < 0) {
+        bestResult = result;
+        bestFormatSpec = spec;
+        if (result == MatchResult.MATCHED) {
           break;
         }
       }
     }
-    // NOTE: This accounts for classifiers which don't have every value assigned.
-    //
+
     // It's possible that a partial match was made above (i.e. PartialMatch/ExcessDigits), but that
-    // the number is valid but simply unassigned any value. So by making a final validity check we
-    // can catch this and reset the default value (which for formatting is always the empty string).
+    // the number is valid but simply has no format spec assigned. So by making a final validity
+    // check we can catch this and reset the default specifier.
     if (bestResult != MatchResult.MATCHED
-        && bestFormatSpec.length() > 0
+        && !bestFormatSpec.isEmpty()
         && rawClassifier
-                .match(phoneNumber.getCallingCode(), phoneNumber.getNationalNumber())
-                .compareTo(bestResult)
-            < 0) {
+            .match(phoneNumber.getCallingCode(), phoneNumber.getNationalNumber())
+            .isBetterThan(bestResult)) {
       bestFormatSpec = "";
     }
+
     // bestFormatSpec is non-null base64 encoded binary spec (possibly empty).
     // bestResult is corresponding match (can be too short, too long, or invalid).
     String formatted;
-    if (bestFormatSpec.length() > 0) {
+    if (!bestFormatSpec.isEmpty()) {
       formatted =
           PhoneNumberFormatter.formatNationalNumber(
               phoneNumber.getNationalNumber(), bestFormatSpec);
     } else {
       formatted = phoneNumber.getNationalNumber().toString();
     }
-    if (type == FormatType.INTERNATIONAL) {
+    if (bestFormatType == INTERNATIONAL) {
       formatted = "+" + phoneNumber.getCallingCode() + " " + formatted;
     }
     return formatted;

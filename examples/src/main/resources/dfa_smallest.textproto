@@ -7,7 +7,7 @@
 #
 # Data size:
 # Protocol buffer: 8.5kB (5kB zipped)
-# Json:            16.5kB (5kB zipped)
+# Json:            18.5kB (5kB zipped)
 version {
   major_version: 1
   minor_version: 0

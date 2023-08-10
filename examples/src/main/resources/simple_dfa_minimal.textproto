@@ -5,8 +5,8 @@
 # number ranges.
 #
 # Data size:
-# Protocol buffer: 52kB (32kB zipped)
-# Json:            91kB (35kB zipped)
+# Protocol buffer: 47kB (28kB zipped)
+# Json:            83kB (31kB zipped)
 version {
   major_version: 1
   minor_version: 0
@@ -29,4 +29,3 @@ default_minimum_prefix_length: 2
 # Support formatting and region information.
 format: NATIONAL
 format: INTERNATIONAL
-classifier { type_name: "REGION" }

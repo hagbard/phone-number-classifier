@@ -12,5 +12,5 @@ export { PhoneNumber } from "./phone-number.js";
 export { DigitSequence, Digits } from "./digit-sequence.js";
 export { AbstractPhoneNumberClassifier, Classifier, SingleValuedClassifier, Matcher, SingleValuedMatcher } from "./phone-number-classifier.js";
 export { PhoneNumberFormatter, FormatType } from "./phone-number-formatter.js";
-export { PhoneNumberRegions } from "./phone-number-regions.js";
+export { PhoneNumberParser } from "./phone-number-parser.js";
 export { MatchResult, LengthResult } from "./match-results.js";

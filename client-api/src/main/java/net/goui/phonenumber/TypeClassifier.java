@@ -30,6 +30,7 @@ import net.goui.phonenumber.AbstractPhoneNumberClassifier.SingleValuedMatcher;
 import net.goui.phonenumber.metadata.RawClassifier;
 import net.goui.phonenumber.metadata.RawClassifier.ValueMatcher;
 
+/** Type safe classifier for phone numbers which implements all matcher/classifier APIs. */
 final class TypeClassifier<V> implements SingleValuedMatcher<V> {
   private final AbstractPhoneNumberClassifier phoneNumberClassifier;
   private final String typeName;

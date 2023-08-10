@@ -17,7 +17,7 @@ import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.NATIONAL;
 import com.google.common.annotations.VisibleForTesting;
 import net.goui.phonenumber.AbstractPhoneNumberClassifier;
 import net.goui.phonenumber.PhoneNumberFormatter;
-import net.goui.phonenumber.PhoneNumberRegions;
+import net.goui.phonenumber.PhoneNumberParser;
 import net.goui.phonenumber.metadata.RawClassifier;
 
 public final class SimpleClassifier extends AbstractPhoneNumberClassifier {
@@ -30,10 +30,9 @@ public final class SimpleClassifier extends AbstractPhoneNumberClassifier {
     return INSTANCE;
   }
 
-  private final Matcher<String> regionMatcher = forString("REGION").matcher();
   private final PhoneNumberFormatter nationalFormatter = createFormatter(NATIONAL);
   private final PhoneNumberFormatter internationalFormatter = createFormatter(INTERNATIONAL);
-  private final PhoneNumberRegions<String> regionInfo = createRegionInfo(identity());
+  private final PhoneNumberParser<String> parser = createParser(identity());
 
   private SimpleClassifier(RawClassifier rawClassifier) {
     super(rawClassifier);
@@ -44,10 +43,6 @@ public final class SimpleClassifier extends AbstractPhoneNumberClassifier {
     return rawClassifier();
   }
 
-  public Matcher<String> forRegion() {
-    return regionMatcher;
-  }
-
   public PhoneNumberFormatter national() {
     return nationalFormatter;
   }
@@ -56,7 +51,7 @@ public final class SimpleClassifier extends AbstractPhoneNumberClassifier {
     return internationalFormatter;
   }
 
-  public PhoneNumberRegions<String> getRegionInfo() {
-    return regionInfo;
+  public PhoneNumberParser<String> getParser() {
+    return parser;
   }
 }

@@ -10,6 +10,12 @@
 
 package net.goui.phonenumber.metadata;
 
+/**
+ * Base class for providers of classifier metadata.
+ *
+ * <p>Where metadata is built into a class resource, {@code AbstractResourceClassifierService}
+ * should be subclasses to provide easy metadata loading.
+ */
 public abstract class ClassifierService {
   private final VersionInfo statedVersion;
 

@@ -95,16 +95,6 @@ final class MetadataJson {
   static JsObject toJson(CallingCodeProto proto) {
     List<JsObject.Field> fields = new ArrayList<>();
     fields.add(field("c", num(proto.getCallingCode())));
-
-    fields.add(field("r", num(proto.getPrimaryRegion())));
-    JsArray nationalPrefixes = jsArray(proto.getNationalPrefixList(), JSAPI::num);
-    if (!nationalPrefixes.isEmpty()) {
-      fields.add(field("p", arrayOrSingleton(nationalPrefixes)));
-    }
-    String exampleNumber = proto.getExampleNumber();
-    if (!exampleNumber.isEmpty()) {
-      fields.add(field("e", str(exampleNumber)));
-    }
     JsArray ranges = jsArray(proto.getValidityMatcherIndexList(), JSAPI::num);
     if (!ranges.isEmpty()) {
       fields.add(field("v", arrayOrSingleton(ranges)));
@@ -114,6 +104,26 @@ final class MetadataJson {
       fields.add(field("n", nnd));
     }
     fields.add(field("m", jsArray(proto.getMatcherDataList(), MetadataJson::toJson)));
+    fields.add(field("p", toParserJson(proto)));
+    if (!proto.getExampleNumber().isEmpty()) {
+      fields.add(field("e", str(proto.getExampleNumber())));
+    }
+    return obj(fields);
+  }
+
+  @VisibleForTesting
+  static JsObject toParserJson(CallingCodeProto proto) {
+    List<JsObject.Field> fields = new ArrayList<>();
+    fields.add(field("r", num(proto.getMainRegion())));
+    if (proto.getRegionCount() > 1) {
+      fields.add(field("n", num(proto.getRegionCount())));
+    }
+    if (!proto.getNationalPrefixList().isEmpty()) {
+      fields.add(field("p", arrayOrSingleton(jsArray(proto.getNationalPrefixList(), JSAPI::num))));
+    }
+    if (proto.getNationalPrefixOptional()) {
+      fields.add(field("o", num(1)));
+    }
     return obj(fields);
   }
 

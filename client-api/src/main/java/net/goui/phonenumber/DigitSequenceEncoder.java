@@ -16,7 +16,13 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.CharMatcher;
 import java.util.Arrays;
 
-/** https://en.wikipedia.org/wiki/E.164 */
+/**
+ * Encodes and manipulates arbitrary digit sequences up to 19-digits in length.
+ *
+ * <p>Note that a 19 digit sequence is the maximum which can be represented in a 64-bit long value,
+ * but this is sufficient to represent <a href="https://en.wikipedia.org/wiki/E.164">E.164</a>
+ * values, which should not be longer than 15 digits.
+ */
 final class DigitSequenceEncoder {
   private static final CharMatcher E164_DIGIT = CharMatcher.inRange('0', '9');
   // Maximum encoded digits in a 64-bit long (includes overflow).

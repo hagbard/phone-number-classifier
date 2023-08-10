@@ -13,7 +13,7 @@ import { DigitSequence, Digits } from "./digit-sequence.js";
 import { RawClassifier, ValueMatcher, ReturnType } from "./raw-classifier.js";
 import { MatchResult, LengthResult } from "./match-results.js";
 import { PhoneNumberFormatter, FormatType } from "./phone-number-formatter.js";
-import { PhoneNumberRegions } from "./phone-number-regions.js";
+import { PhoneNumberParser } from "./phone-number-parser.js";
 import { Converter } from "./converter.js";
 
 /**
@@ -217,11 +217,8 @@ export abstract class AbstractPhoneNumberClassifier {
    * this.regionInfo = super.createRegionInfo(super.ofStringEnum(MyRegionEnum));
    * ```
    */
-  protected createRegionInfo<V>(converter: Converter<V>): PhoneNumberRegions<V> {
-    if (this.rawClassifier.getSupportedNumberTypes().has("REGION")) {
-      return new PhoneNumberRegions(this.getRawClassifier(), converter);
-    }
-    throw new Error("Region information not present in underlying metadata");
+  protected createParser<V>(converter: Converter<V>): PhoneNumberParser<V> {
+    return new PhoneNumberParser(this.getRawClassifier(), converter);
   }
 }
 

@@ -158,11 +158,7 @@ abstract class Metadata {
             extractGroup(RangesTableSchema.REGIONS, ClassifierType.REGION),
             extractFormat(formatsTable, primaryNationalPrefix));
 
-    RangeMap.Builder builder =
-        RangeMap.builder()
-            .setMainRegion(mainRegion)
-            .setNationalPrefixes(nationalPrefixes)
-            .setExampleNumbers(exampleNumbersMap);
+    RangeMap.Builder builder = RangeMap.builder().setExampleNumbers(exampleNumbersMap);
     extractFunctions.forEach(fn -> fn.accept(rangeTable, builder));
     return builder.build(rangeTable.getAllRanges());
   }

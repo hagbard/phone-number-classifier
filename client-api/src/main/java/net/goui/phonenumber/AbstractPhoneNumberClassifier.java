@@ -12,6 +12,7 @@ package net.goui.phonenumber;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.function.Function.identity;
 
 import com.google.auto.value.AutoValue;
@@ -138,16 +139,20 @@ public abstract class AbstractPhoneNumberClassifier {
    */
   @AutoValue
   public abstract static class SchemaVersion {
+    /** Creates a schema version with which to match metadata. */
     public static SchemaVersion of(String schema, int minVersion) {
       checkArgument(!schema.isEmpty(), "schema string must not be empty");
       checkArgument(minVersion >= 0, "schema minimum version must not be negative");
       return new AutoValue_AbstractPhoneNumberClassifier_SchemaVersion(schema, minVersion);
     }
 
+    /** Returns the schema URI (an arbitrary identifier string). */
     public abstract String schema();
 
+    /** Return the minimal schema version which would satisfy this version. */
     public abstract int minVersion();
 
+    /** Returns whether this version is satisfied by the given version. */
     final boolean isSatisfiedBy(VersionInfo version) {
       return version.getSchema().equals(schema()) && version.getSchemaVersion() >= minVersion();
     }
@@ -211,7 +216,20 @@ public abstract class AbstractPhoneNumberClassifier {
    * @throws IllegalStateException if the format type is not present in the underlying metadata.
    */
   protected PhoneNumberFormatter createFormatter(FormatType type) {
+    checkState(canFormat(type), "No format data available for type: %s", type);
     return new PhoneNumberFormatter(rawClassifier, type);
+  }
+
+  /**
+   * Returns whether a classifier has the required format metadata for a type.
+   *
+   * <p>In general a subclass of `AbstractPhoneNumberClassifier` should know implicitly if a format
+   * type is supported, so a runtime check should not be needed. However, it is foreseeable that
+   * some schemas could define formatting to be optional and fall back to simple block formatting
+   * for missing data.
+   */
+  protected boolean canFormat(PhoneNumberFormatter.FormatType type) {
+    return rawClassifier.getSupportedNumberTypes().contains(type.id);
   }
 
   /**
@@ -226,8 +244,8 @@ public abstract class AbstractPhoneNumberClassifier {
    *
    * @throws IllegalStateException if region information is not present in the underlying metadata.
    */
-  protected <T> PhoneNumberRegions<T> createRegionInfo(Function<String, T> converter) {
-    return new PhoneNumberRegions<>(rawClassifier, converter);
+  protected <T> PhoneNumberParser<T> createParser(Function<String, T> converter) {
+    return new PhoneNumberParser<>(rawClassifier, converter);
   }
 
   /**
@@ -275,15 +293,6 @@ public abstract class AbstractPhoneNumberClassifier {
    */
   public final MatchResult match(PhoneNumber number) {
     return rawClassifier.match(number.getCallingCode(), number.getNationalNumber());
-  }
-
-  private static int intValueOf(DigitSequence cc) {
-    checkArgument(
-        cc.length() >= 1 && cc.length() <= 3,
-        "calling codes should be between 1 and 3 digits: %s",
-        cc);
-    checkArgument(cc.getDigit(0) != 0, "calling codes must not have a leading zero: %s", cc);
-    return Integer.parseInt(cc.toString());
   }
 
   /**

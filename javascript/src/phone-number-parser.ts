@@ -9,7 +9,7 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 import { DigitSequence } from "./digit-sequence.js";
-import { RawClassifier } from "./raw-classifier.js";
+import { RawClassifier, ParserData } from "./raw-classifier.js";
 import { Converter } from "./converter.js";
 
 /**
@@ -18,50 +18,41 @@ import { Converter } from "./converter.js";
  * This functionality is only available if the REGION classifier was included in the underlying
  * metadata.
  */
-export class PhoneNumberRegions<T> {
+export class PhoneNumberParser<T> {
   private readonly regionCodeMap: Map<string, ReadonlyArray<T>>;
   private readonly callingCodeMap: Map<string, DigitSequence>;
+  private readonly nationalPrefixMap: Map<string, ReadonlyArray<DigitSequence>>;
+  private readonly nationalPrefixOptional: Set<string>;
 
   constructor(rawClassifier: RawClassifier, private readonly converter: Converter<T>) {
-    converter.ensureValues(rawClassifier.getPossibleValues("REGION"));
     this.regionCodeMap = new Map();
     this.callingCodeMap = new Map();
+    this.nationalPrefixMap = new Map();
+    this.nationalPrefixOptional = new Set();
     for (let cc of rawClassifier.getSupportedCallingCodes()) {
-      let mainRegion = rawClassifier.getMainRegion(cc);
-      let regions: string[] =
-          [...rawClassifier.getValueMatcher(cc, "REGION").getPossibleValues()];
-      // Note: Since region data is associated with ranges, and ranges can be restricted by
-      // configuration, it's possible to get a calling codes in which some or all of the original
-      // region code are missing. This is fine for classification, but this API promises to have
-      // the "main" region present in the list, so we make sure (if it's missing) to add it here.
-      if (!regions.includes(mainRegion)) {
-        regions.push(mainRegion);
+      let parserData: ParserData|null = rawClassifier.getParserData(cc);
+      if (!parserData) {
+        throw new Error(`Parser data unavailable for: ${cc}`);
       }
-      // Region 001 is treated specially since it's the only region with more than one calling code
-      // so it cannot be put into the calling code map. It's also not expected to ever appear with
-      // any other region codes in the data.
-      let hasWorldRegion: boolean = regions.includes("001");
-      // We only need to do any work if there's more than one region for this calling code.
-      if (regions.length > 1) {
-        if (hasWorldRegion) {
-          throw new Error(`Region 001 must never appear with other region codes: ${regions}`);
-        }
-        // Sort regions, and then move the main region to the front (if not already there).
-        regions.sort();
-        let idx = regions.indexOf(mainRegion);
-        if (idx > 0) {
-          regions.splice(idx, 1);
-          regions.unshift(mainRegion);
-        }
-      }
-      // At this point, if (hasWorldRegion == true) it's the only region,
-      // so we aren't dropping any other regions here.
-      if (!hasWorldRegion) {
+      let regions = parserData.getRegions();
+      // Region 001 is treated specially since it's the only region with more than one calling code,
+      // so it cannot be put into the calling code map. It cannot also appear with other regions.
+      if (!regions.includes("001")) {
         for (let r of regions) {
           this.callingCodeMap.set(r, cc);
         }
+      } else if (regions.length > 1) {
+        throw new Error(`Region 001 must never appear with other region codes: ${regions}`);
       }
-      this.regionCodeMap.set(cc.toString(), regions.map(s => this.converter.fromString(s)));
+      let ccString = cc.toString();
+      this.regionCodeMap.set(ccString, regions.map(s => this.converter.fromString(s)));
+
+      if (parserData.getNationalPrefixes().length > 0) {
+        this.nationalPrefixMap.set(ccString, parserData.getNationalPrefixes());
+        if (parserData.isNationalPrefixOptional()) {
+          this.nationalPrefixOptional.add(ccString);
+        }
+      }
     }
   }
 
@@ -87,5 +78,10 @@ export class PhoneNumberRegions<T> {
   getCallingCode(regionCode: T): DigitSequence|null {
     let cc = this.callingCodeMap.get(this.converter.toString(regionCode));
     return cc ? cc : null;
+  }
+
+  getNationalPrefixes(callingCode: DigitSequence): ReadonlyArray<DigitSequence> {
+    let np = this.nationalPrefixMap.get(callingCode.toString());
+    return np ? np : [];
   }
 }

@@ -85,29 +85,42 @@ message CallingCodeProto {
   // because calling codes never have leading zeros.
   uint32 calling_code = 1;
 
+  // ---------------- Parser Metadata ----------------
   // Index of CLDR region code considered to be the "main" region associated with the data. If
   // additional region information is needed, a REGION classifier should be built into the data.
-  uint32 primary_region = 2;
+  uint32 main_region = 2;
+  // The count of regions associated with this calling code (assumed to be '1' if missing).
+  // If greater than 1, then the set of region codes are referenced by indices:
+  //    primary_region, ..., primary_region + (region_count - 1)
+  //
+  // This only works because region codes form a set and no two calling codes share the same
+  // region(*) so we can arrange the tokenized strings in the metadata in a suitable order.
+  // (*) - Other than "001", but that's always a single region for a calling code.
+  uint32 region_count = 3;
 
   // Indices of zero or more national prefixes used for this calling code.
   // The first value is the default, but all values may be used when parsing a number.
-  repeated uint32 national_prefix = 3;
+  repeated uint32 national_prefix = 5;
+  bool national_prefix_optional = 6;
 
+  // ---------------- Validation Metadata ----------------
   // Index of range(s) which defined the set of valid numbers in this region. For "simplified"
   // data, this may greatly exceed the original "raw" ranges, but must always be a superset.
   // However, since the original data can often includes many ranges which are not associated with
   // "active"/callable numbers, users should not treat false-positives with any great significance.
-  repeated uint32 validity_matcher_index = 4;
+  repeated uint32 validity_matcher_index = 7;
 
+  // ---------------- Classifier Metadata ----------------
   // Classifiers for different data types. The type corresponds to the entry with the same index in
   // type_names.
-  repeated NationalNumberDataProto national_number_data = 5;
+  repeated NationalNumberDataProto national_number_data = 8;
 
   // List of matcher data, indexed for validity data and from national_number_data.
-  repeated MatcherDataProto matcher_data = 6;
+  repeated MatcherDataProto matcher_data = 9;
 
+  // ---------------- Example Number Metadata ----------------
   // An optional, representative example number (extracted from Libphonenumber).
-  string example_number = 7;
+  string example_number = 10;
 }
 
 message NationalNumberDataProto {

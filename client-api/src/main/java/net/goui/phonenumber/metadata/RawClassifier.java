@@ -10,7 +10,6 @@
 
 package net.goui.phonenumber.metadata;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
@@ -89,17 +88,7 @@ public interface RawClassifier {
    */
   ImmutableSet<String> getSupportedNumberTypes();
 
-  /**
-   * Returns the "main" CLDR region code associated with the given calling code. This method will
-   * work even when no region data was explicitly added to the underlying metadata.
-   *
-   * <p>Since a subclass of {@code AbstractPhoneNumberClassifier} may choose to implement region
-   * codes via strongly typed values, such as {@code com.ibm.icu.util.Region}, this method is not
-   * reflected in the API of {@code AbstractPhoneNumberClassifier} by default.
-   */
-  String getMainRegion(DigitSequence callingCode);
-
-  ImmutableList<DigitSequence> getNationalPrefixes(DigitSequence callingCode);
+  ParserData getParserData(DigitSequence callingCode);
 
   /**
    * Returns an example number for the given calling code. The returned number will be valid, but
