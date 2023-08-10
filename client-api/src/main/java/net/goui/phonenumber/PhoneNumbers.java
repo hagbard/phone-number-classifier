@@ -53,16 +53,29 @@ public final class PhoneNumbers {
         "E.164 numbers must contain only decimal digits and allowed separators: %s",
         e164);
     DigitSequence cc = extractSupportedCallingCode(toEncode);
+    checkArgument(cc != null, "Unknown calling code %s in E.164 number: %s", cc, e164);
     return E164PhoneNumber.of(cc, DigitSequence.parse(toEncode.substring(cc.length())));
   }
 
-  private static DigitSequence extractSupportedCallingCode(String seq) {
+  static PhoneNumber create(DigitSequence callingCode, DigitSequence nationalNumber) {
+    checkArgument(isCallingCode(callingCode), "Invalid calling code: %s", callingCode);
+    return E164PhoneNumber.of(callingCode, nationalNumber);
+  }
+
+  // Visible to PhoneNumberParser, so can be given arbitrary sequence a input.
+  static DigitSequence extractSupportedCallingCode(String seq) {
+    int len = seq.length();
+    if (len == 0) return null;
     int cc = digitOf(seq, 0);
     if (!isCallingCode(cc)) {
+      if (len == 1) return null;
       cc = (10 * cc) + digitOf(seq, 1);
       if (!isCallingCode(cc)) {
+        if (len == 2) return null;
         cc = (10 * cc) + digitOf(seq, 2);
-        checkArgument(isCallingCode(cc), "Unknown calling code %s in E.164 number: %s", cc, seq);
+        if (!isCallingCode(cc)) {
+          return null;
+        }
       }
     }
     return DigitSequence.parse(Integer.toString(cc));
@@ -70,13 +83,20 @@ public final class PhoneNumbers {
 
   private static int digitOf(String s, int n) {
     int d = s.charAt(n) - '0';
-    checkArgument(d >=0 && d <= 9, "Invalid decimal digit in: %s", s);
+    checkArgument(d >= 0 && d <= 9, "Invalid decimal digit in: %s", s);
     return d;
   }
 
   private static boolean isCallingCode(int cc) {
     int bits = CC_MASK.charAt(cc >>> 4);
     return (bits & (1 << (cc & 0xF))) != 0;
+  }
+
+  private static boolean isCallingCode(DigitSequence cc) {
+    return !cc.isEmpty()
+        && cc.length() <= 3
+        && cc.getDigit(0) != 0
+        && isCallingCode(Integer.parseInt(cc.toString()));
   }
 
   @AutoValue

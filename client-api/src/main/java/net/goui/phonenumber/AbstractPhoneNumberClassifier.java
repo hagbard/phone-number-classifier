@@ -12,6 +12,7 @@ package net.goui.phonenumber;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.function.Function.identity;
 
 import com.google.auto.value.AutoValue;
@@ -215,7 +216,20 @@ public abstract class AbstractPhoneNumberClassifier {
    * @throws IllegalStateException if the format type is not present in the underlying metadata.
    */
   protected PhoneNumberFormatter createFormatter(FormatType type) {
+    checkState(canFormat(type), "No format data available for type: %s", type);
     return new PhoneNumberFormatter(rawClassifier, type);
+  }
+
+  /**
+   * Returns whether a classifier has the required format metadata for a type.
+   *
+   * <p>In general a subclass of `AbstractPhoneNumberClassifier` should know implicitly if a format
+   * type is supported, so a runtime check should not be needed. However, it is foreseeable that
+   * some schemas could define formatting to be optional and fall back to simple block formatting
+   * for missing data.
+   */
+  protected boolean canFormat(PhoneNumberFormatter.FormatType type) {
+    return rawClassifier.getSupportedNumberTypes().contains(type.id);
   }
 
   /**

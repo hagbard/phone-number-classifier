@@ -28,9 +28,11 @@ import static org.typemeta.funcj.json.model.JSAPI.str;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.common.base.CharMatcher;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
 import com.google.common.flogger.FluentLogger;
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -170,14 +172,15 @@ public class Analyzer {
       if (allRanges.isEmpty()) {
         continue;
       }
-      Set<JsArray> uniqueResults = new HashSet<>();
+      Multiset<JsArray> uniqueResults = HashMultiset.create();
       for (int n = 0; n < 50; n++) {
         DigitSequence nn = allRanges.sample((long) (rnd.nextDouble() * allRanges.size()));
         JsArray result =
             jsArray(
                 Sets.difference(rangeMap.getTypes(), FORMAT_MAP.keySet()),
                 t -> classify(rangeMap, t, nn));
-        if (uniqueResults.add(result)) {
+        uniqueResults.add(result);
+        if (uniqueResults.count(result) <= 5) {
           List<JsObject.Field> fields = new ArrayList<>();
           fields.add(field("cc", str(cc.toString())));
           fields.add(field("number", str(nn.toString())));
@@ -206,7 +209,7 @@ public class Analyzer {
         field("values", jsArray(rangeMap.getClassifier(type).classify(nn), JSAPI::str)));
   }
 
-  private static String getPrimaryRegion(DigitSequence cc) {
+  private static String getMainRegion(DigitSequence cc) {
     return PHONE_NUMBER_UTIL.getRegionCodeForCountryCode(Integer.parseUnsignedInt(cc.toString()));
   }
 
@@ -219,7 +222,13 @@ public class Analyzer {
       return null;
     }
 
-    String region = getPrimaryRegion(cc);
+    // Since numbers with the "world" region don't have a unique calling code, it's impossible to
+    // reliably re-parse the numbers from national format, so we shouldn't emit them into the data.
+    String region = getMainRegion(cc);
+    if (region.equals("001") && type == NATIONAL_FORMAT) {
+      return null;
+    }
+
     DigitSequence np = getNationalPrefix(metadata, cc);
     Optional<PhoneNumber> optLpn = parseNationalNumber(cc, np.toString() + nn.toString(), region);
     if (optLpn.isEmpty()) {
@@ -236,14 +245,12 @@ public class Analyzer {
 
   private static Optional<PhoneNumber> parseNationalNumber(
       DigitSequence cc, String nn, String region) {
-    if (!region.equals("001")) {
-      try {
-        PhoneNumber lpn = PHONE_NUMBER_UTIL.parse(nn, region);
-        if (cc.toString().equals(Integer.toString(lpn.getCountryCode()))) {
-          return Optional.of(lpn);
-        }
-      } catch (NumberParseException ignored) {
+    try {
+      PhoneNumber lpn = PHONE_NUMBER_UTIL.parse(nn, region);
+      if (cc.toString().equals(Integer.toString(lpn.getCountryCode()))) {
+        return Optional.of(lpn);
       }
+    } catch (NumberParseException ignored) {
     }
     return Optional.empty();
   }

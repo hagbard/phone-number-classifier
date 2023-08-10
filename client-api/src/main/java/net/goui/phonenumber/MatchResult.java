@@ -93,4 +93,9 @@ public enum MatchResult {
     // 3. An EXCESS_DIGITS result in one set takes precedence over UNMATCHED in the other.
     return Comparators.min(first, second);
   }
+
+  /** Whether this match is "better" than the given match. */
+  public boolean isBetterThan(MatchResult r) {
+    return compareTo(r) < 0;
+  }
 }

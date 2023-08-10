@@ -63,6 +63,14 @@ public class SimpleClassifierTest {
   @Test
   public void testParser() {
     PhoneNumberParser<String> parser = SIMPLE_CLASSIFIER.getParser();
+    assertThat(parser.parseLeniently("(079) 555 1234", "CH")).hasValue(PhoneNumbers.fromE164("+41795551234"));
+    assertThat(parser.parseLeniently("(+41) 079 555-1234")).hasValue(PhoneNumbers.fromE164("+41795551234"));
+
+  }
+
+  @Test
+  public void testParserRegions() {
+    PhoneNumberParser<String> parser = SIMPLE_CLASSIFIER.getParser();
     assertThat(parser.getRegions(seq("44"))).containsExactly("GB", "GG", "IM", "JE").inOrder();
     assertThat(parser.getRegions(seq("41"))).containsExactly("CH");
     assertThat(parser.getRegions(seq("888"))).containsExactly("001");
