@@ -17,6 +17,7 @@ import static java.util.function.Function.identity;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -200,6 +201,14 @@ public abstract class AbstractPhoneNumberClassifier {
   // Protected so subclasses can expose it for regression testing.
   protected final RawClassifier rawClassifier() {
     return rawClassifier;
+  }
+
+  public ImmutableSet<DigitSequence> getSupportedCallingCodes() {
+    return rawClassifier.getSupportedCallingCodes();
+  }
+
+  public boolean isSupportedCallingCode(DigitSequence callingCode) {
+    return getSupportedCallingCodes().contains(callingCode);
   }
 
   /**

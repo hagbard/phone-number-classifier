@@ -37,6 +37,13 @@ export abstract class AbstractPhoneNumberClassifier {
   }
 
   /**
+   * Returns whether the given calling code is supported by this classifier.
+   */
+  isSupportedCallingCode(callingCode: DigitSequence): boolean {
+    return this.rawClassifier.isSupportedCallingCode(callingCode);
+  }
+
+  /**
    * Tests a phone number against the possible lengths of any number in its numbering plan. This
    * method is fast, but takes no account of the number type.
    *

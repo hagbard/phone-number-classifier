@@ -224,12 +224,18 @@ describe("PhoneNumberParser", () => {
     expect(pnc.getParser().getCallingCode("GB")).toEqual(seq("44"));
     expect(pnc.getParser().getCallingCode("JE")).toEqual(seq("44"));
   });
-  test('testGetNationalPrefixes', () => {
-    expect(pnc.getParser().getNationalPrefixes(seq("1"))).toEqual([seq("1")]);
-    expect(pnc.getParser().getNationalPrefixes(seq("44"))).toEqual([seq("0")]);
-    expect(pnc.getParser().getNationalPrefixes(seq("375"))).toEqual([seq("8"), seq("0"), seq("80")]);
-  });
+  test('testParseUnsupportedNumber', () => {
+    // All calling codes starting with 9 should be unsupported in the metadata for this test.
+    expect(pnc.isSupportedCallingCode(seq("90"))).toEqual(false);
+    let result = pnc.getParser().parseStrictly("+90 800 471 709298");
+    expect(result.getPhoneNumber().getCallingCode()).toEqual(seq("90"));
+    expect(result.getPhoneNumber().getNationalNumber()).toEqual(seq("800471709298"));
+    expect(result.getResult()).toEqual(MatchResult.Invalid);
 
+    // For unsupported calling codes, national number parsing always fails.
+    expect(() => pnc.getParser().parseStrictly("0800 471 709298", "TR"))
+        .toThrowError(/Cannot parse.*\b0800 471 709298\b.*\bTR\b/);
+  });
 });
 
 describe("GoldenDataTest", () => {
@@ -238,12 +244,28 @@ describe("GoldenDataTest", () => {
     goldenDataJson.testdata.forEach(gd => {
       let cc: DigitSequence = seq(gd.cc);
       let nn: DigitSequence = seq(gd.number);
-      gd.result.forEach(r => {
-        expect(raw.classify(cc, nn, r.type)).toEqual(new Set(r.values));
-      });
-      gd.format.forEach(r => {
-        expect(pnc.formatForTests(cc, nn, r.type)).toEqual(r.value);
-      })
+      // Undefined if unsupported calling code.
+      let region = pnc.getParser().getRegions(cc).at(0);
+      if (region) {
+        gd.result.forEach(r => {
+          expect(raw.classify(cc, nn, r.type)).toEqual(new Set(r.values));
+        });
+        // If a valid number is supported in the metadata it is parsed successfully from any format.
+        gd.format.forEach(r => {
+          expect(pnc.formatForTests(cc, nn, r.type)).toEqual(r.value);
+          let res = pnc.getParser().parseStrictly(r.value, region);
+          expect(res.getPhoneNumber()).toEqual(PhoneNumber.of(cc, nn));
+          expect(res.getResult()).toEqual(MatchResult.Matched);
+        });
+      } else {
+        // If a valid number is unsupported in the metadata it can be parsed from international
+        // format, but cannot be classified (it's always considers "invalid").
+        gd.format.filter(r => r.type === "INTERNATIONAL_FORMAT").forEach(r => {
+          let res = pnc.getParser().parseStrictly(r.value, region);
+          expect(res.getPhoneNumber()).toEqual(PhoneNumber.of(cc, nn));
+          expect(res.getResult()).toEqual(MatchResult.Invalid);
+        });
+      }
     });
   });
 });

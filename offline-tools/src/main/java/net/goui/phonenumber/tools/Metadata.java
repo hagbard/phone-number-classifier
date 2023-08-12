@@ -130,8 +130,7 @@ abstract class Metadata {
             exampleTable.row(mainRegion);
 
         callingCodeMap.put(
-            cc, getRangeMapForTable(rangeTable, formatsTable, mainRegion, nationalPrefixes,
-                exampleNumbersMap));
+            cc, getRangeMapForTable(rangeTable, formatsTable, nationalPrefixes, exampleNumbersMap));
       }
     }
     return create(root, callingCodeMap.buildOrThrow());
@@ -144,7 +143,6 @@ abstract class Metadata {
   private static RangeMap getRangeMapForTable(
       RangeTable rangeTable,
       ImmutableMap<String, FormatSpec> formatsTable,
-      PhoneRegion mainRegion,
       ImmutableList<DigitSequence> nationalPrefixes,
       ImmutableMap<ValidNumberType, DigitSequence> exampleNumbersMap) {
 

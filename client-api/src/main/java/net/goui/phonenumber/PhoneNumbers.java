@@ -52,7 +52,7 @@ public final class PhoneNumbers {
         ASCII_DIGIT.matchesAllOf(toEncode),
         "E.164 numbers must contain only decimal digits and allowed separators: %s",
         e164);
-    DigitSequence cc = extractSupportedCallingCode(toEncode);
+    DigitSequence cc = extractCallingCode(toEncode);
     checkArgument(cc != null, "Unknown calling code %s in E.164 number: %s", cc, e164);
     return E164PhoneNumber.of(cc, DigitSequence.parse(toEncode.substring(cc.length())));
   }
@@ -63,19 +63,18 @@ public final class PhoneNumbers {
   }
 
   // Visible to PhoneNumberParser, so can be given arbitrary sequence a input.
-  static DigitSequence extractSupportedCallingCode(String seq) {
+  static DigitSequence extractCallingCode(String seq) {
     int len = seq.length();
     if (len == 0) return null;
     int cc = digitOf(seq, 0);
+    if (cc == 0) return null;
     if (!isCallingCode(cc)) {
       if (len == 1) return null;
       cc = (10 * cc) + digitOf(seq, 1);
       if (!isCallingCode(cc)) {
         if (len == 2) return null;
         cc = (10 * cc) + digitOf(seq, 2);
-        if (!isCallingCode(cc)) {
-          return null;
-        }
+        if (!isCallingCode(cc)) return null;
       }
     }
     return DigitSequence.parse(Integer.toString(cc));
