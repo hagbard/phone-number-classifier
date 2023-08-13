@@ -15,8 +15,54 @@ import { PhoneNumber } from "./phone-number.js";
 import { MatchResult, LengthResult } from "./match-results.js";
 
 /**
+ * Phone number result object to hold a parsed phone number and the associated match result.
+ */
+export class PhoneNumberResult {
+  constructor(private readonly phoneNumber: PhoneNumber, private readonly result: MatchResult) {}
+
+  getPhoneNumber(): PhoneNumber {
+    return this.phoneNumber;
+  }
+
+  getResult(): MatchResult {
+    return this.result;
+  }
+}
+
+/**
  * Phone number parsing API, available from subclasses of `AbstractPhoneNumberClassifier` when
  * parser metadata is available.
+ *
+ * Important: This parser is deliberately simpler than the corresponding parser in Google's
+ * Libphonenumber library. It is designed to be a robust parser for cases where the input is a
+ * formatted phone number, but it will not handle all the edge cases that Libphonenumber can
+ * (e.g. parsing U.S. vanity numbers such as "1-800-BIG-DUCK").
+ *
+ * However, when given normally formatted national/international phone number text, this parser
+ * produces exactly the same, or better results than Libphonenumber for valid/supported ranges.
+ *
+ * If a calling code/region is supported in the metadata for the parser, then numbers are
+ * validated with/without national prefixes, and the best match is chosen. Examples of input which
+ * can be parsed:
+ *
+ * "056/090 93 19" (SK)
+ * "+687 71.49.28" (NC)
+ * "(8108) 6309 390 906" (RU/KZ)
+ *
+ * In the final example, note that the national is given without the (optional) national prefix,
+ * which is also '8'. In this case Libphonenumber gets confused and mis-parses the number, whereas
+ * this parser will correctly handle it (https://issuetracker.google.com/issues/295677348).
+ *
+ * If a calling code/region is not supported in the metadata for the parser, then only
+ * internationally formatted numbers (with a leading '+' and country calling code) can be parsed,
+ * and no validation is performed (the match result is always `Invalid`).
+ *
+ * As a special case, Argentinian national mobile numbers formatted with the mobile token '15'
+ * after the area code (e.g. "0 11 15-3329-5195") will be transformed to use the international
+ * mobile token prefix '9' (e.g. +54 9 11 3329-5195). This results in 11-digit mobile numbers in
+ * Argentina, which is not strictly correct (the leading '9' is not part of the national number)
+ * but it is the only reasonable way to preserve the distinction between mobile and fixed-line
+ * numbers when the numbers are subsequently formatted again.
  */
 export class PhoneNumberParser<T> {
   // This must include every character in any format specifier.
@@ -217,17 +263,5 @@ export class PhoneNumberParser<T> {
         // 0x30 = '0', 0xff10 = '０'
         .map(d => d >= 0xff10 ? d - 0xff10 : d - 0x30)
         .join("");
-  }
-}
-
-export class PhoneNumberResult {
-  constructor(private readonly phoneNumber: PhoneNumber, private readonly result: MatchResult) {}
-
-  getPhoneNumber(): PhoneNumber {
-    return this.phoneNumber;
-  }
-
-  getResult(): MatchResult {
-    return this.result;
   }
 }

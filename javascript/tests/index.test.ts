@@ -224,6 +224,18 @@ describe("PhoneNumberParser", () => {
     expect(pnc.getParser().getCallingCode("GB")).toEqual(seq("44"));
     expect(pnc.getParser().getCallingCode("JE")).toEqual(seq("44"));
   });
+  // Example of a case where Libphonenumber fails to parse properly.
+  // https://libphonenumber.appspot.com/phonenumberparser?number=%288108%29+6309+390+906&country=RU
+  test('testParseBetterThanLibphonenumber', () => {
+    // The example number is a 14-digit toll free number (from 7/ranges.csv):
+    //   8108  ; 14  ; FIXED_LINE  ; TOLL_FREE
+    // The optional national prefix is also '8', but isn't included for this input.
+    // Libphonenumber gets brutally confused and returns a result of +86 309390906.
+    let result = pnc.getParser().parseStrictly("(8108) 6309 390 906", "RU");
+    expect(result.getPhoneNumber().getCallingCode()).toEqual(seq("7"));
+    expect(result.getPhoneNumber().getNationalNumber()).toEqual(seq("81086309390906"));
+    expect(result.getResult()).toEqual(MatchResult.Matched);
+  });
   test('testParseUnsupportedNumber', () => {
     // All calling codes starting with 9 should be unsupported in the metadata for this test.
     expect(pnc.isSupportedCallingCode(seq("90"))).toEqual(false);
