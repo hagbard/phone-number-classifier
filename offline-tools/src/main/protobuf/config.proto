@@ -96,7 +96,7 @@ message MetadataConfigProto {
   repeated uint32 calling_code = 3;
   string calling_codes = 4;
 
-  // Used to determine the default behaviour when `calling_code` is empty.
+  // Used to determine the default behaviour when no calling codes are specified.
   // If false (default value) then all calling codes are processed.
   // If true, only calling codes in overrides are processed.
   bool exclude_by_default = 5;

@@ -23,25 +23,32 @@ export class PhoneNumber {
 
   static fromE164(e164: string): PhoneNumber {
     let seq = e164.startsWith("+") ? e164.substring(1) : e164;
-    if (seq.length < 3) {
-      throw new Error(`E.164 numbers must be at least 3 digits: ${e164}`);
+    let cc = PhoneNumber.extractCallingCode(seq);
+    if (!cc) {
+      throw new Error(`Cannot extract calling code from E.164 number: ${e164}`);
     }
-    let cc: number = PhoneNumber.digitOf(seq, 0);
-    if (!PhoneNumber.isCallingCode(cc)) {
-      cc = (10 * cc) + PhoneNumber.digitOf(seq, 1);
-      if (!PhoneNumber.isCallingCode(cc)) {
-        cc = (10 * cc) + PhoneNumber.digitOf(seq, 2);
-        if (!PhoneNumber.isCallingCode(cc)) {
-          throw new Error(`Unknown calling code ${cc} in E.164 number: ${e164}`);
-        }
-      }
-    }
-    let callingCode: DigitSequence = DigitSequence.parse(cc.toString());
-    return PhoneNumber.of(callingCode, DigitSequence.parse(seq.substring(callingCode.length())));
+    return PhoneNumber.of(cc, DigitSequence.parse(seq.substring(cc.length())));
   }
 
   static of(callingCode: DigitSequence, nationalNumber: DigitSequence): PhoneNumber {
     return new PhoneNumber(callingCode, nationalNumber);
+  }
+
+  static extractCallingCode(seq: string): DigitSequence|null {
+    let len = seq.length;
+    if (len === 0) return null;
+    let cc: number = PhoneNumber.digitOf(seq, 0);
+    if (cc === 0) return null;
+    if (!PhoneNumber.isCallingCode(cc)) {
+      if (len === 1) return null;
+      cc = (10 * cc) + PhoneNumber.digitOf(seq, 1);
+      if (!PhoneNumber.isCallingCode(cc)) {
+        if (len === 2) return null;
+        cc = (10 * cc) + PhoneNumber.digitOf(seq, 2);
+        if (!PhoneNumber.isCallingCode(cc)) return null;
+      }
+    }
+    return DigitSequence.parse(cc.toString());
   }
 
   private static digitOf(s: string, n: number): number {

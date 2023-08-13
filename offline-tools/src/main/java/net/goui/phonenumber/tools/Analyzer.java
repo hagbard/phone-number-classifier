@@ -123,17 +123,20 @@ public class Analyzer {
             ? MetadataConfig.simple(DEFAULT_BASE_TYPES, DIGIT_SEQUENCE_MATCHER, 0, 1)
             : MetadataConfig.load(Paths.get(flags.configPath));
     // Don't call trimValidRanges() until we have the simplified version.
+    //
+    // Note that transformedMetadata has data for all calling codes, and it's only when we call
+    // simplify() that it is trimmed. This means that test data is written for *all* calling
+    // codes (which is what we want, since some functionality is still testable).
     Metadata transformedMetadata =
         Metadata.load(flags.zipPath, flags.dirPath, flags.csvSeparator)
             .transform(config.getOutputTransformer());
-    Metadata simplifiedMetadata =
-        MetadataSimplifier.simplify(transformedMetadata, config).trimValidRanges();
     transformedMetadata = transformedMetadata.trimValidRanges();
-
     if (!flags.testDataPath.isEmpty()) {
       logger.atInfo().log("writing test data to: %s", flags.testDataPath);
       writeTestData(transformedMetadata, Paths.get(flags.testDataPath));
     }
+    Metadata simplifiedMetadata =
+            MetadataSimplifier.simplify(transformedMetadata, config).trimValidRanges();
     printRegex(transformedMetadata, simplifiedMetadata);
   }
 

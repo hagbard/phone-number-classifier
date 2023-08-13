@@ -4,9 +4,8 @@ import com.google.auto.value.AutoValue;
 
 @AutoValue
 public abstract class PhoneNumberResult {
-  static PhoneNumberResult result(
-      DigitSequence callingCode, DigitSequence nationalNumber, MatchResult matchResult) {
-    return new AutoValue_PhoneNumberResult(PhoneNumbers.create(callingCode, nationalNumber), matchResult);
+  static PhoneNumberResult of(PhoneNumber phoneNumber, MatchResult matchResult) {
+    return new AutoValue_PhoneNumberResult(phoneNumber, matchResult);
   }
 
   public abstract PhoneNumber getPhoneNumber();

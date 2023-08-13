@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 import net.goui.phonenumber.proto.Metadata.MetadataProto.VersionInfo;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto;
+import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.ConfigOverrideProto;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.MatcherType;
 
 /** Encapsulation of a metadata configuration file. */
@@ -64,7 +65,7 @@ abstract class MetadataConfig {
             .build();
 
     Map<DigitSequence, CallingCodeConfig> configMap = new LinkedHashMap<>();
-    for (MetadataConfigProto.ConfigOverrideProto override : configProto.getOverrideList()) {
+    for (ConfigOverrideProto override : configProto.getOverrideList()) {
       ImmutableSet<DigitSequence> overrideCallingCodes =
           loadCallingCodes(override.getCallingCodes(), override.getCallingCodeList());
       checkArgument(

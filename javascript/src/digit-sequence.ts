@@ -56,6 +56,9 @@ export abstract class DigitSequence {
    */
   abstract getSuffix(length: number): DigitSequence;
 
+  /** @returns whether the given sequence contains the same digits as this instance. */
+  abstract equals(other: DigitSequence): boolean;
+
   /**
    * @param a string containing only ASCII decimal digits up to 19-digits in length.
    * @returns a new `DigitSequence` representing the given digits.
@@ -72,7 +75,7 @@ export abstract class DigitSequence {
 }
 
 class StringBasedDigitSequence extends DigitSequence {
-  private static readonly ZERO: number = '0'.charCodeAt(0);
+  private static readonly ZERO: number = 0x30;
 
   // We could also use # prefix (https://github.com/tc39/proposal-class-fields#private-fields)
   // but this adds bloat when compiled for older JavaScript versions and anyone accessing
@@ -121,6 +124,10 @@ class StringBasedDigitSequence extends DigitSequence {
       return start > 0 ? new StringBasedDigitSequence(this.digits.substring(start)) : this;
     }
     throw new Error(`length (${length}) must not exceed sequence length: ${this}`);
+  }
+
+  equals(other: DigitSequence): boolean {
+    return this.digits === other.toString();
   }
 
   toString(): string {

@@ -42,8 +42,7 @@ export class RawClassifier {
     let version: VersionJson = json.ver;
     // Token decoding function.
     let decode: (i: number) => string = (i) => json.tok[i];
-    let callingCodes: ReadonlySet<DigitSequence> =
-        new Set(json.ccd.map(ccd => DigitSequence.parse(ccd.c.toString())));
+    let callingCodes: ReadonlySet<string> = new Set(json.ccd.map(ccd => ccd.c.toString()));
     let typeList = json.typ !== undefined ? json.typ : [];
     let types: Map<string, number> = new Map(typeList.map((t, i) => [decode(t), i]));
     let singleValuedTypeMask: number = json.svm !== undefined ? json.svm : 0;
@@ -69,7 +68,7 @@ export class RawClassifier {
   }
 
   constructor(
-      private readonly callingCodes: ReadonlySet<DigitSequence>,
+      private readonly callingCodes: ReadonlySet<string>,
       private readonly types: Map<string, number>,
       private readonly singleValuedTypeMask: number,
       private readonly classifierOnlyTypeMask: number,
@@ -80,9 +79,19 @@ export class RawClassifier {
    * The country calling codes supported by the metadata schema. Different metadata schemas can make
    * different promises about which calling codes are supported, and without knowledge of the schema
    * being used, there are no guarantees about what is in this set.
+   *
+   * Note: In order to make the returned value actually useful for checking if a calling code is
+   * supported, we have to return a `Set<string>` and not a `Set<DigitSequence>`. JavaScript sucks.
    */
-  getSupportedCallingCodes(): ReadonlySet<DigitSequence> {
+  getSupportedCallingCodes(): ReadonlySet<string> {
     return this.callingCodes;
+  }
+
+  /**
+   * Returns whether the given calling code is supported by this classifier.
+   */
+  isSupportedCallingCode(callingCode: DigitSequence): boolean {
+    return this.callingCodes.has(callingCode.toString());
   }
 
   /**

@@ -13,6 +13,7 @@ package net.goui.phonenumber.tools;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema.NATIONAL_PREFIX;
 import static java.util.function.Function.identity;
 
 import com.google.auto.value.AutoValue;
@@ -27,15 +28,10 @@ import com.google.i18n.phonenumbers.metadata.PrefixTree;
 import com.google.i18n.phonenumbers.metadata.RangeSpecification;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
 import com.google.i18n.phonenumbers.metadata.finitestatematcher.compiler.MatcherCompiler;
+import com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema.DigitSequences;
 import com.google.i18n.phonenumbers.metadata.table.RangeKey;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 import net.goui.phonenumber.tools.MetadataConfig.CallingCodeConfig;
 
@@ -87,7 +83,6 @@ final class MetadataSimplifier {
       }
 
       int maxFalsePositivePercent = callingCodeConfig.get().maxFalsePositivePercent();
-      int minPrefixLength = callingCodeConfig.get().minPrefixLength();
       RangeMap rangeMap = metadata.getRangeMap(cc);
 
       // If the configuration specifies no additional false-positives, we just copy the range.
@@ -95,6 +90,29 @@ final class MetadataSimplifier {
         simplifiedMetadata.put(cc, rangeMap);
         continue;
       }
+
+      // Special case to avoid over-shortening ranges in cases where national prefixes exist.
+      // This avoids cases where range simplification could create new ranges which begin with
+      // two copies of the national prefix (causing problems when parsing).
+      //
+      // The most egregious case of this is Belarus (BY) where the national prefixes include
+      // "80", but ranges between 7 and 9 digits can also start with "80", but not "8080".
+      // If ranges were simplified too much then ranges starting with "8080" could be introduced,
+      // making it impossible to reliably remove the national prefix during parsing.
+      //
+      // In most cases, this limits the minimum prefix length to 1 or 2, which will not make a
+      // noticeable difference to metadata size.
+      int minPrefixLength = callingCodeConfig.get().minPrefixLength();
+      ImmutableSet<DigitSequence> nationalPrefixes =
+          metadata
+              .root()
+              .get(cc, NATIONAL_PREFIX)
+              .map(DigitSequences::getValues)
+              .orElse(ImmutableSet.of());
+      int maxNationalPrefixLength =
+          nationalPrefixes.stream().mapToInt(DigitSequence::length).max().orElse(0);
+      minPrefixLength = Math.max(minPrefixLength, maxNationalPrefixLength + 1);
+
       simplifiedMetadata.put(
           cc, simplifyRangeMap(rangeMap, maxFalsePositivePercent, minPrefixLength));
     }

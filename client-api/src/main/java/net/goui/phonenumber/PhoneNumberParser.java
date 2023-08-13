@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static net.goui.phonenumber.LengthResult.POSSIBLE;
 import static net.goui.phonenumber.LengthResult.TOO_LONG;
+import static net.goui.phonenumber.MatchResult.INVALID;
 import static net.goui.phonenumber.MatchResult.MATCHED;
 
 import com.google.common.base.CharMatcher;
@@ -86,109 +87,6 @@ public final class PhoneNumberParser<T> {
     this.nationalPrefixOptional = nationalPrefixOptional.build();
   }
 
-  public Optional<PhoneNumber> parseLeniently(String text) {
-    return parseImpl(text, null).map(PhoneNumberResult::getPhoneNumber);
-  }
-
-  public Optional<PhoneNumber> parseLeniently(String text, T region) {
-    return parseImpl(text, region).map(PhoneNumberResult::getPhoneNumber);
-  }
-
-  public PhoneNumberResult parseStrictly(String text) {
-    return parseImpl(text, null)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid phone number text: " + text));
-  }
-
-  public PhoneNumberResult parseStrictly(String text, T region) {
-    return parseImpl(text, region)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid phone number text: " + text));
-  }
-
-  private Optional<PhoneNumberResult> parseImpl(String text, @Nullable T region) {
-    if (!ALLOWED_CHARS.matchesAllOf(text)) {
-      return Optional.empty();
-    }
-    // Should always succeed even if result is empty.
-    String digitText = removeNonDigitsAndNormalizeToAscii(text);
-    if (digitText.isEmpty()) {
-      return Optional.empty();
-    }
-    // Heuristic to look for things that are more likely to be attempts are writing an E.164 number.
-    // This is true for things like "+1234", "(+12) 34" but NOT "+ 12 34", "++1234" or "+1234+"
-    // If this is true, we try to extract a calling code from the number *before* using the given
-    // region.
-    int plusIndex = text.indexOf('+');
-    boolean looksLikeE164 =
-        plusIndex >= 0
-            && ANY_DIGIT.indexIn(text) == plusIndex + 1
-            && plusIndex == text.lastIndexOf('+');
-
-    DigitSequence originalNumber = DigitSequence.parse(digitText);
-    DigitSequence providedCc = callingCodeMap.get(region);
-    DigitSequence extractedCc = PhoneNumbers.extractSupportedCallingCode(digitText);
-    PhoneNumberResult bestResult = null;
-    if (providedCc != null && !looksLikeE164) {
-      bestResult = getBestParseResult(providedCc, originalNumber);
-      if (bestResult.getResult() != MATCHED && extractedCc != null) {
-        PhoneNumberResult result =
-            getBestParseResult(extractedCc, removePrefix(originalNumber, extractedCc.length()));
-        bestResult = bestOf(bestResult, result);
-      }
-    } else if (extractedCc != null) {
-      bestResult =
-          getBestParseResult(extractedCc, removePrefix(originalNumber, extractedCc.length()));
-      if (bestResult.getResult() != MATCHED && providedCc != null) {
-        bestResult = bestOf(bestResult, getBestParseResult(providedCc, originalNumber));
-      }
-    }
-
-    return Optional.ofNullable(bestResult);
-  }
-
-  private PhoneNumberResult getBestParseResult(DigitSequence cc, DigitSequence nn) {
-
-    if (cc.equals(CC_ARGENTINA)) {
-      nn = maybeAdjustArgentineFixedLineNumber(cc, nn);
-    }
-
-    DigitSequence bestNumber = nn;
-    ImmutableSet<DigitSequence> nationalPrefixes = nationalPrefixMap.get(cc);
-    MatchResult bestResult = rawClassifier.match(cc, nn);
-    if (bestResult != MATCHED) {
-      for (DigitSequence np : nationalPrefixes) {
-        if (startsWith(np, nn)) {
-          DigitSequence candidateNumber = removePrefix(nn, np.length());
-          MatchResult candidateResult = rawClassifier.match(cc, candidateNumber);
-          if (candidateResult.compareTo(bestResult) < 0) {
-            bestNumber = candidateNumber;
-            bestResult = candidateResult;
-            if (bestResult == MATCHED) {
-              break;
-            }
-          }
-        }
-      }
-    }
-    return PhoneNumberResult.result(cc, bestNumber, bestResult);
-  }
-
-  private DigitSequence maybeAdjustArgentineFixedLineNumber(DigitSequence cc, DigitSequence nn) {
-    if (rawClassifier.testLength(cc, nn) == TOO_LONG) {
-      Matcher m = ARGENTINA_MOBILE_PREFIX.matcher(nn.toString());
-      if (m.matches()) {
-        DigitSequence candidate = DigitSequence.parse("9" + m.group(1) + m.group(2));
-        if (rawClassifier.testLength(cc, candidate) == POSSIBLE) {
-          nn = candidate;
-        }
-      }
-    }
-    return nn;
-  }
-
-  private static PhoneNumberResult bestOf(PhoneNumberResult a, PhoneNumberResult b) {
-    return a.getResult().isBetterThan(b.getResult()) ? a : b;
-  }
-
   /**
    * Returns a sorted list of CLDR region codes for the given country calling code.
    *
@@ -221,22 +119,118 @@ public final class PhoneNumberParser<T> {
     return Optional.ofNullable(callingCodeMap.get(region));
   }
 
-  /**
-   * Returns the national prefixes (possibly empty) for the given calling code. Most numbering plans
-   * have either one, or no national prefix, but some plans specify more than one. The first value
-   * in the returned list is the "preferred" prefix for formatting.
-   */
-  public ImmutableSet<DigitSequence> getNationalPrefixes(DigitSequence callingCode) {
-    return nationalPrefixMap.get(callingCode);
+  public Optional<PhoneNumber> parseLeniently(String text) {
+    return parseImpl(text, null).map(PhoneNumberResult::getPhoneNumber);
   }
 
-  /**
-   * Returns whether the national prefix for the given calling code is optional. In cases where a
-   * national prefix is optional, it need not be dialled at the start of a national number. National
-   * prefixes should never be dialled as part of an international number.
-   */
-  public boolean isNationalPrefixOptional(DigitSequence callingCode) {
-    return nationalPrefixOptional.contains(callingCode);
+  public Optional<PhoneNumber> parseLeniently(String text, T region) {
+    return parseImpl(text, region).map(PhoneNumberResult::getPhoneNumber);
+  }
+
+  public PhoneNumberResult parseStrictly(String text) {
+    return parseImpl(text, null)
+        .orElseThrow(
+            () -> new IllegalArgumentException("Cannot parse phone number text '" + text + "'"));
+  }
+
+  public PhoneNumberResult parseStrictly(String text, T region) {
+    return parseImpl(text, region)
+        .orElseThrow(
+            () ->
+                new IllegalArgumentException(
+                    "Cannot parse phone number text '" + text + "' in region '" + region + "'"));
+  }
+
+  private Optional<PhoneNumberResult> parseImpl(String text, @Nullable T region) {
+    if (!ALLOWED_CHARS.matchesAllOf(text)) {
+      return Optional.empty();
+    }
+    // Should always succeed even if result is empty.
+    String digitText = removeNonDigitsAndNormalizeToAscii(text);
+    if (digitText.isEmpty()) {
+      return Optional.empty();
+    }
+    // Heuristic to look for things that are more likely to be attempts are writing an E.164 number.
+    // This is true for things like "+1234", "(+12) 34" but NOT "+ 12 34", "++1234" or "+1234+"
+    // If this is true, we try to extract a calling code from the number *before* using the given
+    // region.
+    int plusIndex = text.indexOf('+');
+    boolean looksLikeE164 =
+        plusIndex >= 0
+            && ANY_DIGIT.indexIn(text) == plusIndex + 1
+            && plusIndex == text.lastIndexOf('+');
+
+    DigitSequence originalNumber = DigitSequence.parse(digitText);
+    // Null if the region is not supported.
+    DigitSequence providedCc = callingCodeMap.get(region);
+    // We can extract all possible calling codes regardless of whether they are supported, but we
+    // only want to attempt to classify supported calling codes.
+    DigitSequence extractedCc = PhoneNumbers.extractCallingCode(digitText);
+    boolean extractedCcIsSupported =
+        extractedCc != null && rawClassifier.getSupportedCallingCodes().contains(extractedCc);
+    PhoneNumberResult bestResult = null;
+    if (providedCc != null && !looksLikeE164) {
+      bestResult = getBestParseResult(providedCc, originalNumber);
+      if (bestResult.getResult() != MATCHED && extractedCcIsSupported) {
+        PhoneNumberResult result =
+            getBestParseResult(extractedCc, removePrefix(originalNumber, extractedCc.length()));
+        bestResult = bestOf(bestResult, result);
+      }
+    } else if (extractedCcIsSupported) {
+      bestResult =
+          getBestParseResult(extractedCc, removePrefix(originalNumber, extractedCc.length()));
+      if (bestResult.getResult() != MATCHED && providedCc != null) {
+        bestResult = bestOf(bestResult, getBestParseResult(providedCc, originalNumber));
+      }
+    }
+    // Fallback for cases where the calling code isn't supported in the metadata, but we can
+    // still make a best guess at an E164 number without any validation.
+    if (bestResult == null && looksLikeE164 && extractedCc != null) {
+      bestResult = PhoneNumberResult.of(PhoneNumbers.fromE164(digitText), INVALID);
+    }
+    return Optional.ofNullable(bestResult);
+  }
+
+  private PhoneNumberResult getBestParseResult(DigitSequence cc, DigitSequence nn) {
+    if (cc.equals(CC_ARGENTINA)) {
+      nn = maybeAdjustArgentineFixedLineNumber(cc, nn);
+    }
+    DigitSequence bestNumber = nn;
+    MatchResult bestResult = rawClassifier.match(cc, nn);
+    if (bestResult != MATCHED) {
+      ImmutableSet<DigitSequence> nationalPrefixes = nationalPrefixMap.get(cc);
+      for (DigitSequence np : nationalPrefixes) {
+        if (startsWith(np, nn)) {
+          DigitSequence candidateNumber = removePrefix(nn, np.length());
+          MatchResult candidateResult = rawClassifier.match(cc, candidateNumber);
+          if (candidateResult.isBetterThan(bestResult)) {
+            bestNumber = candidateNumber;
+            bestResult = candidateResult;
+            if (bestResult == MATCHED) {
+              break;
+            }
+          }
+        }
+      }
+    }
+    return PhoneNumberResult.of(PhoneNumbers.create(cc, bestNumber), bestResult);
+  }
+
+  private DigitSequence maybeAdjustArgentineFixedLineNumber(DigitSequence cc, DigitSequence nn) {
+    if (rawClassifier.testLength(cc, nn) == TOO_LONG) {
+      Matcher m = ARGENTINA_MOBILE_PREFIX.matcher(nn.toString());
+      if (m.matches()) {
+        DigitSequence candidate = DigitSequence.parse("9" + m.group(1) + m.group(2));
+        if (rawClassifier.testLength(cc, candidate) == POSSIBLE) {
+          return candidate;
+        }
+      }
+    }
+    return nn;
+  }
+
+  private static PhoneNumberResult bestOf(PhoneNumberResult a, PhoneNumberResult b) {
+    return a.getResult().isBetterThan(b.getResult()) ? a : b;
   }
 
   private static boolean startsWith(DigitSequence prefix, DigitSequence seq) {
