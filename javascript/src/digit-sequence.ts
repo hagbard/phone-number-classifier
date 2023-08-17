@@ -57,7 +57,7 @@ export abstract class DigitSequence {
   abstract getSuffix(length: number): DigitSequence;
 
   /** @returns whether the given sequence contains the same digits as this instance. */
-  abstract equals(other: DigitSequence): boolean;
+  abstract equals(other: DigitSequence|undefined|null): boolean;
 
   /**
    * @param a string containing only ASCII decimal digits up to 19-digits in length.
@@ -126,8 +126,8 @@ class StringBasedDigitSequence extends DigitSequence {
     throw new Error(`length (${length}) must not exceed sequence length: ${this}`);
   }
 
-  equals(other: DigitSequence): boolean {
-    return this.digits === other.toString();
+  equals(other: DigitSequence|undefined|null): boolean {
+    return !!other && this.digits === other.toString();
   }
 
   toString(): string {

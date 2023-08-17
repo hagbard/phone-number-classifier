@@ -50,8 +50,8 @@ class TestClassifier extends AbstractPhoneNumberClassifier {
         super.forValues("LPN:TYPE", super.ofNumericEnum(LpnType)).singleValuedMatcher();
     // We don't have a region code enum to hand, so use strings directly.
     this.regionMatcher = super.forStrings("REGION").matcher();
-    this.nationalFormatter = super.createFormatter(FormatType.NATIONAL);
-    this.internationalFormatter = super.createFormatter(FormatType.INTERNATIONAL);
+    this.nationalFormatter = super.createFormatter(FormatType.National);
+    this.internationalFormatter = super.createFormatter(FormatType.International);
     this.parser = super.createParser(Converter.identity());
   }
 
@@ -231,22 +231,25 @@ describe("PhoneNumberParser", () => {
     //   8108  ; 14  ; FIXED_LINE  ; TOLL_FREE
     // The optional national prefix is also '8', but isn't included for this input.
     // Libphonenumber gets brutally confused and returns a result of +86 309390906.
-    let result = pnc.getParser().parseStrictly("(8108) 6309 390 906", "RU");
+    let result = pnc.getParser().parseStrictlyForRegion("(8108) 6309 390 906", "RU");
     expect(result.getPhoneNumber().getCallingCode()).toEqual(seq("7"));
     expect(result.getPhoneNumber().getNationalNumber()).toEqual(seq("81086309390906"));
-    expect(result.getResult()).toEqual(MatchResult.Matched);
+    expect(result.getMatchResult()).toEqual(MatchResult.Matched);
   });
   test('testParseUnsupportedNumber', () => {
     // All calling codes starting with 9 should be unsupported in the metadata for this test.
     expect(pnc.isSupportedCallingCode(seq("90"))).toEqual(false);
+
     let result = pnc.getParser().parseStrictly("+90 800 471 709298");
     expect(result.getPhoneNumber().getCallingCode()).toEqual(seq("90"));
     expect(result.getPhoneNumber().getNationalNumber()).toEqual(seq("800471709298"));
-    expect(result.getResult()).toEqual(MatchResult.Invalid);
+    expect(result.getMatchResult()).toEqual(MatchResult.Invalid);
 
-    // For unsupported calling codes, national number parsing always fails.
-    expect(() => pnc.getParser().parseStrictly("0800 471 709298", "TR"))
-        .toThrowError(/Cannot parse.*\b0800 471 709298\b.*\bTR\b/);
+    // For unsupported calling codes, national number parsing may give bogus results.
+    let bogus = pnc.getParser().parseStrictly("0800 471 709298", seq("90"));
+    expect(bogus.getPhoneNumber().getCallingCode()).toEqual(seq("90"));
+    expect(bogus.getPhoneNumber().getNationalNumber()).toEqual(seq("0800471709298"));
+    expect(bogus.getMatchResult()).toEqual(MatchResult.Invalid);
   });
 });
 
@@ -256,26 +259,24 @@ describe("GoldenDataTest", () => {
     goldenDataJson.testdata.forEach(gd => {
       let cc: DigitSequence = seq(gd.cc);
       let nn: DigitSequence = seq(gd.number);
-      // Undefined if unsupported calling code.
-      let region = pnc.getParser().getRegions(cc).at(0);
-      if (region) {
+      if (raw.isSupportedCallingCode(cc)) {
         gd.result.forEach(r => {
           expect(raw.classify(cc, nn, r.type)).toEqual(new Set(r.values));
         });
         // If a valid number is supported in the metadata it is parsed successfully from any format.
         gd.format.forEach(r => {
           expect(pnc.formatForTests(cc, nn, r.type)).toEqual(r.value);
-          let res = pnc.getParser().parseStrictly(r.value, region);
+          let res = pnc.getParser().parseStrictly(r.value, cc);
           expect(res.getPhoneNumber()).toEqual(PhoneNumber.of(cc, nn));
-          expect(res.getResult()).toEqual(MatchResult.Matched);
+          expect(res.getMatchResult()).toEqual(MatchResult.Matched);
         });
       } else {
         // If a valid number is unsupported in the metadata it can be parsed from international
         // format, but cannot be classified (it's always considers "invalid").
         gd.format.filter(r => r.type === "INTERNATIONAL_FORMAT").forEach(r => {
-          let res = pnc.getParser().parseStrictly(r.value, region);
+          let res = pnc.getParser().parseStrictly(r.value, cc);
           expect(res.getPhoneNumber()).toEqual(PhoneNumber.of(cc, nn));
-          expect(res.getResult()).toEqual(MatchResult.Invalid);
+          expect(res.getMatchResult()).toEqual(MatchResult.Invalid);
         });
       }
     });

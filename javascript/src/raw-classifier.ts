@@ -252,7 +252,12 @@ class CallingCodeClassifier {
   }
 
   match(nationalNumber: DigitSequence): MatchResult {
-    return this.validityMatcher.match(nationalNumber);
+    let result: MatchResult = this.validityMatcher.match(nationalNumber);
+    if (result === MatchResult.Invalid
+        && this.testLength(nationalNumber) === LengthResult.Possible) {
+      result = MatchResult.PossibleLength;
+    }
+    return result;
   }
 
   getTypeClassifier(index: number): NationalNumberClassifier {
@@ -312,7 +317,7 @@ class NationalNumberClassifier implements ValueMatcher {
 
   matchValues(nationalNumber: DigitSequence, ...values: string[]): MatchResult {
     if (this.defaultValue) {
-      throw new Error("match operations not supported by this classifier");
+      throw new Error("match operations are not supported by this classifier");
     }
     let result = MatchResult.Invalid;
     for (let v of values) {

@@ -14,8 +14,8 @@ import { RawClassifier, ValueMatcher, ReturnType } from "./raw-classifier.js";
 import { MatchResult, LengthResult } from "./match-results.js";
 
 export enum FormatType {
-  NATIONAL = "NATIONAL_FORMAT",
-  INTERNATIONAL = "INTERNATIONAL_FORMAT",
+  National = "NATIONAL_FORMAT",
+  International = "INTERNATIONAL_FORMAT",
 }
 
 /**
@@ -70,8 +70,8 @@ export class PhoneNumberFormatter {
   /**
    * Formats a phone number according to the type of this formatter.
    *
-   * <p>Note that for invalid numbers, the INTERNATIONAL format will become E.164 naturally, but the
-   * NATIONAL format will NOT have the national prefix prepended. In general, if a number is matched
+   * <p>Note that for invalid numbers, the International format will become E.164 naturally, but the
+   * National format will NOT have the national prefix prepended. In general, if a number is matched
    * as `Invalid`, you should only show its E.164 representation.
    */
   format(phoneNumber: PhoneNumber): string {
@@ -107,7 +107,7 @@ export class PhoneNumberFormatter {
     } else {
       formatted = phoneNumber.getNationalNumber().toString();
     }
-    if (this.type === FormatType.INTERNATIONAL) {
+    if (this.type === FormatType.International) {
       formatted = "+" + phoneNumber.getCallingCode() + " " + formatted;
     }
     return formatted;
