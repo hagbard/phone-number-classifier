@@ -12,7 +12,7 @@ package net.goui.phonenumber;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static net.goui.phonenumber.MatchResult.INVALID;
-import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.INTERNATIONAL;
+import static net.goui.phonenumber.FormatType.INTERNATIONAL;
 
 import net.goui.phonenumber.DigitSequence.Digits;
 import net.goui.phonenumber.metadata.RawClassifier;
@@ -30,16 +30,6 @@ import net.goui.phonenumber.metadata.RawClassifier.ValueMatcher;
  * specifier strings obtained from the raw classifier.
  */
 public class PhoneNumberFormatter {
-  public enum FormatType {
-    NATIONAL("NATIONAL_FORMAT"),
-    INTERNATIONAL("INTERNATIONAL_FORMAT");
-
-    final String id;
-
-    FormatType(String id) {
-      this.id = id;
-    }
-  }
 
   private static final int CARRIER_CODE_BYTE = 0x3E;
   private static final int RAW_ASCII_BYTE = 0x3F;

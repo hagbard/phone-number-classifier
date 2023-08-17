@@ -11,8 +11,8 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 package net.goui.phonenumbers.examples;
 
 import static java.util.function.Function.identity;
-import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.INTERNATIONAL;
-import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.NATIONAL;
+import static net.goui.phonenumber.FormatType.INTERNATIONAL;
+import static net.goui.phonenumber.FormatType.NATIONAL;
 
 import com.google.common.annotations.VisibleForTesting;
 import net.goui.phonenumber.AbstractPhoneNumberClassifier;

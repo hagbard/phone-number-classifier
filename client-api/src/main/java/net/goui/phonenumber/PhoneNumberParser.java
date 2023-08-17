@@ -1,8 +1,19 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
+
+This program and the accompanying materials are made available under the terms of the
+Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
+Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
+
+SPDX-License-EPL Identifier-2.0 OR Apache-2.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 package net.goui.phonenumber;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static net.goui.phonenumber.FormatType.INTERNATIONAL;
+import static net.goui.phonenumber.FormatType.NATIONAL;
 import static net.goui.phonenumber.LengthResult.POSSIBLE;
 import static net.goui.phonenumber.LengthResult.TOO_LONG;
 import static net.goui.phonenumber.MatchResult.INVALID;
@@ -14,6 +25,7 @@ import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -25,6 +37,39 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 /**
  * Phone number parsing API, available from subclasses of {@link AbstractPhoneNumberClassifier} when
  * parser metadata is available.
+ *
+ * <p><em>Important</em>: This parser is deliberately simpler than the corresponding parser in
+ * Google's Libphonenumber library. It is designed to be a robust parser for cases where the input
+ * is a formatted phone number, but it will not handle all the edge cases that Libphonenumber can
+ * (e.g. parsing U.S. vanity numbers such as "1-800-NOT-REAL").
+ *
+ * <p>However, when given normally formatted national/international phone number text, this parser
+ * produces exactly the same, or better results than Libphonenumber for valid/supported ranges.
+ *
+ * <p>If a calling code/region is supported in the metadata for the parser, then numbers are
+ * validated with/without national prefixes, and the best match is chosen. Examples of input which
+ * can be parsed:
+ *
+ * <ul>
+ *   <li>{@code "056/090 93 19"} (SK)
+ *   <li>{@code "+687 71.49.28"} (NC)
+ *   <li>{@code "(8108) 6309 390 906"} (RU/KZ)
+ * </ul>
+ *
+ * <p>In the final example, note that the national is given without the (optional) national prefix,
+ * which is also '8'. In this case <a href="https://issuetracker.google.com/issues/295677348">
+ * Libphonenumber gets confused and mis-parses the number</a>, whereas this parser will correctly
+ * handle it.
+ *
+ * <p>If a calling code/region is not supported in the metadata for the parser, then no validation
+ * is performed and the match result is always {@link MatchResult#INVALID}.
+ *
+ * <p>As a special case, Argentinian national mobile numbers formatted with the mobile token '15'
+ * after the area code (e.g. "0 11 15-3329-5195") will be transformed to use the international
+ * mobile token prefix '9' (e.g. +54 9 11 3329-5195). This results in 11-digit mobile numbers in
+ * Argentina, which is not strictly correct (the leading '9' is not part of the national number) but
+ * it is the only reasonable way to preserve the distinction between mobile and fixed-line numbers
+ * when the numbers are subsequently formatted again.
  */
 public final class PhoneNumberParser<T> {
   private static final CharMatcher ASCII_DIGIT = CharMatcher.inRange('0', '9');
@@ -44,12 +89,16 @@ public final class PhoneNumberParser<T> {
   private static final DigitSequence CC_ARGENTINA = DigitSequence.parse("54");
   private static final Pattern ARGENTINA_MOBILE_PREFIX = Pattern.compile("0?(.{2,4})15(.{6,8})");
 
+  private static final Comparator<PhoneNumberResult<?>> COMPARE_RESULTS =
+      Comparator.comparing(PhoneNumberResult::getMatchResult);
+
   private final RawClassifier rawClassifier;
   private final ImmutableListMultimap<DigitSequence, T> regionCodeMap;
   private final ImmutableMap<T, DigitSequence> callingCodeMap;
   private final ImmutableSetMultimap<DigitSequence, DigitSequence> nationalPrefixMap;
   private final ImmutableSet<DigitSequence> nationalPrefixOptional;
 
+  // Called from AbstractPhoneNumberClassifier.
   PhoneNumberParser(RawClassifier rawClassifier, Function<String, T> converter) {
     this.rawClassifier = rawClassifier;
     T worldRegion = checkNotNull(converter.apply("001"));
@@ -120,85 +169,135 @@ public final class PhoneNumberParser<T> {
   }
 
   public Optional<PhoneNumber> parseLeniently(String text) {
-    return parseImpl(text, null).map(PhoneNumberResult::getPhoneNumber);
+    return parseLeniently(text, (DigitSequence) null);
   }
 
   public Optional<PhoneNumber> parseLeniently(String text, T region) {
-    return parseImpl(text, region).map(PhoneNumberResult::getPhoneNumber);
+    return parseLeniently(text, toCallingCode(region));
   }
 
-  public PhoneNumberResult parseStrictly(String text) {
-    return parseImpl(text, null)
-        .orElseThrow(
-            () -> new IllegalArgumentException("Cannot parse phone number text '" + text + "'"));
+  public Optional<PhoneNumber> parseLeniently(String text, @Nullable DigitSequence callingCode) {
+    return Optional.ofNullable(parseImpl(text, callingCode)).map(PhoneNumberResult::getPhoneNumber);
   }
 
-  public PhoneNumberResult parseStrictly(String text, T region) {
-    return parseImpl(text, region)
-        .orElseThrow(
-            () ->
-                new IllegalArgumentException(
-                    "Cannot parse phone number text '" + text + "' in region '" + region + "'"));
+  public PhoneNumberResult<T> parseStrictly(String text) {
+    return parseStrictly(text, (DigitSequence) null);
   }
 
-  private Optional<PhoneNumberResult> parseImpl(String text, @Nullable T region) {
+  public PhoneNumberResult<T> parseStrictly(String text, T region) {
+    return parseStrictly(text, toCallingCode(region));
+  }
+
+  public PhoneNumberResult<T> parseStrictly(String text, @Nullable DigitSequence callingCode) {
+    PhoneNumberResult<T> result = parseImpl(text, callingCode);
+    checkArgument(result != null, "Cannot parse phone number text '%s'", text);
+    return result;
+  }
+
+  private DigitSequence toCallingCode(T region) {
+    Optional<DigitSequence> callingCode = getCallingCode(region);
+    checkArgument(callingCode.isPresent(), "Unknown region code: %s", region);
+    return callingCode.get();
+  }
+
+  /*
+   * The algorithm tries to parse the input assuming both "national" and "international"
+   * formatting of the given text.
+   *    * For national format, the given calling code is used ("NAT").
+   *    * For international format, the calling code is extracted from the number ("INT").
+   * 1. If neither result can be obtained, parsing fails
+   * 2. If only one result can be obtained, it is returned
+   * 3. If the national result match is strictly better than the international one, return the
+   *    national result.
+   * 4. In the remaining cases we check the input ("CHK"), and return the international result if
+   *    either:
+   *    * The extracted calling code was the same as the given calling code: ("41 xxxx xxxx", cc=41)
+   *    * If the input text is internationally formatted: e.g. ("+41 xxxx xxxx", cc=34)
+   * Otherwise return the national format.
+   *
+   * Note: Step 4 is only reached if the international parse result is a better match than the
+   * national one, and even then we might return the national result if we aren't sure the extracted
+   * calling code looks trustworthy.
+   *
+   * National   /----------------- International Result ------------------\
+   *  Result  || MATCHED | PARTIAL | EXCESS  | LENGTH  | INVALID |  N/A    |
+   * =========||============================================================
+   *  MATCHED || CHK [4] | NAT [3] | NAT [3] | NAT [3] | NAT [3] | NAT [2] |
+   * ---------||-=--=--=-+---------+---------+---------+---------+---------+
+   *  PARTIAL || CHK [4] | CHK [4] | NAT [3] | NAT [3] | NAT [3] | NAT [2] |
+   * ---------||---------+-=--=--=-+---------+---------+---------+---------+
+   *  EXCESS  || CHK [4] | CHK [4] | CHK [4] | NAT [3] | NAT [3] | NAT [2] |
+   * ---------||---------+---------+-=--=--=-+---------+---------+---------+
+   *  LENGTH  || CHK [4] | CHK [4] | CHK [4] | CHK [4] | NAT [3] | NAT [2] |
+   * ---------||---------+---------+---------+-=--=--=-+---------+---------+
+   *  INVALID || CHK [4] | CHK [4] | CHK [4] | CHK [4] | CHK [4] | NAT [2] |
+   * ---------||---------+---------+---------+---------+-=--=--=-+-=--=--=-+
+   *   N/A    || INT [2] | INT [2] | INT [2] | INT [2] | INT [2] | --- [1] |
+   * ---------||---------+---------+---------+---------+---------+---------+
+   */
+  @Nullable
+  private PhoneNumberResult<T> parseImpl(String text, @Nullable DigitSequence callingCode) {
     if (!ALLOWED_CHARS.matchesAllOf(text)) {
-      return Optional.empty();
+      return null;
     }
     // Should always succeed even if result is empty.
     String digitText = removeNonDigitsAndNormalizeToAscii(text);
     if (digitText.isEmpty()) {
-      return Optional.empty();
+      return null;
     }
-    // Heuristic to look for things that are more likely to be attempts are writing an E.164 number.
-    // This is true for things like "+1234", "(+12) 34" but NOT "+ 12 34", "++1234" or "+1234+"
-    // If this is true, we try to extract a calling code from the number *before* using the given
-    // region.
-    int plusIndex = text.indexOf('+');
-    boolean looksLikeE164 =
-        plusIndex >= 0
-            && ANY_DIGIT.indexIn(text) == plusIndex + 1
-            && plusIndex == text.lastIndexOf('+');
-
-    DigitSequence originalNumber = DigitSequence.parse(digitText);
-    // Null if the region is not supported.
-    DigitSequence providedCc = callingCodeMap.get(region);
-    // We can extract all possible calling codes regardless of whether they are supported, but we
-    // only want to attempt to classify supported calling codes.
+    DigitSequence digits = DigitSequence.parse(digitText);
     DigitSequence extractedCc = PhoneNumbers.extractCallingCode(digitText);
-    boolean extractedCcIsSupported =
-        extractedCc != null && rawClassifier.getSupportedCallingCodes().contains(extractedCc);
-    PhoneNumberResult bestResult = null;
-    if (providedCc != null && !looksLikeE164) {
-      bestResult = getBestParseResult(providedCc, originalNumber);
-      if (bestResult.getResult() != MATCHED && extractedCcIsSupported) {
-        PhoneNumberResult result =
-            getBestParseResult(extractedCc, removePrefix(originalNumber, extractedCc.length()));
-        bestResult = bestOf(bestResult, result);
-      }
-    } else if (extractedCcIsSupported) {
-      bestResult =
-          getBestParseResult(extractedCc, removePrefix(originalNumber, extractedCc.length()));
-      if (bestResult.getResult() != MATCHED && providedCc != null) {
-        bestResult = bestOf(bestResult, getBestParseResult(providedCc, originalNumber));
-      }
+    PhoneNumberResult<T> nationalParseResult =
+        callingCode != null ? getBestResult(callingCode, digits, NATIONAL) : null;
+    if (extractedCc == null) {
+      // This accounts for step [1] (no results) and step [2] with only the national result.
+      return nationalParseResult;
     }
-    // Fallback for cases where the calling code isn't supported in the metadata, but we can
-    // still make a best guess at an E164 number without any validation.
-    if (bestResult == null && looksLikeE164 && extractedCc != null) {
-      bestResult = PhoneNumberResult.of(PhoneNumbers.fromE164(digitText), INVALID);
+    PhoneNumberResult<T> internationalParseResult =
+        getBestResult(extractedCc, removePrefix(digits, extractedCc.length()), INTERNATIONAL);
+    if (nationalParseResult == null) {
+      // This accounts for step [2] with only the international result.
+      return internationalParseResult;
     }
-    return Optional.ofNullable(bestResult);
+    if (COMPARE_RESULTS.compare(nationalParseResult, internationalParseResult) < 0) {
+      // This accounts for step [3].
+      return nationalParseResult;
+    }
+    if (callingCode.equals(extractedCc) || looksLikeInternationalFormat(text, extractedCc)) {
+      // This accounts for step [4] when the input strongly suggest international format.
+      return internationalParseResult;
+    }
+    return nationalParseResult;
   }
 
-  private PhoneNumberResult getBestParseResult(DigitSequence cc, DigitSequence nn) {
+  // This is true for things like "+1234", "(+12) 34" but NOT "+ 12 34", "++1234" or "+1234+".
+  private static boolean looksLikeInternationalFormat(String text, DigitSequence cc) {
+    int firstDigit = ANY_DIGIT.indexIn(text);
+    return firstDigit > 0
+        && text.charAt(firstDigit - 1) == '+'
+        && text.indexOf('+', firstDigit) == -1
+        && text.regionMatches(firstDigit, cc.toString(), 0, cc.length());
+  }
+
+  private PhoneNumberResult<T> getBestResult(
+      DigitSequence cc, DigitSequence nn, FormatType formatType) {
     if (cc.equals(CC_ARGENTINA)) {
       nn = maybeAdjustArgentineFixedLineNumber(cc, nn);
     }
+    if (!rawClassifier.getSupportedCallingCodes().contains(cc)) {
+      return PhoneNumberResult.of(PhoneNumbers.of(cc, nn), INVALID, formatType);
+    }
+    ImmutableSet<DigitSequence> nationalPrefixes = nationalPrefixMap.get(cc);
+    MatchResult bestResult = INVALID;
+    // We can test the given number (without attempting to remove a national prefix) under some
+    // conditions, but avoid doing so when a national prefix is required for national dialling.
+    if (formatType == INTERNATIONAL
+        || nationalPrefixes.isEmpty()
+        || nationalPrefixOptional.contains(cc)) {
+      bestResult = rawClassifier.match(cc, nn);
+    }
     DigitSequence bestNumber = nn;
-    MatchResult bestResult = rawClassifier.match(cc, nn);
     if (bestResult != MATCHED) {
-      ImmutableSet<DigitSequence> nationalPrefixes = nationalPrefixMap.get(cc);
       for (DigitSequence np : nationalPrefixes) {
         if (startsWith(np, nn)) {
           DigitSequence candidateNumber = removePrefix(nn, np.length());
@@ -213,7 +312,7 @@ public final class PhoneNumberParser<T> {
         }
       }
     }
-    return PhoneNumberResult.of(PhoneNumbers.create(cc, bestNumber), bestResult);
+    return PhoneNumberResult.of(PhoneNumbers.of(cc, bestNumber), bestResult, formatType);
   }
 
   private DigitSequence maybeAdjustArgentineFixedLineNumber(DigitSequence cc, DigitSequence nn) {
@@ -227,10 +326,6 @@ public final class PhoneNumberParser<T> {
       }
     }
     return nn;
-  }
-
-  private static PhoneNumberResult bestOf(PhoneNumberResult a, PhoneNumberResult b) {
-    return a.getResult().isBetterThan(b.getResult()) ? a : b;
   }
 
   private static boolean startsWith(DigitSequence prefix, DigitSequence seq) {

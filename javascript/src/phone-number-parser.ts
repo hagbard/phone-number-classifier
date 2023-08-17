@@ -13,10 +13,74 @@ import { RawClassifier, ParserData } from "./raw-classifier.js";
 import { Converter } from "./converter.js";
 import { PhoneNumber } from "./phone-number.js";
 import { MatchResult, LengthResult } from "./match-results.js";
+import { FormatType } from "./phone-number-formatter.js";
+
+/**
+ * Encapsulates a parsed phone number and an associated match result. This is returned for strict
+ * parsing and the match result can be used to provide user feedback for phone number entry.
+ */
+export class PhoneNumberResult {
+  constructor(
+      private readonly phoneNumber: PhoneNumber,
+      private readonly result: MatchResult,
+      private readonly formatType: FormatType) {}
+
+  /** Returns the parsed phone number (which need not be valid). */
+  getPhoneNumber(): PhoneNumber {
+    return this.phoneNumber;
+  }
+
+  /**
+   * Returns the match result for the phone number, according to the parser's metadata. If the
+   * result is `MatchResult.Matched`, then parsing was completely successful and unambiguous.
+   */
+  getMatchResult(): MatchResult {
+    return this.result;
+  }
+
+  /**
+   * Returns the format assumed by the parser. This can be useful for feeding information back to
+   * users.
+   */
+  getInferredFormat(): FormatType {
+    return this.formatType;
+  }
+}
 
 /**
  * Phone number parsing API, available from subclasses of `AbstractPhoneNumberClassifier` when
  * parser metadata is available.
+ *
+ * Important: This parser is deliberately simpler than the corresponding parser in Google's
+ * Libphonenumber library. It is designed to be a robust parser for cases where the input is a
+ * formatted phone number, but it will not handle all the edge cases that Libphonenumber can
+ * (e.g. parsing U.S. vanity numbers such as "1-800-BIG-DUCK").
+ *
+ * However, when given normally formatted national/international phone number text, this parser
+ * produces exactly the same, or better results than Libphonenumber for valid/supported ranges.
+ *
+ * If a calling code/region is supported in the metadata for the parser, then numbers are
+ * validated with/without national prefixes, and the best match is chosen. Examples of input which
+ * can be parsed:
+ *
+ * "056/090 93 19" (SK)
+ * "+687 71.49.28" (NC)
+ * "(8108) 6309 390 906" (RU/KZ)
+ *
+ * In the final example, note that the national is given without the (optional) national prefix,
+ * which is also '8'. In this case Libphonenumber gets confused and mis-parses the number, whereas
+ * this parser will correctly handle it (https://issuetracker.google.com/issues/295677348).
+ *
+ * If a calling code/region is not supported in the metadata for the parser, then only
+ * internationally formatted numbers (with a leading '+' and country calling code) can be parsed,
+ * and no validation is performed (the match result is always `Invalid`).
+ *
+ * As a special case, Argentinian national mobile numbers formatted with the mobile token '15'
+ * after the area code (e.g. "0 11 15-3329-5195") will be transformed to use the international
+ * mobile token prefix '9' (e.g. +54 9 11 3329-5195). This results in 11-digit mobile numbers in
+ * Argentina, which is not strictly correct (the leading '9' is not part of the national number)
+ * but it is the only reasonable way to preserve the distinction between mobile and fixed-line
+ * numbers when the numbers are subsequently formatted again.
  */
 export class PhoneNumberParser<T> {
   // This must include every character in any format specifier.
@@ -94,21 +158,71 @@ export class PhoneNumberParser<T> {
     return cc ? cc : null;
   }
 
-  parseLeniently(text: string, region?: T): PhoneNumber|null {
-    let result = this.parseImpl(text, region);
+  parseLeniently(text: string, callingCode?: DigitSequence): PhoneNumber|null {
+    let result = this.parseImpl(text, callingCode);
     return result ? result.getPhoneNumber() : null;
   }
 
-  parseStrictly(text: string, region?: T): PhoneNumberResult {
-    let result = this.parseImpl(text, region);
+  parseLenientlyForRegion(text: string, region: T): PhoneNumber|null {
+    return this.parseLeniently(text, this.toCallingCode(region));
+  }
+
+  parseStrictly(text: string, callingCode?: DigitSequence): PhoneNumberResult {
+    let result = this.parseImpl(text, callingCode);
     if (!result) {
-      throw new Error(
-          `Cannot parse phone number text '${text}'${region ? " in region " + region : ""}`);
+      throw new Error(`Cannot parse phone number text '${text}'`);
     }
     return result;
   }
 
-  parseImpl(text: string, region?: T): PhoneNumberResult|null {
+  parseStrictlyForRegion(text: string, region: T): PhoneNumberResult {
+    return this.parseStrictly(text, this.toCallingCode(region));
+  }
+
+  private toCallingCode(region: T): DigitSequence {
+    let callingCode = this.getCallingCode(region);
+    if (!callingCode) {
+      throw new Error(`Unknown region code: ${region}`);
+    }
+    return callingCode;
+  }
+
+  /*
+   * The algorithm tries to parse the input assuming both "national" and "international"
+   * formatting of the given text.
+   *    * For national format, the given calling code is used ("NAT").
+   *    * For international format, the calling code is extracted from the number ("INT").
+   * 1. If neither result can be obtained, parsing fails
+   * 2. If only one result can be obtained, it is returned
+   * 3. If the national result match is strictly better than the international one, return the
+   *    national result.
+   * 4. In the remaining cases we check the input ("CHK"), and return the international result if
+   *    either:
+   *    * The extracted calling code was the same as the given calling code: ("41 xxxx xxxx", cc=41)
+   *    * If the input text is internationally formatted: e.g. ("+41 xxxx xxxx", cc=34)
+   * Otherwise return the national format.
+   *
+   * Note: Step 4 is only reached if the international parse result is a better match than the
+   * national one, and even then we might return the national result if we aren't sure the extracted
+   * calling code looks trustworthy.
+   *
+   * National   /----------------- International Result ------------------\
+   *  Result  || MATCHED | PARTIAL | EXCESS  | LENGTH  | INVALID |  N/A    |
+   * =========||============================================================
+   *  MATCHED || CHK [4] | NAT [3] | NAT [3] | NAT [3] | NAT [3] | NAT [2] |
+   * ---------||-=--=--=-+---------+---------+---------+---------+---------+
+   *  PARTIAL || CHK [4] | CHK [4] | NAT [3] | NAT [3] | NAT [3] | NAT [2] |
+   * ---------||---------+-=--=--=-+---------+---------+---------+---------+
+   *  EXCESS  || CHK [4] | CHK [4] | CHK [4] | NAT [3] | NAT [3] | NAT [2] |
+   * ---------||---------+---------+-=--=--=-+---------+---------+---------+
+   *  LENGTH  || CHK [4] | CHK [4] | CHK [4] | CHK [4] | NAT [3] | NAT [2] |
+   * ---------||---------+---------+---------+-=--=--=-+---------+---------+
+   *  INVALID || CHK [4] | CHK [4] | CHK [4] | CHK [4] | CHK [4] | NAT [2] |
+   * ---------||---------+---------+---------+---------+-=--=--=-+-=--=--=-+
+   *   N/A    || INT [2] | INT [2] | INT [2] | INT [2] | INT [2] | --- [1] |
+   * ---------||---------+---------+---------+---------+---------+---------+
+   */
+  parseImpl(text: string, callingCode?: DigitSequence): PhoneNumberResult|null {
     if (!text.match(PhoneNumberParser.AllowedChars)) {
       return null;
     }
@@ -117,55 +231,60 @@ export class PhoneNumberParser<T> {
     if (digitText.length === 0) {
       return null;
     }
-    // Heuristic to look for things that are more likely to be attempts are writing an E.164 number.
-    // This is true for things like "+1234", "(+12) 34" but NOT "+ 12 34", "++1234" or "+1234+"
-    // If true, we try to extract a calling code from the number *before* using the given region.
-    let plusIndex = text.indexOf('+');
-    let looksLikeE164 =
-        plusIndex >= 0
-            && text.search(/[0-9０-９]/) === plusIndex + 1
-            && plusIndex === text.lastIndexOf('+');
-
-    let originalNumber = DigitSequence.parse(digitText);
-    // Null if the region is not supported.
-    let providedCc = region ? this.getCallingCode(region) : null;
-    // We can extract all possible calling codes regardless of whether they are supported, but we
-    // only want to attempt to classify supported calling codes.
-    let extractedCc = PhoneNumber.extractCallingCode(digitText);
-    let extractedCcIsSupported =
-        extractedCc && this.rawClassifier.isSupportedCallingCode(extractedCc);
-    let bestResult: PhoneNumberResult|null = null;
-    if (providedCc && !looksLikeE164) {
-      bestResult = this.getBestParseResult(providedCc, originalNumber);
-      if (bestResult.getResult() !== MatchResult.Matched && extractedCcIsSupported) {
-        let result = this.getBestParseResult(
-            extractedCc!, PhoneNumberParser.removePrefix(originalNumber, extractedCc!.length()));
-        bestResult = PhoneNumberParser.bestOf(bestResult, result);
-      }
-    } else if (extractedCcIsSupported) {
-      bestResult = this.getBestParseResult(
-          extractedCc!, PhoneNumberParser.removePrefix(originalNumber, extractedCc!.length()));
-      if (bestResult.getResult() !== MatchResult.Matched && providedCc) {
-        let result = this.getBestParseResult(providedCc, originalNumber);
-        bestResult = PhoneNumberParser.bestOf(bestResult, result);
-      }
+    let digits: DigitSequence = DigitSequence.parse(digitText);
+    let extractedCc: DigitSequence|null = PhoneNumber.extractCallingCode(digitText);
+    let nationalParseResult: PhoneNumberResult|null =
+        callingCode ? this.getBestResult(callingCode, digits, FormatType.National) : null;
+    if (!extractedCc) {
+      // This accounts for step [1] (no results) and step [2] with only the national result.
+      return nationalParseResult;
     }
-    // Fallback for cases where the calling code isn't supported in the metadata, but we can
-    // still make a best guess at an E164 number without any validation.
-    if (!bestResult && looksLikeE164 && extractedCc) {
-      bestResult = new PhoneNumberResult(PhoneNumber.fromE164(digitText), MatchResult.Invalid);
+    let withoutCc: DigitSequence = PhoneNumberParser.removePrefix(digits, extractedCc.length());
+    let internationalParseResult: PhoneNumberResult =
+        this.getBestResult(extractedCc, withoutCc, FormatType.International)
+    if (!nationalParseResult) {
+      // This accounts for step [2] with only the international result.
+      return internationalParseResult;
     }
-    return bestResult;
+    if (nationalParseResult.getMatchResult() < internationalParseResult.getMatchResult()) {
+      // This accounts for step [3].
+      return nationalParseResult;
+    }
+    if (extractedCc.equals(callingCode)
+        || PhoneNumberParser.looksLikeInternationalFormat(text, extractedCc)) {
+      // This accounts for step [4] when the input strongly suggest international format.
+      return internationalParseResult;
+    }
+    return nationalParseResult;
   }
 
-  private getBestParseResult(cc: DigitSequence, nn: DigitSequence): PhoneNumberResult {
+  private static looksLikeInternationalFormat(text: string, cc: DigitSequence) {
+    let firstDigit = text.search(/[0-9]/);
+    return firstDigit > 0
+        && text.at(firstDigit - 1) === '+'
+        && text.indexOf('+', firstDigit) == -1
+        && text.substring(firstDigit, firstDigit + cc.length()) === cc.toString();
+  }
+
+  private getBestResult(cc: DigitSequence, nn: DigitSequence, formatType: FormatType): PhoneNumberResult {
     if (cc.equals(PhoneNumberParser.CcArgentina)) {
       nn = this.maybeAdjustArgentineFixedLineNumber(cc, nn);
     }
+    if (!this.rawClassifier.isSupportedCallingCode(cc)) {
+      return new PhoneNumberResult(PhoneNumber.of(cc, nn), MatchResult.Invalid, formatType);
+    }
+    let nationalPrefixes = this.nationalPrefixMap.get(cc.toString()) ?? [];
+    let bestResult: MatchResult = MatchResult.Invalid;
+    // We can test the given number (without attempting to remove a national prefix) under some
+    // conditions, but avoid doing so when a national prefix is required for national dialling.
+    let ccStr = cc.toString();
+    if (formatType === FormatType.International
+        || nationalPrefixes.length === 0
+        || this.nationalPrefixOptional.has(ccStr)) {
+      bestResult = this.rawClassifier.match(cc, nn);
+    }
     let bestNumber: DigitSequence = nn;
-    let bestResult: MatchResult = this.rawClassifier.match(cc, nn);
     if (bestResult !== MatchResult.Matched) {
-      let nationalPrefixes = this.nationalPrefixMap.get(cc.toString()) ?? [];
       for (let np of nationalPrefixes) {
         if (PhoneNumberParser.startsWith(np, nn)) {
           let candidateNumber = PhoneNumberParser.removePrefix(nn, np.length());
@@ -180,7 +299,7 @@ export class PhoneNumberParser<T> {
         }
       }
     }
-    return new PhoneNumberResult(PhoneNumber.of(cc, bestNumber), bestResult);
+    return new PhoneNumberResult(PhoneNumber.of(cc, bestNumber), bestResult, formatType);
   }
 
   private maybeAdjustArgentineFixedLineNumber(cc: DigitSequence, nn: DigitSequence): DigitSequence {
@@ -192,10 +311,6 @@ export class PhoneNumberParser<T> {
       }
     }
     return nn;
-  }
-
-  private static bestOf(a: PhoneNumberResult, b: PhoneNumberResult): PhoneNumberResult {
-    return a.getResult() < b.getResult() ? a : b;
   }
 
   private static startsWith(prefix: DigitSequence, seq: DigitSequence): boolean {
@@ -217,17 +332,5 @@ export class PhoneNumberParser<T> {
         // 0x30 = '0', 0xff10 = '０'
         .map(d => d >= 0xff10 ? d - 0xff10 : d - 0x30)
         .join("");
-  }
-}
-
-export class PhoneNumberResult {
-  constructor(private readonly phoneNumber: PhoneNumber, private readonly result: MatchResult) {}
-
-  getPhoneNumber(): PhoneNumber {
-    return this.phoneNumber;
-  }
-
-  getResult(): MatchResult {
-    return this.result;
   }
 }

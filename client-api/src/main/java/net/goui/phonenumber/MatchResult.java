@@ -39,7 +39,7 @@ public enum MatchResult {
    * The given number was unmatched, but could potentially become {@link #MATCHED} if more digits
    * were appended to it.
    *
-   * <p>This is useful when considering incremental input of phone numbers and by distinguishing
+   * <p>This is useful when considering incremental input of phone numbers. By distinguishing
    * partially matched numbers from invalid numbers, a user interface can offer better feedback as
    * numbers are entered.
    *
@@ -61,14 +61,31 @@ public enum MatchResult {
   EXCESS_DIGITS,
 
   /**
+   * The given number was unmatched, but has the length of a valid number. No amount of adding or
+   * removing digits could make this number {@link #MATCHED}, but changing a digit, or digits,
+   * might.
+   *
+   * <p>This result is useful for distinguishing types of match failure, but it has a lower
+   * precedence than {@code PARTIAL_MATCH} because when a user is correctly entering a number, we
+   * want to see a sequence of partial matches followed by {@code MATCHED}, without ever returning
+   * {@code POSSIBLE_LENGTH}.
+   *
+   * <p>If you wish to test numbers by length, it is better to call {@link
+   * AbstractPhoneNumberClassifier#testLength(PhoneNumber)} directly than to infer length
+   * information from match results.
+   */
+  POSSIBLE_LENGTH,
+
+  /**
    * The given number was unmatched and should not be considered valid without further confirmation.
    * No amount of adding or removing digits could make this number {@link #MATCHED}.
    *
-   * <p>This result can occur a number of any length once it can no longer satisfy any possible
-   * valid number.
+   * <p>This result can occur for a number of any length once it can no longer satisfy any possible
+   * valid number and does not have a possible length.
    *
    * <p>This is the general case for an unmatched number and the default return value for any case
-   * not described above, and can serve as the "identity" value when reducing multiple results.
+   * not described above, and can serve as the default starting value when reducing multiple
+   * results.
    */
   INVALID;
 

@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import net.goui.phonenumber.PhoneNumberFormatter.FormatType;
+
 import net.goui.phonenumber.PhoneNumbers.E164PhoneNumber;
 import net.goui.phonenumber.metadata.ClassifierLoader;
 import net.goui.phonenumber.metadata.RawClassifier;
@@ -237,7 +237,7 @@ public abstract class AbstractPhoneNumberClassifier {
    * some schemas could define formatting to be optional and fall back to simple block formatting
    * for missing data.
    */
-  protected boolean canFormat(PhoneNumberFormatter.FormatType type) {
+  protected boolean canFormat(FormatType type) {
     return rawClassifier.getSupportedNumberTypes().contains(type.id);
   }
 

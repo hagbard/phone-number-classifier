@@ -23,6 +23,7 @@ export enum MatchResult {
    * important.
    */
   Matched,
+
   /**
    * The given number was unmatched, but could potentially become `Matched` if more digits
    * were appended to it.
@@ -37,6 +38,7 @@ export enum MatchResult {
    * `PartialMatch` has a higher precedence than `ExcessDigits`.
    */
   PartialMatch,
+
   /**
    * The given number was unmatched, but will become `Matched` if some number of trailing
    * digits are removed from it. Adding extra digits will never make this number valid.
@@ -46,6 +48,21 @@ export enum MatchResult {
    * when the number is complete.
    */
   ExcessDigits,
+
+  /**
+   * The given number was unmatched, but has the length of a valid number. No amount of adding or
+   * removing digits could make this number `Matched`, but changing a digit, or digits, might.
+   *
+   * This result is useful for distinguishing types of match failure, but it has a lower
+   * precedence than `PartialMatch` because when a user is correctly entering a number, we
+   * want to see a sequence of partial matches followed by `Matched`, without ever returning
+   * `PossibleLength`.
+   *
+   * If you wish to test numbers by length, it is better to call `testLength(PhoneNumber)` in
+   * AbstractPhoneNumberClassifier directly than to infer length information from match results.
+   */
+  PossibleLength,
+
   /**
    * The given number was unmatched and should not be considered valid without further confirmation.
    * No amount of adding or removing digits could make this number `Matched`.

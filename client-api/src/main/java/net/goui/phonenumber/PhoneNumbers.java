@@ -57,7 +57,7 @@ public final class PhoneNumbers {
     return E164PhoneNumber.of(cc, DigitSequence.parse(toEncode.substring(cc.length())));
   }
 
-  static PhoneNumber create(DigitSequence callingCode, DigitSequence nationalNumber) {
+  static PhoneNumber of(DigitSequence callingCode, DigitSequence nationalNumber) {
     checkArgument(isCallingCode(callingCode), "Invalid calling code: %s", callingCode);
     return E164PhoneNumber.of(callingCode, nationalNumber);
   }
