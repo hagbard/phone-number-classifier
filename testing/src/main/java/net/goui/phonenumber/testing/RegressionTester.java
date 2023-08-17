@@ -12,25 +12,18 @@ package net.goui.phonenumber.testing;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.function.Function.identity;
+import static net.goui.phonenumber.FormatType.INTERNATIONAL;
+import static net.goui.phonenumber.FormatType.NATIONAL;
 import static net.goui.phonenumber.MatchResult.INVALID;
 import static net.goui.phonenumber.MatchResult.MATCHED;
-import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.INTERNATIONAL;
-import static net.goui.phonenumber.PhoneNumberFormatter.FormatType.NATIONAL;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.truth.Expect;
 import com.google.common.truth.StandardSubjectBuilder;
 import com.google.common.truth.Truth;
 import java.util.Set;
 import java.util.stream.Stream;
-import net.goui.phonenumber.AbstractPhoneNumberClassifier;
-import net.goui.phonenumber.DigitSequence;
-import net.goui.phonenumber.PhoneNumber;
-import net.goui.phonenumber.PhoneNumberFormatter;
-import net.goui.phonenumber.PhoneNumberParser;
-import net.goui.phonenumber.PhoneNumberResult;
-import net.goui.phonenumber.PhoneNumbers;
+import net.goui.phonenumber.*;
 import net.goui.phonenumber.metadata.RawClassifier;
 import org.typemeta.funcj.json.model.JsObject;
 import org.typemeta.funcj.json.model.JsString;
@@ -135,6 +128,10 @@ public final class RegressionTester {
         .withMessage("parsing [%s] as %s for original number: %s", expected, type, number)
         .that(parseResult.getMatchResult())
         .isEqualTo(MATCHED);
+    truthStrategy
+        .withMessage("parsing [%s] as %s for original number: %s", expected, type, number)
+        .that(parseResult.getInferredFormat())
+        .isEqualTo(formatTyoeOf(type));
   }
 
   private void assertParseUnsupported(PhoneNumber number, JsObject jsonResult) {
@@ -151,6 +148,10 @@ public final class RegressionTester {
         .withMessage("parsing [%s] as %s for original number: %s", expected, type, number)
         .that(parseResult.getMatchResult())
         .isEqualTo(INVALID);
+    truthStrategy
+        .withMessage("parsing [%s] as %s for original number: %s", expected, type, number)
+        .that(parseResult.getInferredFormat())
+        .isEqualTo(INTERNATIONAL);
   }
 
   private static String getString(JsObject json, String field) {
@@ -159,5 +160,14 @@ public final class RegressionTester {
 
   private static Stream<JsObject> objectsOf(JsObject json, String field) {
     return json.get(field).asArray().stream().map(JsValue::asObject);
+  }
+
+  private static FormatType formatTyoeOf(String id) {
+    if (id.equals("NATIONAL_FORMAT")) {
+      return NATIONAL;
+    } else if (id.equals("INTERNATIONAL_FORMAT")) {
+      return INTERNATIONAL;
+    }
+    throw new IllegalArgumentException("Bad format ID: " + id);
   }
 }

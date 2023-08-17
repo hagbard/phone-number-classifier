@@ -1,13 +1,23 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
+
+This program and the accompanying materials are made available under the terms of the
+Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
+Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
+
+SPDX-License-EPL Identifier-2.0 OR Apache-2.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 package net.goui.phonenumber;
 
 import static com.google.common.base.Preconditions.*;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static net.goui.phonenumber.FormatType.INTERNATIONAL;
+import static net.goui.phonenumber.FormatType.NATIONAL;
 import static net.goui.phonenumber.LengthResult.POSSIBLE;
 import static net.goui.phonenumber.LengthResult.TOO_LONG;
 import static net.goui.phonenumber.MatchResult.INVALID;
 import static net.goui.phonenumber.MatchResult.MATCHED;
-import static net.goui.phonenumber.PhoneNumberResult.ParseFormat.INTERNATIONAL;
-import static net.goui.phonenumber.PhoneNumberResult.ParseFormat.NATIONAL;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableList;
@@ -19,7 +29,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.goui.phonenumber.PhoneNumberResult.ParseFormat;
 import net.goui.phonenumber.metadata.ParserData;
 import net.goui.phonenumber.metadata.RawClassifier;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -264,7 +273,7 @@ public final class PhoneNumberParser<T> {
   }
 
   private PhoneNumberResult<T> getBestResult(
-      DigitSequence cc, DigitSequence nn, ParseFormat formatType) {
+      DigitSequence cc, DigitSequence nn, FormatType formatType) {
     if (cc.equals(CC_ARGENTINA)) {
       nn = maybeAdjustArgentineFixedLineNumber(cc, nn);
     }
