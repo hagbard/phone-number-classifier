@@ -93,11 +93,10 @@ public final class RegressionTester {
     DigitSequence nn = DigitSequence.parse(getString(jsonResults, "number"));
     PhoneNumber number = PhoneNumbers.fromE164("+" + cc + nn);
     // Null if unsupported calling code.
-    String region = Iterables.getFirst(classifier.parser.getRegions(cc), null);
-    if (region != null) {
+    if (classifier.isSupportedCallingCode(cc)) {
       // Supported numbers can be classified, formatted and re-parsed correctly.
       objectsOf(jsonResults, "result").forEach(r -> assertResult(number, r));
-      objectsOf(jsonResults, "format").forEach(f -> assertFormatAndParse(number, f, region));
+      objectsOf(jsonResults, "format").forEach(f -> assertFormatAndParse(number, f, cc));
     } else {
       // Unsupported numbers cannot be classified, and can only be parsed from international format.
       objectsOf(jsonResults, "format")
@@ -119,7 +118,7 @@ public final class RegressionTester {
         .containsExactlyElementsIn(expected);
   }
 
-  private void assertFormatAndParse(PhoneNumber number, JsObject jsonResult, String region) {
+  private void assertFormatAndParse(PhoneNumber number, JsObject jsonResult, DigitSequence cc) {
     String type = getString(jsonResult, "type");
     String expected = getString(jsonResult, "value");
     truthStrategy
@@ -127,14 +126,14 @@ public final class RegressionTester {
         .that(classifier.format(number, type))
         .isEqualTo(expected);
     // If a valid number is supported in the metadata it is parsed successfully from any format.
-    PhoneNumberResult parseResult = classifier.getParser().parseStrictly(expected, region);
+    PhoneNumberResult<String> parseResult = classifier.getParser().parseStrictly(expected, cc);
     truthStrategy
         .withMessage("parsing [%s] as %s for original number: %s", expected, type, number)
         .that(parseResult.getPhoneNumber())
         .isEqualTo(number);
     truthStrategy
         .withMessage("parsing [%s] as %s for original number: %s", expected, type, number)
-        .that(parseResult.getResult())
+        .that(parseResult.getMatchResult())
         .isEqualTo(MATCHED);
   }
 
@@ -143,14 +142,14 @@ public final class RegressionTester {
     String expected = getString(jsonResult, "value");
     // If a valid number is unsupported in the metadata it can be parsed from international format,
     // but cannot be classified (it's always considers "invalid").
-    PhoneNumberResult parseResult = classifier.getParser().parseStrictly(expected);
+    PhoneNumberResult<String> parseResult = classifier.getParser().parseStrictly(expected);
     truthStrategy
         .withMessage("parsing [%s] as %s for original number: %s", expected, type, number)
         .that(parseResult.getPhoneNumber())
         .isEqualTo(number);
     truthStrategy
         .withMessage("parsing [%s] as %s for original number: %s", expected, type, number)
-        .that(parseResult.getResult())
+        .that(parseResult.getMatchResult())
         .isEqualTo(INVALID);
   }
 
