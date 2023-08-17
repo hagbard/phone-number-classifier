@@ -94,7 +94,7 @@ public final class RegressionTester {
       // Unsupported numbers cannot be classified, and can only be parsed from international format.
       objectsOf(jsonResults, "format")
           .filter(f -> getString(f, "type").equals("INTERNATIONAL_FORMAT"))
-          .forEach(f -> assertParseUnsupported(number, f));
+          .forEach(f -> assertParseUnsupported(number, f, cc));
     }
   }
 
@@ -131,15 +131,15 @@ public final class RegressionTester {
     truthStrategy
         .withMessage("parsing [%s] as %s for original number: %s", expected, type, number)
         .that(parseResult.getInferredFormat())
-        .isEqualTo(formatTyoeOf(type));
+        .isEqualTo(formatTypeOf(type));
   }
 
-  private void assertParseUnsupported(PhoneNumber number, JsObject jsonResult) {
+  private void assertParseUnsupported(PhoneNumber number, JsObject jsonResult, DigitSequence cc) {
     String type = getString(jsonResult, "type");
     String expected = getString(jsonResult, "value");
     // If a valid number is unsupported in the metadata it can be parsed from international format,
     // but cannot be classified (it's always considers "invalid").
-    PhoneNumberResult<String> parseResult = classifier.getParser().parseStrictly(expected);
+    PhoneNumberResult<String> parseResult = classifier.getParser().parseStrictly(expected, cc);
     truthStrategy
         .withMessage("parsing [%s] as %s for original number: %s", expected, type, number)
         .that(parseResult.getPhoneNumber())
@@ -162,7 +162,7 @@ public final class RegressionTester {
     return json.get(field).asArray().stream().map(JsValue::asObject);
   }
 
-  private static FormatType formatTyoeOf(String id) {
+  private static FormatType formatTypeOf(String id) {
     if (id.equals("NATIONAL_FORMAT")) {
       return NATIONAL;
     } else if (id.equals("INTERNATIONAL_FORMAT")) {

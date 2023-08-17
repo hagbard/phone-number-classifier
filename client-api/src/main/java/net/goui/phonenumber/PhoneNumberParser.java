@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -34,13 +35,13 @@ import net.goui.phonenumber.metadata.RawClassifier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * /** Phone number parsing API, available from subclasses of {@link AbstractPhoneNumberClassifier}
- * when parser metadata is available.
+ * Phone number parsing API, available from subclasses of {@link AbstractPhoneNumberClassifier} when
+ * parser metadata is available.
  *
  * <p><em>Important</em>: This parser is deliberately simpler than the corresponding parser in
  * Google's Libphonenumber library. It is designed to be a robust parser for cases where the input
  * is a formatted phone number, but it will not handle all the edge cases that Libphonenumber can
- * (e.g. parsing U.S. vanity numbers such as "1-800-BIG-DUCK").
+ * (e.g. parsing U.S. vanity numbers such as "1-800-NOT-REAL").
  *
  * <p>However, when given normally formatted national/international phone number text, this parser
  * produces exactly the same, or better results than Libphonenumber for valid/supported ranges.
@@ -60,9 +61,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Libphonenumber gets confused and mis-parses the number</a>, whereas this parser will correctly
  * handle it.
  *
- * <p>If a calling code/region is not supported in the metadata for the parser, then only
- * internationally formatted numbers (with a leading '+' and country calling code) can be parsed,
- * and no validation is performed (the match result is always `Invalid`).
+ * <p>If a calling code/region is not supported in the metadata for the parser, then no validation
+ * is performed and the match result is always {@link MatchResult#INVALID}.
  *
  * <p>As a special case, Argentinian national mobile numbers formatted with the mobile token '15'
  * after the area code (e.g. "0 11 15-3329-5195") will be transformed to use the international
@@ -89,12 +89,16 @@ public final class PhoneNumberParser<T> {
   private static final DigitSequence CC_ARGENTINA = DigitSequence.parse("54");
   private static final Pattern ARGENTINA_MOBILE_PREFIX = Pattern.compile("0?(.{2,4})15(.{6,8})");
 
+  private static final Comparator<PhoneNumberResult<?>> COMPARE_RESULTS =
+      Comparator.comparing(PhoneNumberResult::getMatchResult);
+
   private final RawClassifier rawClassifier;
   private final ImmutableListMultimap<DigitSequence, T> regionCodeMap;
   private final ImmutableMap<T, DigitSequence> callingCodeMap;
   private final ImmutableSetMultimap<DigitSequence, DigitSequence> nationalPrefixMap;
   private final ImmutableSet<DigitSequence> nationalPrefixOptional;
 
+  // Called from AbstractPhoneNumberClassifier.
   PhoneNumberParser(RawClassifier rawClassifier, Function<String, T> converter) {
     this.rawClassifier = rawClassifier;
     T worldRegion = checkNotNull(converter.apply("001"));
@@ -169,9 +173,7 @@ public final class PhoneNumberParser<T> {
   }
 
   public Optional<PhoneNumber> parseLeniently(String text, T region) {
-    Optional<DigitSequence> callingCode = getCallingCode(region);
-    checkArgument(callingCode.isPresent(), "Unknown region code: %s", region);
-    return parseLeniently(text, callingCode.get());
+    return parseLeniently(text, toCallingCode(region));
   }
 
   public Optional<PhoneNumber> parseLeniently(String text, @Nullable DigitSequence callingCode) {
@@ -183,9 +185,7 @@ public final class PhoneNumberParser<T> {
   }
 
   public PhoneNumberResult<T> parseStrictly(String text, T region) {
-    Optional<DigitSequence> callingCode = getCallingCode(region);
-    checkArgument(callingCode.isPresent(), "Unknown region code: %s", region);
-    return parseStrictly(text, callingCode.get());
+    return parseStrictly(text, toCallingCode(region));
   }
 
   public PhoneNumberResult<T> parseStrictly(String text, @Nullable DigitSequence callingCode) {
@@ -194,41 +194,46 @@ public final class PhoneNumberParser<T> {
     return result;
   }
 
+  private DigitSequence toCallingCode(T region) {
+    Optional<DigitSequence> callingCode = getCallingCode(region);
+    checkArgument(callingCode.isPresent(), "Unknown region code: %s", region);
+    return callingCode.get();
+  }
+
   /*
-   * The state table for how return values are calculated for parsing.
-   *
    * The algorithm tries to parse the input assuming both "national" and "international"
    * formatting of the given text.
-   *    * For national format, the given calling code is used ("NATIONAL").
-   *    * For international format, the calling code is extracted from the number ("INTL").
+   *    * For national format, the given calling code is used ("NAT").
+   *    * For international format, the calling code is extracted from the number ("INT").
    * 1. If neither result can be obtained, parsing fails
    * 2. If only one result can be obtained, it is returned
-   * 3. If the national result is "better" than the international one, return the national result.
-   * 4. In the remaining cases, return the international if either:
+   * 3. If the national result match is strictly better than the international one, return the
+   *    national result.
+   * 4. In the remaining cases we check the input ("CHK"), and return the international result if
+   *    either:
    *    * The extracted calling code was the same as the given calling code: ("41 xxxx xxxx", cc=41)
    *    * If the input text is internationally formatted: e.g. ("+41 xxxx xxxx", cc=34)
-   * 5. Otherwise return the national format.
+   * Otherwise return the national format.
    *
    * Note: Step 4 is only reached if the international parse result is a better match than the
    * national one, and even then we might return the national result if we aren't sure the extracted
-   * calling code looks trustworthy. It also only occurs if the extracted calling code is supported,
-   * so we can classify the candidate numbers to show they are "better" than the national result..
+   * calling code looks trustworthy.
    *
-   * National   /-------------------------- International Result ---------------------------\
-   *  Result  || MATCHED    | PARTIAL    | EXCESS     | LENGTH     | INVALID    |  N/A
-   * =========||==============================================================================
-   *  MATCHED || NATIONAL   | NATIONAL   | NATIONAL   | NATIONAL   | NATIONAL   | NATIONAL   |
-   * ---------||-=--=--=--=-+------------+------------+------------+------------+------------+
-   *  PARTIAL || CHECK-CC   | NATIONAL   | NATIONAL   | NATIONAL   | NATIONAL   | NATIONAL   |
-   * ---------||------------+-=--=--=--=-+------------+------------+------------+------------+
-   *  EXCESS  || CHECK-CC   | CHECK-CC   | NATIONAL   | NATIONAL   | NATIONAL   | NATIONAL   |
-   * ---------||------------+------------+-=--=--=--=-+------------+------------+------------+
-   *  LENGTH  || CHECK-CC   | CHECK-CC   | CHECK-CC   | NATIONAL   | NATIONAL   | NATIONAL   |
-   * ---------||------------+------------+------------+-=--=--=--=-+------------+------------+
-   *  INVALID || CHECK-CC   | CHECK-CC   | CHECK-CC   | CHECK-CC   | NATIONAL   | NATIONAL   |
-   * ---------||------------+------------+------------+------------+-=--=--=--=-+------------+
-   *   N/A    || INTL (2)   | INTL (2)   | INTL (2)   | INTL (2)   | INTL (2)   | ---(1)---  |
-   * ---------||------------+------------+------------+------------+------------+------------+
+   * National   /----------------- International Result ------------------\
+   *  Result  || MATCHED | PARTIAL | EXCESS  | LENGTH  | INVALID |  N/A    |
+   * =========||============================================================
+   *  MATCHED || CHK [4] | NAT [3] | NAT [3] | NAT [3] | NAT [3] | NAT [2] |
+   * ---------||-=--=--=-+---------+---------+---------+---------+---------+
+   *  PARTIAL || CHK [4] | CHK [4] | NAT [3] | NAT [3] | NAT [3] | NAT [2] |
+   * ---------||---------+-=--=--=-+---------+---------+---------+---------+
+   *  EXCESS  || CHK [4] | CHK [4] | CHK [4] | NAT [3] | NAT [3] | NAT [2] |
+   * ---------||---------+---------+-=--=--=-+---------+---------+---------+
+   *  LENGTH  || CHK [4] | CHK [4] | CHK [4] | CHK [4] | NAT [3] | NAT [2] |
+   * ---------||---------+---------+---------+-=--=--=-+---------+---------+
+   *  INVALID || CHK [4] | CHK [4] | CHK [4] | CHK [4] | CHK [4] | NAT [2] |
+   * ---------||---------+---------+---------+---------+-=--=--=-+-=--=--=-+
+   *   N/A    || INT [2] | INT [2] | INT [2] | INT [2] | INT [2] | --- [1] |
+   * ---------||---------+---------+---------+---------+---------+---------+
    */
   @Nullable
   private PhoneNumberResult<T> parseImpl(String text, @Nullable DigitSequence callingCode) {
@@ -245,22 +250,24 @@ public final class PhoneNumberParser<T> {
     PhoneNumberResult<T> nationalParseResult =
         callingCode != null ? getBestResult(callingCode, digits, NATIONAL) : null;
     if (extractedCc == null) {
-      // This accounts for (1.A) no results possible and (2.B) only the national result.
+      // This accounts for step [1] (no results) and step [2] with only the national result.
       return nationalParseResult;
     }
     PhoneNumberResult<T> internationalParseResult =
         getBestResult(extractedCc, removePrefix(digits, extractedCc.length()), INTERNATIONAL);
     if (nationalParseResult == null) {
-      // This accounts for (2.C) only the international result.
+      // This accounts for step [2] with only the international result.
       return internationalParseResult;
     }
-    if (nationalParseResult.isBetterThan(internationalParseResult)) {
-      // This accounts for (3)
+    if (COMPARE_RESULTS.compare(nationalParseResult, internationalParseResult) < 0) {
+      // This accounts for step [3].
       return nationalParseResult;
     }
-    return (callingCode.equals(extractedCc) || looksLikeInternationalFormat(text, extractedCc))
-        ? internationalParseResult
-        : nationalParseResult;
+    if (callingCode.equals(extractedCc) || looksLikeInternationalFormat(text, extractedCc)) {
+      // This accounts for step [4] when the input strongly suggest international format.
+      return internationalParseResult;
+    }
+    return nationalParseResult;
   }
 
   // This is true for things like "+1234", "(+12) 34" but NOT "+ 12 34", "++1234" or "+1234+".
@@ -278,14 +285,17 @@ public final class PhoneNumberParser<T> {
       nn = maybeAdjustArgentineFixedLineNumber(cc, nn);
     }
     if (!rawClassifier.getSupportedCallingCodes().contains(cc)) {
-      return PhoneNumberResult.of(PhoneNumbers.create(cc, nn), INVALID, formatType);
+      return PhoneNumberResult.of(PhoneNumbers.of(cc, nn), INVALID, formatType);
     }
     ImmutableSet<DigitSequence> nationalPrefixes = nationalPrefixMap.get(cc);
-    boolean requiresNationalPrefix =
-        formatType == NATIONAL
-            && !nationalPrefixes.isEmpty()
-            && !nationalPrefixOptional.contains(cc);
-    MatchResult bestResult = requiresNationalPrefix ? INVALID : rawClassifier.match(cc, nn);
+    MatchResult bestResult = INVALID;
+    // We can test the given number (without attempting to remove a national prefix) under some
+    // conditions, but avoid doing so when a national prefix is required for national dialling.
+    if (formatType == INTERNATIONAL
+        || nationalPrefixes.isEmpty()
+        || nationalPrefixOptional.contains(cc)) {
+      bestResult = rawClassifier.match(cc, nn);
+    }
     DigitSequence bestNumber = nn;
     if (bestResult != MATCHED) {
       for (DigitSequence np : nationalPrefixes) {
@@ -302,7 +312,7 @@ public final class PhoneNumberParser<T> {
         }
       }
     }
-    return PhoneNumberResult.of(PhoneNumbers.create(cc, bestNumber), bestResult, formatType);
+    return PhoneNumberResult.of(PhoneNumbers.of(cc, bestNumber), bestResult, formatType);
   }
 
   private DigitSequence maybeAdjustArgentineFixedLineNumber(DigitSequence cc, DigitSequence nn) {

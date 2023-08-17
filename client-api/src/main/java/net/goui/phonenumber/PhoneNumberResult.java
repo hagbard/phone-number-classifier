@@ -23,18 +23,22 @@ public abstract class PhoneNumberResult<T> {
     return new AutoValue_PhoneNumberResult<T>(phoneNumber, matchResult, formatType);
   }
 
-  /** Returns the parsed phone number (which need not be valid). */
+  /**
+   * Returns the parsed phone number, which may not have the same calling code as the value passed
+   * into the parse method.
+   */
   public abstract PhoneNumber getPhoneNumber();
 
   /**
-   * Returns the match result for the phone number, according to the parser's metadata. If the
-   * result is {@link MatchResult#MATCHED}, then parsing was completely successful and unambiguous.
+   * Returns the match result for the parsed phone number, according to the parser's metadata. If
+   * the result is {@link MatchResult#MATCHED}, then parsing was completely successful and
+   * unambiguous.
    */
   public abstract MatchResult getMatchResult();
 
+  /**
+   * Returns the format assumed by the parser. This can be useful for feeding information back to
+   * users.
+   */
   public abstract FormatType getInferredFormat();
-
-  boolean isBetterThan(PhoneNumberResult<T> other) {
-    return getMatchResult().compareTo(other.getMatchResult()) <= 0;
-  }
 }
