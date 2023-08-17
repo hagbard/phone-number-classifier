@@ -156,7 +156,20 @@ abstract class Metadata {
             extractGroup(RangesTableSchema.REGIONS, ClassifierType.REGION),
             extractFormat(formatsTable, primaryNationalPrefix));
 
-    RangeMap.Builder builder = RangeMap.builder().setExampleNumbers(exampleNumbersMap);
+    // In the format specifier, "national prefix optional" means:
+    //   "If there is a national prefix, it's optional."
+    // For parsing we want to know:
+    //   "Is there any format in which the national prefix is not present?"
+    // So we can't just look at nationalPrefixOptional(), as that is NOT set when there is no
+    // national prefix at all. We have to also count any formats without a national format.
+    boolean nationalPrefixOptionalForParsing =
+        formatsTable.values().stream()
+            .anyMatch(f -> !f.national().hasNationalPrefix() || f.nationalPrefixOptional());
+
+    RangeMap.Builder builder =
+        RangeMap.builder()
+            .setExampleNumbers(exampleNumbersMap)
+            .setNationalPrefixOptional(nationalPrefixOptionalForParsing);
     extractFunctions.forEach(fn -> fn.accept(rangeTable, builder));
     return builder.build(rangeTable.getAllRanges());
   }

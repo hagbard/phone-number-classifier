@@ -39,6 +39,7 @@ abstract class RangeMap {
   /** A builder for a {@link RangeMap} with which classifiers can be mapped from types. */
   static final class Builder {
     private final Map<ClassifierType, RangeClassifier> map = new LinkedHashMap<>();
+    private boolean nationalPrefixOptional = false;
     private ImmutableMap<ValidNumberType, DigitSequence> exampleNumbers = ImmutableMap.of();
 
     Builder() {}
@@ -47,6 +48,12 @@ abstract class RangeMap {
     @CanIgnoreReturnValue
     public Builder put(ClassifierType type, RangeClassifier classifier) {
       map.put(type, classifier);
+      return this;
+    }
+
+    @CanIgnoreReturnValue
+    public Builder setNationalPrefixOptional(boolean nationalPrefixOptional) {
+      this.nationalPrefixOptional = nationalPrefixOptional;
       return this;
     }
 
@@ -69,7 +76,7 @@ abstract class RangeMap {
               .filter(e -> allRanges.contains(e.getValue()))
               .collect(toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
       return new AutoValue_RangeMap(
-          allRanges, trimmedMap, filteredExamples);
+          allRanges, trimmedMap, nationalPrefixOptional, filteredExamples);
     }
   }
 
@@ -78,7 +85,9 @@ abstract class RangeMap {
   }
 
   Builder toBuilder() {
-    return builder().setExampleNumbers(getExampleNumbers());
+    return builder()
+        .setExampleNumbers(getExampleNumbers())
+        .setNationalPrefixOptional(nationalPrefixOptional());
   }
 
   /** Returns the bounding range for this range map. */
@@ -86,6 +95,8 @@ abstract class RangeMap {
 
   // Internal field (shouldn't be needed by outside this class).
   abstract ImmutableMap<ClassifierType, RangeClassifier> classifiers();
+
+  abstract boolean nationalPrefixOptional();
 
   abstract ImmutableMap<ValidNumberType, DigitSequence> getExampleNumbers();
 

@@ -219,7 +219,7 @@ final class MetadataProtoBuilder {
           .map(Object::toString)
           .map(this::tokenize)
           .forEach(callingCodeData::addNationalPrefix);
-      if (metadata.root().get(cc, NATIONAL_PREFIX_OPTIONAL).orElse(false)) {
+      if (metadata.getRangeMap(cc).nationalPrefixOptional()) {
         callingCodeData.setNationalPrefixOptional(true);
       }
     }
