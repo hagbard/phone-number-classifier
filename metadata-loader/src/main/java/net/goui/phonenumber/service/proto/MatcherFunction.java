@@ -15,10 +15,7 @@ import static net.goui.phonenumber.LengthResult.INVALID_LENGTH;
 import static net.goui.phonenumber.LengthResult.POSSIBLE;
 import static net.goui.phonenumber.LengthResult.TOO_LONG;
 import static net.goui.phonenumber.LengthResult.TOO_SHORT;
-import static net.goui.phonenumber.MatchResult.EXCESS_DIGITS;
-import static net.goui.phonenumber.MatchResult.INVALID;
-import static net.goui.phonenumber.MatchResult.MATCHED;
-import static net.goui.phonenumber.MatchResult.PARTIAL_MATCH;
+import static net.goui.phonenumber.MatchResult.*;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -148,7 +145,11 @@ abstract class MatcherFunction {
 
     @Override
     public MatchResult match(DigitSequence s) {
-      return resultOf(matcher.match(input(s)));
+      MatchResult result = resultOf(matcher.match(input(s)));
+      if (result == INVALID && testLength(s) == POSSIBLE) {
+        result = POSSIBLE_LENGTH;
+      }
+      return result;
     }
 
     @Override
@@ -195,7 +196,9 @@ abstract class MatcherFunction {
             ? MATCHED
             : matcher.hitEnd() ? PARTIAL_MATCH : EXCESS_DIGITS;
       } else {
-        return matcher.hitEnd() ? PARTIAL_MATCH : INVALID;
+        return matcher.hitEnd()
+            ? PARTIAL_MATCH
+            : testLength(s) == POSSIBLE ? POSSIBLE_LENGTH : INVALID;
       }
     }
 
