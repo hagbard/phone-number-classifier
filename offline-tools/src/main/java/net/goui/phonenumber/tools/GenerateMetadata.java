@@ -21,7 +21,10 @@ import com.google.common.flogger.FluentLogger;
 import com.google.common.primitives.Bytes;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +39,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.goui.phonenumber.proto.Metadata.*;
+import net.goui.phonenumber.proto.Metadata.MetadataProto;
 
 /**
  * The primary tool for generating client metadata for phone number classifiers.

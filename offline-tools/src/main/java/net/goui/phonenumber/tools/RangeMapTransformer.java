@@ -13,7 +13,9 @@ package net.goui.phonenumber.tools;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
-import static net.goui.phonenumber.tools.ClassifierType.*;
+import static net.goui.phonenumber.tools.ClassifierType.INTERNATIONAL_FORMAT;
+import static net.goui.phonenumber.tools.ClassifierType.NATIONAL_FORMAT;
+import static net.goui.phonenumber.tools.ClassifierType.PUBLIC_CLASSIFIERS;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;

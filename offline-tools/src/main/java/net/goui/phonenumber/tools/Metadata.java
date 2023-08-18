@@ -30,7 +30,10 @@ import com.google.i18n.phonenumbers.metadata.model.FormatsTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema;
 import com.google.i18n.phonenumbers.metadata.model.RangesTableSchema;
 import com.google.i18n.phonenumbers.metadata.proto.Types.ValidNumberType;
-import com.google.i18n.phonenumbers.metadata.table.*;
+import com.google.i18n.phonenumbers.metadata.table.Column;
+import com.google.i18n.phonenumbers.metadata.table.ColumnGroup;
+import com.google.i18n.phonenumbers.metadata.table.CsvTable;
+import com.google.i18n.phonenumbers.metadata.table.RangeTable;
 import java.io.IOException;
 import java.util.function.BiConsumer;
 

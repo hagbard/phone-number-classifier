@@ -32,9 +32,18 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.flogger.FluentLogger;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
-import com.google.i18n.phonenumbers.metadata.model.*;
+import com.google.i18n.phonenumbers.metadata.model.CsvData;
 import com.google.i18n.phonenumbers.metadata.model.CsvData.CsvDataProvider;
-import com.google.i18n.phonenumbers.metadata.table.*;
+import com.google.i18n.phonenumbers.metadata.model.ExamplesTableSchema;
+import com.google.i18n.phonenumbers.metadata.model.FormatsTableSchema;
+import com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema;
+import com.google.i18n.phonenumbers.metadata.model.OperatorsTableSchema;
+import com.google.i18n.phonenumbers.metadata.model.RangesTableSchema;
+import com.google.i18n.phonenumbers.metadata.model.ShortcodesTableSchema;
+import com.google.i18n.phonenumbers.metadata.table.Column;
+import com.google.i18n.phonenumbers.metadata.table.CsvSchema;
+import com.google.i18n.phonenumbers.metadata.table.CsvTable;
+import com.google.i18n.phonenumbers.metadata.table.DiffKey;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -43,6 +52,9 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ *
+ */
 public final class DiffManager {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 

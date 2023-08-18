@@ -10,7 +10,9 @@ SPDX-License-EPL Identifier-2.0 OR Apache-2.0
 
 package net.goui.phonenumber;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static net.goui.phonenumber.FormatType.INTERNATIONAL;
 import static net.goui.phonenumber.FormatType.NATIONAL;
