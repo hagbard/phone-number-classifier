@@ -55,6 +55,13 @@ java_binary(
     runtime_deps = [":offline_tools"],
 )
 
+java_binary(
+    name = "diff",
+    data = ["//:metadata.zip"],
+    main_class = "net.goui.phonenumber.tools.DiffManager",
+    runtime_deps = [":offline_tools"],
+)
+
 java_library(
     name = "tests",
     srcs = glob(["src/test/java/**/*.java"]),

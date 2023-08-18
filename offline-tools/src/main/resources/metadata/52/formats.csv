@@ -1,4 +1,4 @@
-Id             ; National           ; International      ; Comment
-fmt_2/4/4      ; "XX XXXX XXXX"     ; "XX XXXX XXXX"     ; "2-digit area codes (fixed or mobile)."
-fmt_3/3/4      ; "XXX XXX XXXX"     ; "XXX XXX XXXX"     ; "3-digit area codes (fixed or mobile)."
-shortcode_5    ; "XXXXX"            ;                    ; "5-digit shortcodes (very rare)."
+Id             ; National           ; International   ; National Prefix Optional ; Comment
+fixed_2/4/4    ; "XX XXXX XXXX"     ; "XX XXXX XXXX"  ; true                     ; "Fixed line (2-digit area codes)."
+fixed_3/3/4    ; "XXX XXX XXXX"     ; "XXX XXX XXXX"  ; true                     ; "Fixed line (3-digit area codes) and other non-mobile numbers."
+shortcode_5    ; "XXXXX"            ;                 ;                          ; "5-digit shortcodes (very rare)."
