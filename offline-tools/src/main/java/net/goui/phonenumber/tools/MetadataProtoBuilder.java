@@ -16,7 +16,6 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema.EXTRA_REGIONS;
 import static com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema.MAIN_REGION;
 import static com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema.NATIONAL_PREFIX;
-import static com.google.i18n.phonenumbers.metadata.model.MetadataTableSchema.NATIONAL_PREFIX_OPTIONAL;
 import static java.util.stream.Collectors.joining;
 import static net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.MatcherType.DIGIT_SEQUENCE_MATCHER;
 import static net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.MatcherType.REGULAR_EXPRESSION;

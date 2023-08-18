@@ -11,8 +11,8 @@ SPDX-License-EPL Identifier-2.0 OR Apache-2.0
 package net.goui.phonenumber;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static net.goui.phonenumber.MatchResult.INVALID;
 import static net.goui.phonenumber.FormatType.INTERNATIONAL;
+import static net.goui.phonenumber.MatchResult.INVALID;
 
 import net.goui.phonenumber.DigitSequence.Digits;
 import net.goui.phonenumber.metadata.RawClassifier;
