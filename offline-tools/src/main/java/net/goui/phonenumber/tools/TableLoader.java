@@ -10,6 +10,7 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 
 package net.goui.phonenumber.tools;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -27,6 +28,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -63,28 +65,48 @@ final class TableLoader implements AutoCloseable {
   }
 
   /**
-   * Returns a CSV table for the specified schema from the root relative metadata path (e.g.
-   * {@code "44/ranges.csv"}).
+   * Returns a CSV table for the specified schema from the root relative metadata path (e.g. {@code
+   * "44/ranges.csv"}).
    */
   <T> CsvTable<T> load(String rootRelativePath, CsvSchema<T> schema) throws IOException {
     // Load from any explicitly specified overlay directory first.
     Path overlayPath = overlayMap.get(rootRelativePath);
     if (overlayPath != null) {
-      return loadTableFromFile(overlayPath, schema, csvParser);
+      return loadFromFile(overlayPath, schema, csvParser);
     }
     // If a resource exists for a CSV file, load that in preference to the zip.
     // Unlike overlay files, resources MUST be semicolon separated (like the zip file).
     // Resources are intended for shipping with the library, not adding by users.
-    try (InputStream is = TableLoader.class.getResourceAsStream("/" + rootRelativePath)) {
-      if (is != null) {
-        return loadFromResourceInputStream(is, rootRelativePath, schema);
-      }
+    Optional<CsvTable<T>> overrideTable = loadFromResource(rootRelativePath, schema);
+    if (overrideTable.isPresent()) {
+      return overrideTable.get();
     }
     checkState(
         zip != null,
         "cannot find metadata path in overlay directory, and no zip file was specified: %s",
         rootRelativePath);
-    return loadTableFromZipEntry(zip, rootRelativePath, schema);
+    return loadFromZipEntry(zip, rootRelativePath, schema);
+  }
+
+  public static <T> Optional<CsvTable<T>> loadFromResource(
+      String rootRelativePath, CsvSchema<T> schema) throws IOException {
+    try (InputStream is = TableLoader.class.getResourceAsStream("/" + rootRelativePath)) {
+      if (is != null) {
+        logger.atInfo().log("Resource overlay: /%s", rootRelativePath);
+        try (Reader reader = new InputStreamReader(is, UTF_8)) {
+          return Optional.of(CsvTable.importCsv(schema, reader));
+        } catch (IOException e) {
+          throw new IOException("error loading resource: " + rootRelativePath, e);
+        }
+      }
+    }
+    return Optional.empty();
+  }
+
+  public <T> CsvTable<T> loadFromZipFile(String rootRelativePath, CsvSchema<T> schema)
+      throws IOException {
+    return loadFromZipEntry(
+        checkNotNull(zip, "No metadata zip file was provided"), rootRelativePath, schema);
   }
 
   private static ImmutableMap<String, Path> readOverlayFiles(String overlayDirPath)
@@ -103,18 +125,8 @@ final class TableLoader implements AutoCloseable {
     return overlayMap;
   }
 
-  private static <T> CsvTable<T> loadFromResourceInputStream(
-      InputStream is, String path, CsvSchema<T> schema) throws IOException {
-    logger.atInfo().log("Resource overlay: /%s", path);
-    try (Reader reader = new InputStreamReader(is, UTF_8)) {
-      return CsvTable.importCsv(schema, reader);
-    } catch (IOException e) {
-      throw new IOException("error loading resource: " + path, e);
-    }
-  }
-
-  private static <T> CsvTable<T> loadTableFromFile(
-      Path path, CsvSchema<T> schema, CsvParser csvParser) throws IOException {
+  private static <T> CsvTable<T> loadFromFile(Path path, CsvSchema<T> schema, CsvParser csvParser)
+      throws IOException {
     logger.atInfo().log("File overlay: %s", path);
     try (Reader reader = Files.newBufferedReader(path, UTF_8)) {
       return CsvTable.importCsv(schema, reader, csvParser);
@@ -123,8 +135,8 @@ final class TableLoader implements AutoCloseable {
     }
   }
 
-  private static <T> CsvTable<T> loadTableFromZipEntry(
-      ZipFile zip, String path, CsvSchema<T> schema) throws IOException {
+  private static <T> CsvTable<T> loadFromZipEntry(ZipFile zip, String path, CsvSchema<T> schema)
+      throws IOException {
     ZipEntry zipEntry = zip.getEntry(path);
     if (zipEntry == null) {
       return CsvTable.builder(schema).build();
