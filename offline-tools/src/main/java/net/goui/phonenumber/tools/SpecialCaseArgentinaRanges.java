@@ -12,8 +12,11 @@ package net.goui.phonenumber.tools;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.i18n.phonenumbers.metadata.model.RangesTableSchema.*;
+import static com.google.i18n.phonenumbers.metadata.model.RangesTableSchema.AREA_CODE_LENGTH;
+import static com.google.i18n.phonenumbers.metadata.model.RangesTableSchema.ExtType;
 import static com.google.i18n.phonenumbers.metadata.model.RangesTableSchema.ExtType.FIXED_LINE_OR_MOBILE;
+import static com.google.i18n.phonenumbers.metadata.model.RangesTableSchema.FORMAT;
+import static com.google.i18n.phonenumbers.metadata.model.RangesTableSchema.TYPE;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;

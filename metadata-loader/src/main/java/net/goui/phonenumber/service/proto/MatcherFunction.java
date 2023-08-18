@@ -15,7 +15,11 @@ import static net.goui.phonenumber.LengthResult.INVALID_LENGTH;
 import static net.goui.phonenumber.LengthResult.POSSIBLE;
 import static net.goui.phonenumber.LengthResult.TOO_LONG;
 import static net.goui.phonenumber.LengthResult.TOO_SHORT;
-import static net.goui.phonenumber.MatchResult.*;
+import static net.goui.phonenumber.MatchResult.EXCESS_DIGITS;
+import static net.goui.phonenumber.MatchResult.INVALID;
+import static net.goui.phonenumber.MatchResult.MATCHED;
+import static net.goui.phonenumber.MatchResult.PARTIAL_MATCH;
+import static net.goui.phonenumber.MatchResult.POSSIBLE_LENGTH;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
