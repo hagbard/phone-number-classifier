@@ -20,6 +20,10 @@ import {
     ParserDataJson } from "./metadata-json.js";
 import { Buffer } from 'buffer';
 
+export class SchemaVersion {
+  constructor(readonly uri: string, readonly ver: number) {}
+}
+
 export enum ReturnType {
     /** Phone numbers are associated with a single value (e.g. the phone number type). */
     SingleValued,
@@ -35,9 +39,28 @@ export interface ValueMatcher {
 }
 
 export class RawClassifier {
+  // Data version which must be updated in client code when JSON structure changes.
+  // Major (semantic) version number; if different, implies incompatible versions.
+  private static readonly MAJOR_DATA_VERSION: number = 1;
+  // Minor version number. A classifier can only use data with a minor version that's
+  // greater than, or equal to, the one it expects.
+  private static readonly MINOR_DATA_VERSION: number = 0;
 
-  public static create(jsonString: string): RawClassifier {
+  public static create(
+      jsonString: string, schema: SchemaVersion, ...rest: SchemaVersion[]): RawClassifier {
     let json: MetadataJson = JSON.parse(jsonString) as MetadataJson;
+
+    let verStr = JSON.stringify(json.ver);
+    if (!RawClassifier.dataVersionIsCompatible(json.ver)) {
+      throw new Error(
+          `Metadata (version=${verStr}) has incompatible data version`);
+    }
+    let schemas: SchemaVersion[] = [schema, ...rest];
+    if (!schemas.some(s => RawClassifier.versionSatisfiesSchema(json.ver, s))) {
+      let schStr = schemas.map(s => JSON.stringify(s)).join("\n  version=");
+      throw new Error(
+          `Metadata (version=${verStr}) does not satisfy any allowed schema:\n  version=${schStr}`);
+    }
 
     let version: VersionJson = json.ver;
     // Token decoding function.
@@ -65,6 +88,15 @@ export class RawClassifier {
       map.set(k, s);
     }
     s.add(v);
+  }
+
+  private static dataVersionIsCompatible(version: VersionJson) {
+    return version.maj === RawClassifier.MAJOR_DATA_VERSION
+        && version.min >= RawClassifier.MINOR_DATA_VERSION;
+  }
+
+  private static versionSatisfiesSchema(version: VersionJson, schema: SchemaVersion) {
+    return version.uri === schema.uri && version.ver >= schema.ver;
   }
 
   constructor(

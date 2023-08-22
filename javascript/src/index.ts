@@ -14,3 +14,4 @@ export { AbstractPhoneNumberClassifier, Classifier, SingleValuedClassifier, Matc
 export { PhoneNumberFormatter, FormatType } from "./phone-number-formatter.js";
 export { PhoneNumberParser } from "./phone-number-parser.js";
 export { MatchResult, LengthResult } from "./match-results.js";
+export { SchemaVersion } from "./raw-classifier.js";
