@@ -9,6 +9,7 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 import {
+    SchemaVersion,
     PhoneNumber,
     AbstractPhoneNumberClassifier,
     Matcher,
@@ -45,7 +46,9 @@ class TestClassifier extends AbstractPhoneNumberClassifier {
   private readonly parser: PhoneNumberParser<string>;
 
   constructor(path: string) {
-    super(fs.readFileSync(path, { encoding: "utf8", flag: "r" }));
+    super(
+        fs.readFileSync(path, { encoding: "utf8", flag: "r" }),
+        new SchemaVersion("goui.net/libphonenumber/dfa/compact", 1));
     this.typeMatcher =
         super.forValues("LPN:TYPE", super.ofNumericEnum(LpnType)).singleValuedMatcher();
     // We don't have a region code enum to hand, so use strings directly.

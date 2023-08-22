@@ -51,7 +51,7 @@ public abstract class AbstractResourceClassifierService extends ClassifierServic
     ProtoBasedNumberClassifier classifier = new ProtoBasedNumberClassifier(proto);
     checkState(
         classifier.getVersion().satisfies(getStatedVersion()),
-        "loaded metadata version (%s) does not satisfy the state version (%s)",
+        "loaded metadata version (%s) does not satisfy the stated version (%s)",
         classifier.getVersion(),
         getStatedVersion());
     return classifier;
