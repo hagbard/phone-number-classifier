@@ -18,14 +18,29 @@ import {
 import { Converter, MetadataJson } from "phonenumbers_js/dist/internal.js";
 import metadataJson from "./simple_compact.json";
 
+/**
+ *
+ */
 export class SimplePhoneNumberValidator extends AbstractPhoneNumberClassifier {
   private static readonly ExpectedSchema: SchemaVersion =
       new SchemaVersion("goui.net/phonenumbers/simple/validation_only", 1);
 
+  /**
+   *
+   */
   private readonly nationalFormatter: PhoneNumberFormatter;
+  /**
+   *
+   */
   private readonly internationalFormatter: PhoneNumberFormatter;
+  /**
+   *
+   */
   private readonly parser: PhoneNumberParser<string>;
 
+  /**
+   *
+   */
   constructor() {
     super(metadataJson as MetadataJson, SimplePhoneNumberValidator.ExpectedSchema);
     this.nationalFormatter = super.createFormatter(FormatType.National);
@@ -33,14 +48,23 @@ export class SimplePhoneNumberValidator extends AbstractPhoneNumberClassifier {
     this.parser = super.createParser(Converter.identity());
   }
 
+  /**
+   *
+   */
   formatNational(number: PhoneNumber): string {
     return this.nationalFormatter.format(number);
   }
 
+  /**
+   *
+   */
   formatInternational(number: PhoneNumber): string {
     return this.internationalFormatter.format(number);
   }
 
+  /**
+   *
+   */
   getParser(): PhoneNumberParser<string> {
     return this.parser;
   }
