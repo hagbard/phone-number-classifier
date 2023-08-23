@@ -3,6 +3,7 @@ node_modules
 
 # Built TypeScript files
 dist/**/*
+dist-tests/**/*
 
 # Lock files and other clutter
 *.lock
