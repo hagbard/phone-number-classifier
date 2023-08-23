@@ -39,8 +39,8 @@ export class RawClassifier {
   private static readonly MINOR_DATA_VERSION: number = 0;
 
   public static create(
-      jsonString: string, schema: SchemaVersion, ...rest: SchemaVersion[]): RawClassifier {
-    let json: MetadataJson = JSON.parse(jsonString) as MetadataJson;
+      rawJson: string|MetadataJson, schema: SchemaVersion, ...rest: SchemaVersion[]): RawClassifier {
+    let json: MetadataJson = typeof rawJson === "string" ? JSON.parse(rawJson) as MetadataJson : rawJson;
 
     let verStr = JSON.stringify(json.ver);
     if (!RawClassifier.dataVersionIsCompatible(json.ver)) {

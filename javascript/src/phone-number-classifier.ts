@@ -8,13 +8,21 @@
  SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-import { PhoneNumber } from "./phone-number.js";
-import { DigitSequence, Digits } from "./digit-sequence.js";
-import { RawClassifier, SchemaVersion, ValueMatcher } from "./raw-classifier.js";
-import { MatchResult, LengthResult } from "./match-results.js";
-import { PhoneNumberFormatter, FormatType } from "./phone-number-formatter.js";
-import { PhoneNumberParser } from "./phone-number-parser.js";
-import { Converter } from "./converter.js";
+import {
+    PhoneNumber,
+    DigitSequence,
+    Digits,
+    MatchResult,
+    LengthResult,
+    PhoneNumberParser,
+    PhoneNumberFormatter,
+    FormatType,
+    SchemaVersion } from "./index.js";
+import {
+    RawClassifier,
+    ValueMatcher,
+    Converter,
+    MetadataJson } from "./internal.js";
 
 /**
  * A base class from which custom, type-safe classifiers can be derived.
@@ -32,7 +40,7 @@ import { Converter } from "./converter.js";
 export abstract class AbstractPhoneNumberClassifier {
   private readonly rawClassifier: RawClassifier;
 
-  protected constructor(json: string, schema: SchemaVersion, ...rest: SchemaVersion[]) {
+  protected constructor(json: string|MetadataJson, schema: SchemaVersion, ...rest: SchemaVersion[]) {
     this.rawClassifier = RawClassifier.create(json, schema);
   }
 
