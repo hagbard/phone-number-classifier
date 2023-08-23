@@ -1,6 +1,17 @@
 {
   "name": "phonenumbers_js",
-  "version": "0.0.2",
+  "version": "0.0.4",
+  "description": "Lightweight TypeScript/JavaScript client code for PhoneNumbers validation library.",
+  "keywords": [
+    "phonenumber",
+    "phone",
+    "validate",
+    "libphonenumber"
+  ],
+  "homepage": "https://github.com/hagbard/phone-numbers",
+  "bugs": "https://github.com/hagbard/phone-numbers/issues",
+  "author": "David Beaumont",
+  "license": "(EPL-2.0 OR Apache-2.0)",
   "dependencies": {
     "buffer": "^6.0.3"
   },
@@ -19,7 +30,8 @@
   "types": "dist/index.d.js",
   "module": "dist/index.js",
   "files": [
-    "dist/src"
+    "dist/src",
+    "README.md"
   ],
   "scripts": {
     "tsc": "tsc -p tsconfig.json",
