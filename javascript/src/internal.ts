@@ -10,3 +10,4 @@
 
 export { DigitSequenceMatcher } from "./digit-sequence-matcher.js";
 export { RawClassifier, ValueMatcher } from "./raw-classifier.js";
+export { Converter } from "./converter.js";

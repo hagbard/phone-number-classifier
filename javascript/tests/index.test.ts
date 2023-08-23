@@ -18,9 +18,8 @@ import {
     PhoneNumberFormatter,
     FormatType,
     PhoneNumberParser,
-    MatchResult } from "../src/index";
-import { RawClassifier } from "../src/internal";
-import { Converter } from "../src/converter";
+    MatchResult } from "../dist/index.js";
+import { RawClassifier, Converter } from "../dist/internal.js";
 import goldenDataJson from "./lpn_golden_data.json"
 const fs = require("fs");
 
