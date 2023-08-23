@@ -24,15 +24,6 @@ export class SchemaVersion {
   constructor(readonly uri: string, readonly ver: number) {}
 }
 
-export enum ReturnType {
-    /** Phone numbers are associated with a single value (e.g. the phone number type). */
-    SingleValued,
-    /** Phone numbers can be associated with multiple values (e.g. region codes). */
-    MultiValued,
-    /** Indicates a serious error in library configuration. */
-    Unknown,
-}
-
 export interface ValueMatcher {
   matchValues(nationalNumber: DigitSequence, ...values: string[]): MatchResult;
   getPossibleValues(): ReadonlyArray<string>;
@@ -43,7 +34,8 @@ export class RawClassifier {
   // Major (semantic) version number; if different, implies incompatible versions.
   private static readonly MAJOR_DATA_VERSION: number = 1;
   // Minor version number. A classifier can only use data with a minor version that's
-  // greater than, or equal to, the one it expects.
+  // greater than or equal to the one it expects. Minor data versions must be backwards
+  // compatible within the major version.
   private static readonly MINOR_DATA_VERSION: number = 0;
 
   public static create(
@@ -59,7 +51,7 @@ export class RawClassifier {
     if (!schemas.some(s => RawClassifier.versionSatisfiesSchema(json.ver, s))) {
       let schStr = schemas.map(s => JSON.stringify(s)).join("\n  version=");
       throw new Error(
-          `Metadata (version=${verStr}) does not satisfy any allowed schema:\n  version=${schStr}`);
+          `Metadata (version=${verStr}) does not satisfy any allowed schema:\n  allowed=${schStr}`);
     }
 
     let version: VersionJson = json.ver;

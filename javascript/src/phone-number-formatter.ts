@@ -10,7 +10,7 @@
 
 import { PhoneNumber } from "./phone-number.js";
 import { DigitSequence, Digits } from "./digit-sequence.js";
-import { RawClassifier, ValueMatcher, ReturnType } from "./raw-classifier.js";
+import { RawClassifier, ValueMatcher } from "./raw-classifier.js";
 import { MatchResult, LengthResult } from "./match-results.js";
 
 export enum FormatType {
@@ -135,11 +135,8 @@ export class PhoneNumberFormatter {
   }
 
   private static formatNationalNumber(nn: DigitSequence, encodedFormatSpec: string): string {
-    let buffer: Buffer = new Buffer(encodedFormatSpec, "ascii");
-    let bytes: Uint8Array = new Uint8Array(
-        buffer.buffer,
-        buffer.byteOffset,
-        buffer.length);
+    let buffer: Buffer =  Buffer.alloc(encodedFormatSpec.length, encodedFormatSpec, "ascii");
+    let bytes: Uint8Array = new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.length);
 
     let maxDigitCount: number = bytes
         .map(c => PhoneNumberFormatter.groupLength(c))
