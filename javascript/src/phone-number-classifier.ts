@@ -10,7 +10,7 @@
 
 import { PhoneNumber } from "./phone-number.js";
 import { DigitSequence, Digits } from "./digit-sequence.js";
-import { RawClassifier, SchemaVersion, ValueMatcher, ReturnType } from "./raw-classifier.js";
+import { RawClassifier, SchemaVersion, ValueMatcher } from "./raw-classifier.js";
 import { MatchResult, LengthResult } from "./match-results.js";
 import { PhoneNumberFormatter, FormatType } from "./phone-number-formatter.js";
 import { PhoneNumberParser } from "./phone-number-parser.js";
