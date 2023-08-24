@@ -1,11 +1,12 @@
 {
-  "name": "phonenumbers_simple",
+  "name": "phonenumbers_simple_example",
   "version": "0.0.1",
   "description": "A simple example implementation of a phone number parser, validator and formatter using the PhoneNumbers library.",
   "keywords": [
     "phonenumber",
     "phone",
     "validate",
+    "example",
     "libphonenumber"
   ],
   "homepage": "https://github.com/hagbard/phone-numbers",
@@ -13,7 +14,7 @@
   "author": "David Beaumont",
   "license": "(EPL-2.0 OR Apache-2.0)",
   "dependencies": {
-    "phonenumbers_js": "^0.0.6"
+    "phonenumbers_js": "^0.0.10"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.js",
@@ -22,7 +23,9 @@
     "dist"
   ],
   "scripts": {
-    "tsc": "tsc -b src",
-    "prepublishOnly": "yarn tsc"
+    "tsc": "tsc -b src && ncp src/simple_compact.json dist/simple_compact.json && ncp src/main.cjs dist/main.cjs"
+  },
+  "devDependencies": {
+    "ncp": "^2.0.0"
   }
 }

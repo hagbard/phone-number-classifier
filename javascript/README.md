@@ -39,7 +39,3 @@ To create a new phone number classifier with appropriate metadata, you need to:
 
 If you are using this library via a wrapper library, you may only need to select and download the
 metadata you need based on your size/accuracy requirements.
-
-To reduce JavaScript code size, comments are omitted from the generated JavaScript code, but you
-can read them in the TypeScript source:
-https://github.com/hagbard/phone-numbers/tree/main/javascript/src.
