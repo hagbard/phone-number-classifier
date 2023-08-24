@@ -10,10 +10,12 @@
 
 import {
     AbstractPhoneNumberClassifier,
+    DigitSequence,
     FormatType,
     PhoneNumber,
     PhoneNumberFormatter,
     PhoneNumberParser,
+    PhoneNumberResult,
     SchemaVersion } from "phonenumbers_js";
 import { Converter, MetadataJson } from "phonenumbers_js/dist/internal.js";
 import metadataJson from "./simple_compact.json";
@@ -24,7 +26,7 @@ import metadataJson from "./simple_compact.json";
  * they can be used to create customized phone number APIs.
  *
  * While it is possible to use this class "as is" in your application, it strongly recommended that
- * you consider making your own version of it so you can tune the API and metadata to your needs.
+ * you consider making your own version of it, so you can tune the API and metadata to your needs.
  *
  * It is also worth noting that there is no promise that the metadata used in this example code
  * will be updated regularly, so using this directly in an application risks eventual metadata
@@ -33,8 +35,10 @@ import metadataJson from "./simple_compact.json";
  * It is straightforward to define your own subclass of AbstractPhoneNumberClassifier, with the
  * features you need, and build you own metadata to support it. You have complete control over
  * the degree of accuracy you want in the metadata and which classifiers you present to your users
- * (including writing your own custom classifiers). Once you have defined your own metadata config,
- * it is trivial to keep your metadata as up-to-date as you need.
+ * (including defining your own custom classifiers). Once you have defined your own metadata config,
+ * it is trivial to keep your metadata as up-to-date as you need it to be.
+ *
+ * More information at: https://github.com/hagbard/phone-numbers
  */
 export class SimplePhoneNumberValidator extends AbstractPhoneNumberClassifier {
   /**
@@ -73,7 +77,7 @@ export class SimplePhoneNumberValidator extends AbstractPhoneNumberClassifier {
    * Note that It is not best practice to build metadata into client code, but this is just a
    * simple example of the PhoneNumbers library. In the general case, it is expected that
    * up-tp-date metadata will be passed to the PhoneNumbers library at run time (either
-   * downloaded on demand, or as part of an application which is served to users with static
+   * downloaded on demand, or as part of an application which is served to users with fresh
    * metadata).
    */
   constructor() {
@@ -81,6 +85,10 @@ export class SimplePhoneNumberValidator extends AbstractPhoneNumberClassifier {
     this.nationalFormatter = super.createFormatter(FormatType.National);
     this.internationalFormatter = super.createFormatter(FormatType.International);
     this.parser = super.createParser(Converter.identity());
+  }
+
+  private static toSequence(s?: DigitSequence|string): DigitSequence|undefined {
+    return typeof s === "string" ? DigitSequence.parse(s) : s;
   }
 
   /**
@@ -115,8 +123,8 @@ export class SimplePhoneNumberValidator extends AbstractPhoneNumberClassifier {
    * If the given calling code is not supported by the underlying metadata, the empty array is
    * returned.
    */
-  getRegions(callingCode: DigitSequence): ReadonlyArray<string> {
-    return this.parser.getRegions(callingCode);
+  getRegions(callingCode: DigitSequence|string): ReadonlyArray<string> {
+    return this.parser.getRegions(SimplePhoneNumberValidator.toSequence(callingCode)!);
   }
 
   /**
@@ -133,8 +141,8 @@ export class SimplePhoneNumberValidator extends AbstractPhoneNumberClassifier {
   /**
    * Parses complete or partial phone number text with an optional country calling code.
    */
-  parseLeniently(text: string, callingCode?: DigitSequence): PhoneNumber|null {
-    return this.parser.parseLeniently(text, callingCode);
+  parseLeniently(text: string, callingCode?: DigitSequence|string): PhoneNumber|null {
+    return this.parser.parseLeniently(text, SimplePhoneNumberValidator.toSequence(callingCode));
   }
 
   /**
@@ -147,14 +155,14 @@ export class SimplePhoneNumberValidator extends AbstractPhoneNumberClassifier {
   /**
    * Parses complete or partial phone number text with an optional country calling code.
    */
-  parseStrictly(text: string, callingCode?: DigitSequence): PhoneNumberResult {
-    return this.parser.parseStrictly(text, callingCode);
+  parseStrictly(text: string, callingCode?: DigitSequence|string): PhoneNumberResult {
+    return this.parser.parseStrictly(text, SimplePhoneNumberValidator.toSequence(callingCode));
   }
 
   /**
    * Parses complete or partial phone number text for a specified region.
    */
-  parseStrictlyForRegion(text: string, region: T): PhoneNumberResult {
+  parseStrictlyForRegion(text: string, region: string): PhoneNumberResult {
     return this.parser.parseStrictlyForRegion(text, region);
   }
 }
