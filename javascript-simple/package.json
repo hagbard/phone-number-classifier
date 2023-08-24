@@ -23,6 +23,6 @@
   ],
   "scripts": {
     "tsc": "tsc -b src",
-    "prepublishOnly": "npm run tsc"
+    "prepublishOnly": "yarn tsc"
   }
 }
