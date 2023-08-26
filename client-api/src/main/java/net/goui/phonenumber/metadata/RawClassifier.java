@@ -11,7 +11,6 @@
 package net.goui.phonenumber.metadata;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Optional;
 import java.util.Set;
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.LengthResult;
@@ -89,13 +88,6 @@ public interface RawClassifier {
   ImmutableSet<String> getSupportedNumberTypes();
 
   ParserData getParserData(DigitSequence callingCode);
-
-  /**
-   * Returns an example number for the given calling code. The returned number will be valid, but
-   * need not be of any specific number type (though common number types are likely). The returned
-   * number is deterministic, and should not be callable.
-   */
-  Optional<DigitSequence> getExampleNationalNumber(DigitSequence callingCode);
 
   /**
    * Returns whether a phone number could be valid according only to its length.

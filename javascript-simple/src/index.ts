@@ -138,31 +138,33 @@ export class SimplePhoneNumberValidator extends AbstractPhoneNumberClassifier {
     return this.parser.getCallingCode(regionCode);
   }
 
-  /**
-   * Parses complete or partial phone number text with an optional country calling code.
-   */
+  /** Parses complete or partial phone number text with an optional country calling code. */
   parseLeniently(text: string, callingCode?: DigitSequence|string): PhoneNumber|null {
     return this.parser.parseLeniently(text, SimplePhoneNumberValidator.toSequence(callingCode));
   }
 
-  /**
-   * Parses complete or partial phone number text for a specified region.
-   */
+  /** Parses complete or partial phone number text for a specified region. */
   parseLenientlyForRegion(text: string, region: string): PhoneNumber|null {
     return this.parser.parseLenientlyForRegion(text, region);
   }
 
-  /**
-   * Parses complete or partial phone number text with an optional country calling code.
-   */
+  /** Parses complete or partial phone number text with an optional country calling code. */
   parseStrictly(text: string, callingCode?: DigitSequence|string): PhoneNumberResult {
     return this.parser.parseStrictly(text, SimplePhoneNumberValidator.toSequence(callingCode));
   }
 
-  /**
-   * Parses complete or partial phone number text for a specified region.
-   */
+  /** Parses complete or partial phone number text for a specified region. */
   parseStrictlyForRegion(text: string, region: string): PhoneNumberResult {
     return this.parser.parseStrictlyForRegion(text, region);
+  }
+
+  /** Returns an example phone number for the given calling code (if available). */
+  getExampleNumber(callingCode: DigitSequence|string): PhoneNumber|null {
+    return this.parser.getExampleNumber(SimplePhoneNumberValidator.toSequence(callingCode)!);
+  }
+
+  /** Returns an example phone number for the given CLDR region code (if available). */
+  getExampleNumberForRegion(region: string): PhoneNumber|null {
+    return this.parser.getExampleNumberForRegion(region);
   }
 }

@@ -53,19 +53,10 @@ public class SimpleClassifierTest {
   }
 
   @Test
-  public void testExampleNumber() {
-    Optional<PhoneNumber> exampleNumber = SIMPLE_CLASSIFIER.getExampleNumber(seq("44"));
-    assertThat(exampleNumber).hasValue(e164("+447400123456"));
-    // Check the example number is considered valid.
-    assertThat(SIMPLE_CLASSIFIER.match(exampleNumber.get())).isEqualTo(MATCHED);
-  }
-
-  @Test
   public void testParser() {
     PhoneNumberParser<String> parser = SIMPLE_CLASSIFIER.getParser();
     assertThat(parser.parseLeniently("(079) 555 1234", "CH")).hasValue(PhoneNumbers.fromE164("+41795551234"));
     assertThat(parser.parseLeniently("(+41) 079 555-1234")).hasValue(PhoneNumbers.fromE164("+41795551234"));
-
   }
 
   @Test
@@ -79,6 +70,19 @@ public class SimpleClassifierTest {
     assertThat(parser.getCallingCode("CH")).hasValue(seq("41"));
     // Special case since there are several calling codes associated with "001".
     assertThat(parser.getCallingCode("001")).isEmpty();
+  }
+
+  @Test
+  public void testParserExampleNumbers() {
+    PhoneNumberParser<String> parser = SIMPLE_CLASSIFIER.getParser();
+
+    Optional<PhoneNumber> exampleNumber = parser.getExampleNumber("GB");
+    assertThat(exampleNumber).hasValue(e164("+447400123456"));
+    assertThat(parser.getExampleNumber(seq("44"))).isEqualTo(exampleNumber);
+    // Jersey (also +44) example number is not equal.
+    assertThat(parser.getExampleNumber("JE")).isNotEqualTo(exampleNumber);
+    // Check the example number is considered valid.
+    assertThat(SIMPLE_CLASSIFIER.match(exampleNumber.get())).isEqualTo(MATCHED);
   }
 
   @Test

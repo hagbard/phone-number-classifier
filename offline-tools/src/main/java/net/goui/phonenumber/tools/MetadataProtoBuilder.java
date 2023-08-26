@@ -21,7 +21,10 @@ import static net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.Matche
 import static net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.MatcherType.REGULAR_EXPRESSION;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Iterables;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.flogger.LazyArg;
 import com.google.common.primitives.Bytes;
@@ -33,11 +36,14 @@ import com.google.i18n.phonenumbers.metadata.proto.Types.ValidNumberType;
 import com.google.i18n.phonenumbers.metadata.regex.RegexGenerator;
 import com.google.i18n.phonenumbers.metadata.table.MultiValue;
 import com.google.protobuf.ByteString;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import net.goui.phonenumber.proto.Metadata.CallingCodeProto;
@@ -115,9 +121,6 @@ final class MetadataProtoBuilder {
     if (config.includeParserInfo()) {
       addParserData(metadata);
     }
-    if (config.includeExampleNumbers()) {
-      addExampleNumbers(metadata);
-    }
 
     metadata.getTypes().stream()
         .map(ClassifierType::id)
@@ -192,22 +195,21 @@ final class MetadataProtoBuilder {
   private void addParserData(Metadata metadata) {
     for (DigitSequence cc : metadata.getAvailableCallingCodes()) {
       CallingCodeProto.Builder callingCodeData = callingCodeProto(cc);
-      String mainRegion =
-          metadata
-              .root()
-              .get(cc, MAIN_REGION)
-              .map(Object::toString)
-              .orElseThrow(() -> new IllegalStateException("Missing main region for: " + cc));
-      callingCodeData.setMainRegion(tokenize(mainRegion));
-      ImmutableSet<PhoneRegion> extraRegions =
-          metadata
-              .root()
-              .get(cc, EXTRA_REGIONS)
-              .map(MultiValue::getValues)
-              .orElse(ImmutableSet.of());
-      extraRegions.stream().map(Object::toString).sorted().forEach(this::tokenize);
-      if (!extraRegions.isEmpty()) {
-        callingCodeData.setRegionCount(1 + extraRegions.size());
+
+      // There's always at least one region (and the first is the main region).
+      List<PhoneRegion> regions = collectAllRegions(metadata, cc);
+      callingCodeData.setMainRegion(tokenize(regions.get(0).toString()));
+      if (regions.size() > 1) {
+        regions.stream().skip(1).map(Object::toString).forEach(this::tokenize);
+        callingCodeData.setRegionCount(regions.size());
+      }
+
+      if (config.includeExampleNumbers()) {
+        ImmutableTable<PhoneRegion, ValidNumberType, DigitSequence> exampleNumbers =
+            metadata.getRangeMap(cc).getExampleNumbers();
+        for (PhoneRegion region : regions) {
+          callingCodeData.addExampleNumber(getExampleNumberString(exampleNumbers.row(region)));
+        }
       }
     }
     for (DigitSequence cc : metadata.getAvailableCallingCodes()) {
@@ -228,21 +230,38 @@ final class MetadataProtoBuilder {
     }
   }
 
-  private void addExampleNumbers(Metadata metadata) {
-    for (DigitSequence cc : metadata.getAvailableCallingCodes()) {
-      RangeMap rangeMap = metadata.getRangeMap(cc);
-      if (!rangeMap.getExampleNumbers().isEmpty()) {
-        DigitSequence exampleNumber =
-            PRIORITY_EXAMPLE_TYPES.stream()
-                .map(rangeMap.getExampleNumbers()::get)
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(rangeMap.getExampleNumbers().values().iterator().next());
-        callingCodeProto(cc).setExampleNumber(exampleNumber.toString());
-      } else {
-        logger.atWarning().log("[cc=%s] No available example number", cc);
-      }
-    }
+  private static List<PhoneRegion> collectAllRegions(Metadata metadata, DigitSequence cc) {
+    List<PhoneRegion> regions = new ArrayList<>();
+    PhoneRegion mainRegion =
+        metadata
+            .root()
+            .get(cc, MAIN_REGION)
+            .orElseThrow(() -> new IllegalStateException("Missing main region for: " + cc));
+    regions.add(mainRegion);
+    metadata
+        .root()
+        .get(cc, EXTRA_REGIONS)
+        .map(MultiValue::getValues)
+        .orElse(ImmutableSet.of())
+        .stream()
+        .sorted()
+        .forEach(regions::add);
+    return regions;
+  }
+
+  private static String getExampleNumberString(
+      ImmutableMap<ValidNumberType, DigitSequence> regionExamples) {
+    // If not present, there are no available example numbers for this region (in which case add
+    // "" to retain alignment with region). This should happen only rare and only in cases where
+    // example numbers are filtered out of the RangeMap because they lie outside a reduced
+    // validation range due to some transformation.
+    Optional<DigitSequence> exampleNumber =
+        PRIORITY_EXAMPLE_TYPES.stream()
+            .map(regionExamples::get)
+            .filter(Objects::nonNull)
+            .findFirst()
+            .or(() -> Optional.ofNullable(Iterables.getFirst(regionExamples.values(), null)));
+    return exampleNumber.map(Object::toString).orElse("");
   }
 
   private NationalNumberDataProto buildNationalNumberData(

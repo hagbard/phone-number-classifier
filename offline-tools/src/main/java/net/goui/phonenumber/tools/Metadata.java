@@ -109,7 +109,7 @@ abstract class Metadata {
         ImmutableMap<String, FormatSpec> formatsTable =
             FormatsTableSchema.toFormatSpecs(
                 loader.load(csvFile(cc, "formats"), FormatsTableSchema.SCHEMA));
-        ImmutableTable<PhoneRegion, ValidNumberType, DigitSequence> exampleTable =
+        ImmutableTable<PhoneRegion, ValidNumberType, DigitSequence> exampleNumbers =
             ExamplesTableSchema.toExampleTable(
                 loader.load(csvFile(cc, "examples"), ExamplesTableSchema.SCHEMA));
 
@@ -127,13 +127,8 @@ abstract class Metadata {
                 .map(s -> s.getValues().asList())
                 .orElse(ImmutableList.of());
 
-        // We only have example numbers for the main region (currently).
-        PhoneRegion mainRegion = root.get(cc, MetadataTableSchema.MAIN_REGION).orElseThrow();
-        ImmutableMap<ValidNumberType, DigitSequence> exampleNumbersMap =
-            exampleTable.row(mainRegion);
-
         callingCodeMap.put(
-            cc, getRangeMapForTable(rangeTable, formatsTable, nationalPrefixes, exampleNumbersMap));
+            cc, getRangeMapForTable(rangeTable, formatsTable, nationalPrefixes, exampleNumbers));
       }
     }
     return create(root, callingCodeMap.buildOrThrow());
@@ -147,7 +142,7 @@ abstract class Metadata {
       RangeTable rangeTable,
       ImmutableMap<String, FormatSpec> formatsTable,
       ImmutableList<DigitSequence> nationalPrefixes,
-      ImmutableMap<ValidNumberType, DigitSequence> exampleNumbersMap) {
+      ImmutableTable<PhoneRegion, ValidNumberType, DigitSequence> exampleNumbers) {
 
     DigitSequence primaryNationalPrefix =
         Iterables.getFirst(nationalPrefixes, DigitSequence.empty());
@@ -171,7 +166,7 @@ abstract class Metadata {
 
     RangeMap.Builder builder =
         RangeMap.builder()
-            .setExampleNumbers(exampleNumbersMap)
+            .setExampleNumbers(exampleNumbers)
             .setNationalPrefixOptional(nationalPrefixOptionalForParsing);
     extractFunctions.forEach(fn -> fn.accept(rangeTable, builder));
     return builder.build(rangeTable.getAllRanges());

@@ -97,6 +97,7 @@ public final class PhoneNumberParser<T> {
   private final RawClassifier rawClassifier;
   private final ImmutableListMultimap<DigitSequence, T> regionCodeMap;
   private final ImmutableMap<T, DigitSequence> callingCodeMap;
+  private final ImmutableMap<String, PhoneNumber> exampleNumberMap;
   private final ImmutableSetMultimap<DigitSequence, DigitSequence> nationalPrefixMap;
   private final ImmutableSet<DigitSequence> nationalPrefixOptional;
 
@@ -106,6 +107,10 @@ public final class PhoneNumberParser<T> {
     T worldRegion = checkNotNull(converter.apply("001"));
     ImmutableListMultimap.Builder<DigitSequence, T> regionCodeMap = ImmutableListMultimap.builder();
     ImmutableMap.Builder<T, DigitSequence> callingCodeMap = ImmutableMap.builder();
+    // Contains keys for both regions ("US", "GB" and "001") as well as calling codes ("1", "44",
+    // "883").
+    // There is no possibility of clashing between these and it saves having 2 maps.
+    ImmutableMap.Builder<String, PhoneNumber> exampleNumberMap = ImmutableMap.builder();
     ImmutableSetMultimap.Builder<DigitSequence, DigitSequence> nationalPrefixMap =
         ImmutableSetMultimap.builder();
     ImmutableSet.Builder<DigitSequence> nationalPrefixOptional = ImmutableSet.builder();
@@ -125,6 +130,35 @@ public final class PhoneNumberParser<T> {
       }
       regionCodeMap.putAll(cc, regions);
 
+      ImmutableList<DigitSequence> exampleNationalNumbers = parserData.getExampleNationalNumbers();
+      if (!exampleNationalNumbers.isEmpty()) {
+        checkArgument(
+            exampleNationalNumbers.size() == regions.size(),
+            "Invalid example numbers (should match available regions): %s",
+            exampleNationalNumbers);
+        // This gets a bit complicated due to the existence of the "world" region 001, for which
+        // multiple calling codes and multiple regions exist. To address this we store example
+        // numbers keyed by both calling code and region code (in string form). Luckily it's
+        // impossible for keys to overlap, so we can share the same map.
+        ImmutableList<T> regionsList = regions.asList();
+        for (int i = 0; i < regionsList.size(); i++) {
+          DigitSequence nationalNumber = exampleNationalNumbers.get(i);
+          // Empty example numbers are possible and must just be ignored.
+          if (nationalNumber.isEmpty()) continue;
+          PhoneNumber example = PhoneNumbers.of(cc, nationalNumber);
+          if (i == 0) {
+            // The "main" region is also keyed by its calling code (this is how "world" region
+            // examples can be returned to the user).
+            exampleNumberMap.put(cc.toString(), example);
+          }
+          T region = regionsList.get(i);
+          if (!region.equals(worldRegion)) {
+            // Non-world regions are keyed here.
+            exampleNumberMap.put(region.toString(), example);
+          }
+        }
+      }
+
       if (!parserData.getNationalPrefixes().isEmpty()) {
         nationalPrefixMap.putAll(cc, parserData.getNationalPrefixes());
         if (parserData.isNationalPrefixOptional()) {
@@ -134,6 +168,7 @@ public final class PhoneNumberParser<T> {
     }
     this.regionCodeMap = regionCodeMap.build();
     this.callingCodeMap = callingCodeMap.buildOrThrow();
+    this.exampleNumberMap = exampleNumberMap.buildOrThrow();
     this.nationalPrefixMap = nationalPrefixMap.build();
     this.nationalPrefixOptional = nationalPrefixOptional.build();
   }
@@ -168,6 +203,37 @@ public final class PhoneNumberParser<T> {
    */
   public Optional<DigitSequence> getCallingCode(T region) {
     return Optional.ofNullable(callingCodeMap.get(region));
+  }
+
+  /**
+   * Returns an example phone number for the given CLDR region code (if available).
+   *
+   * <p>It is not always possible to guarantee example numbers will exist for every metadata
+   * configuration, and it is unsafe to invent example numbers at random (since they might be
+   * accidentally callable, which can cause problems).
+   *
+   * <p>Note: The special "world" region "001" is associated with more than one example number, so
+   * it cannot be resolved by this method. Use {@link #getExampleNumber(DigitSequence)} instead.
+   */
+  public Optional<PhoneNumber> getExampleNumber(T region) {
+    return callingCodeMap.containsKey(region)
+        ? Optional.ofNullable(exampleNumberMap.get(region.toString()))
+        : Optional.empty();
+  }
+
+  /**
+   * Returns an example phone number for the given calling code (if available).
+   *
+   * <p>It is not always possible to guarantee example numbers will exist for every metadata
+   * configuration, and it is unsafe to invent example numbers at random (since they might be
+   * accidentally callable, which can cause problems).
+   *
+   * <p>Note: This method will return the example number of the main region of the calling code.
+   */
+  public Optional<PhoneNumber> getExampleNumber(DigitSequence callingCode) {
+    return regionCodeMap.containsKey(callingCode)
+        ? Optional.ofNullable(exampleNumberMap.get(callingCode.toString()))
+        : Optional.empty();
   }
 
   public Optional<PhoneNumber> parseLeniently(String text) {

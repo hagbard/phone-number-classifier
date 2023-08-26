@@ -98,9 +98,31 @@ message CallingCodeProto {
   // (*) - Other than "001", but that's always a single region for a calling code.
   uint32 region_count = 3;
 
+  // An optional list of national numbers which paired with the available regions. This list
+  // is either empty (no example numbers were configured) or has the same number of entries
+  // as this calling code has regions.
+  //
+  // Note however that (depending on how metadata is configured) it is technically possible
+  // that even when example numbers are configured, not all regions will have them. In these
+  // cases, the corresponding entry will contain an empty string. In client code, you can
+  // fall back to the example number for the main region (if it exists), but you must be
+  // willing to accept that an example number may not always be available.
+  //
+  // The main reason that an example number may be unavailable is if the metadata is configured
+  // with a restricted range of numbers, and the available number (derived from Libphonenumber)
+  // now lies outside that range. In general, if you metadata is not explicitly restricted, you
+  // can expect the vast majority of example numbers to exist (but no absolute promise is made).
+  repeated string example_number = 4;
+
   // Indices of zero or more national prefixes used for this calling code.
   // The first value is the default, but all values may be used when parsing a number.
   repeated uint32 national_prefix = 5;
+  // Whether the national prefix is optional for parsing (i.e. whether a national number can
+  // be validly formatted without the national prefix). Note however, that this is omitted
+  // if the region has no national prefix. This means that the question:
+  //   "Are national numbers in this region always formatted with a national prefix?"
+  // is answered by:
+  //   !national_prefix.isEmpty() && !national_prefix_optional
   bool national_prefix_optional = 6;
 
   // ---------------- Validation Metadata ----------------
@@ -117,10 +139,6 @@ message CallingCodeProto {
 
   // List of matcher data, indexed for validity data and from national_number_data.
   repeated MatcherDataProto matcher_data = 9;
-
-  // ---------------- Example Number Metadata ----------------
-  // An optional, representative example number (extracted from Libphonenumber).
-  string example_number = 10;
 }
 
 message NationalNumberDataProto {

@@ -8,9 +8,9 @@ const pjs = require("phonenumbers_js");
 console.log("---- Example PhoneNumbers validator ----");
 let validator = new spv.SimplePhoneNumberValidator();
 showE164(validator.getExampleNumber("1").toString());
-showE164(validator.getExampleNumber("44").toString());
+showE164(validator.getExampleNumberForRegion("GB").toString());
 showE164(validator.getExampleNumber("33").toString());
-// Partial number (just the +44 example number with the end chopped off).
+// Partial number (just the "GB" example number with the end chopped off).
 showE164("+447400123");
 
 function showE164(s) {

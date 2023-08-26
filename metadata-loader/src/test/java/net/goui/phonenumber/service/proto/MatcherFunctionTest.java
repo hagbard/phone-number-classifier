@@ -20,6 +20,7 @@ import static net.goui.phonenumber.MatchResult.EXCESS_DIGITS;
 import static net.goui.phonenumber.MatchResult.INVALID;
 import static net.goui.phonenumber.MatchResult.MATCHED;
 import static net.goui.phonenumber.MatchResult.PARTIAL_MATCH;
+import static net.goui.phonenumber.MatchResult.POSSIBLE_LENGTH;
 
 import com.google.common.collect.ImmutableList;
 import com.google.i18n.phonenumbers.metadata.RangeSpecification;
@@ -30,6 +31,7 @@ import com.google.protobuf.ByteString;
 import java.util.Arrays;
 import java.util.function.Function;
 import net.goui.phonenumber.DigitSequence;
+import net.goui.phonenumber.MatchResult;
 import net.goui.phonenumber.proto.Metadata;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,7 +71,8 @@ public class MatcherFunctionTest {
     assertMatched(matcher, "123456", "123000", "123999", "456000", "456999");
     assertPartialMatch(matcher, "1", "123", "12300", "45");
     assertExcessDigits(matcher, "1230000", "4569999");
-    assertInvalid(matcher, "7", "789", "789000", "122999", "124000");
+    assertMatchResult(matcher, INVALID, "7", "789");
+    assertMatchResult(matcher, POSSIBLE_LENGTH, "789000", "122999", "124000");
   }
 
   @Test
@@ -111,11 +114,12 @@ public class MatcherFunctionTest {
     }
   }
 
-  private static void assertInvalid(MatcherFunction matcher, String... numbers) {
+  private static void assertMatchResult(
+      MatcherFunction matcher, MatchResult expected, String... numbers) {
     for (String s : numbers) {
       DigitSequence number = DigitSequence.parse(s);
-      assertThat(matcher.match(number)).isEqualTo(INVALID);
-      assertThat(matcher.isMatch(number)).isFalse();
+      assertThat(matcher.match(number)).isEqualTo(expected);
+      assertThat(matcher.isMatch(number)).isEqualTo(expected == MATCHED);
     }
   }
 

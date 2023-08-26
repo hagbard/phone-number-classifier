@@ -114,16 +114,6 @@ export abstract class AbstractPhoneNumberClassifier {
   }
 
   /**
-   * Returns an example number for the given calling code. The returned number will be valid,
-   * but need not be of any specific number type (though common number types are likely). The
-   * returned number is deterministic, and should not be callable.
-   */
-  getExampleNumber(callingCode: DigitSequence): PhoneNumber|null {
-    let nn = this.rawClassifier.getExampleNationalNumber(callingCode);
-    return nn ? PhoneNumber.of(callingCode, nn) : null;
-  }
-
-  /**
    * Returns a new converter which can be used to obtain a type-safe matcher or classifier
    * for the given string based enum. The enum used MUST use constant names which match the
    * underlying metadata values (after case conversion):

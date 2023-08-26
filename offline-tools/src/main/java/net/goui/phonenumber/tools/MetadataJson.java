@@ -105,9 +105,6 @@ final class MetadataJson {
     }
     fields.add(field("m", jsArray(proto.getMatcherDataList(), MetadataJson::toJson)));
     fields.add(field("p", toParserJson(proto)));
-    if (!proto.getExampleNumber().isEmpty()) {
-      fields.add(field("e", str(proto.getExampleNumber())));
-    }
     return obj(fields);
   }
 
@@ -123,6 +120,9 @@ final class MetadataJson {
     }
     if (proto.getNationalPrefixOptional()) {
       fields.add(field("o", num(1)));
+    }
+    if (!proto.getExampleNumberList().isEmpty()) {
+      fields.add(field("e", arrayOrSingleton(jsArray(proto.getExampleNumberList(), JSAPI::str))));
     }
     return obj(fields);
   }
@@ -153,7 +153,7 @@ final class MetadataJson {
 
   private static JsValue arrayOrSingleton(JsArray array) {
     checkArgument(!array.isEmpty(), "should not attempt to write empty arrays");
-    return array.size() > 1 ? array : array.get(0).asNumber();
+    return array.size() > 1 ? array : array.get(0);
   }
 
   private static String toBase64(ByteString bytes) {

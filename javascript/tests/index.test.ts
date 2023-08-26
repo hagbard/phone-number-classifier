@@ -178,13 +178,6 @@ describe("AbstractPhoneNumberClassifier", () => {
     expect(pnc.forRegion().getPossibleValues(e164("+447700")))
       .toEqual(new Set(["GB", "JE"]));
   });
-
-  test('testGetExampleNumber', () => {
-    let cc = seq("44");
-    let exampleNumber: PhoneNumber|null = pnc.getExampleNumber(cc);
-    expect(exampleNumber).toEqual(e164("+447400123456"));
-    expect(pnc.match(exampleNumber!)).toEqual(MatchResult.Matched);
-  });
 });
 
 describe("PhoneNumberFormatter", () => {
@@ -192,11 +185,13 @@ describe("PhoneNumberFormatter", () => {
     expect(pnc.formatNational(e164("+447700112345"))).toEqual("07700 112345");
     expect(pnc.formatInternational(e164("+447700112345"))).toEqual("+44 7700 112345");
   });
+
   test('testOptionalGroupFormatting', () => {
     // Use RU toll free numbers since they have an optional group in the middle.
     expect(pnc.formatNational(e164("+55800123456"))).toEqual("0800 12 3456");
     expect(pnc.formatNational(e164("+558001234567"))).toEqual("0800 123 4567");
   });
+
   test('testAsYouTypeFormatting', () => {
     // Use BR variable cost numbers since they have an optional group in the middle ("#XXX XX* XXXX").
     expect(pnc.formatNational(e164("+5580"))).toEqual("080");
@@ -220,12 +215,28 @@ describe("PhoneNumberParser", () => {
         "JM", "KN", "KY", "LC", "MP", "MS", "PR", "SX", "TC", "TT", "VC", "VG", "VI"]);
     expect(pnc.getParser().getRegions(seq("44"))).toEqual(["GB", "GG", "IM", "JE"]);
   });
+
   test('testCallingCode', () => {
     expect(pnc.getParser().getCallingCode("US")).toEqual(seq("1"));
     expect(pnc.getParser().getCallingCode("CA")).toEqual(seq("1"));
     expect(pnc.getParser().getCallingCode("GB")).toEqual(seq("44"));
     expect(pnc.getParser().getCallingCode("JE")).toEqual(seq("44"));
   });
+
+  test('testExampleNumbers', () => {
+    let exampleNumber = pnc.getParser().getExampleNumberForRegion("GB")!;
+    expect(exampleNumber).toEqual(e164("+447400123456"));
+    expect(pnc.getParser().getExampleNumber(seq("44"))).toEqual(exampleNumber);
+    // Jersey (also +44) example number is not equal.
+    expect(pnc.getParser().getExampleNumberForRegion("JE")).not.toEqual(exampleNumber);
+    // Check the example number is considered valid.
+    expect(pnc.match(exampleNumber)).toEqual(MatchResult.Matched);
+
+    // Even when regions are strings, we can't accidentally ask for the example of a calling code.
+    expect(pnc.getParser().getExampleNumber(seq("888"))).not.toEqual(null);
+    expect(pnc.getParser().getExampleNumberForRegion("888")).toEqual(null);
+  });
+
   // Example of a case where Libphonenumber fails to parse properly.
   // https://libphonenumber.appspot.com/phonenumberparser?number=%288108%29+6309+390+906&country=RU
   test('testParseBetterThanLibphonenumber', () => {
@@ -238,6 +249,7 @@ describe("PhoneNumberParser", () => {
     expect(result.getPhoneNumber().getNationalNumber()).toEqual(seq("81086309390906"));
     expect(result.getMatchResult()).toEqual(MatchResult.Matched);
   });
+
   test('testParseUnsupportedNumber', () => {
     // All calling codes starting with 9 should be unsupported in the metadata for this test.
     expect(pnc.isSupportedCallingCode(seq("90"))).toEqual(false);

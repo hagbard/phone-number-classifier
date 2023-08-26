@@ -17,7 +17,6 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
@@ -58,19 +57,23 @@ final class CallingCodeClassifier {
         IntStream.range(mainRegionIndex, mainRegionIndex + regionCount)
             .mapToObj(tokenDecoder)
             .collect(toImmutableSet());
+    ImmutableList<DigitSequence> exampleNumbers =
+        callingCodeProto.getExampleNumberList().stream()
+            .map(DigitSequence::parse)
+            .collect(toImmutableList());
     ImmutableSet<DigitSequence> nationalPrefixes =
         callingCodeProto.getNationalPrefixList().stream()
             .map(tokenDecoder::apply)
             .map(DigitSequence::parse)
             .collect(toImmutableSet());
     ParserData parserData =
-        ParserData.create(regions, nationalPrefixes, callingCodeProto.getNationalPrefixOptional());
+        ParserData.create(
+            regions,
+            exampleNumbers,
+            nationalPrefixes,
+            callingCodeProto.getNationalPrefixOptional());
 
-    String example = callingCodeProto.getExampleNumber();
-    Optional<DigitSequence> exampleNumber =
-        !example.isEmpty() ? Optional.of(DigitSequence.parse(example)) : Optional.empty();
-
-    return new CallingCodeClassifier(validityMatcher, typeClassifiers, parserData, exampleNumber);
+    return new CallingCodeClassifier(validityMatcher, typeClassifiers, parserData);
   }
 
   private static MatcherFunction combinedMatcherOf(
@@ -81,17 +84,14 @@ final class CallingCodeClassifier {
   private final MatcherFunction validityMatcher;
   private final ImmutableList<TypeClassifier> typeClassifiers;
   private final ParserData parserData;
-  private final Optional<DigitSequence> exampleNumber;
 
   private CallingCodeClassifier(
       MatcherFunction validityMatcher,
       ImmutableList<TypeClassifier> typeClassifiers,
-      ParserData parserData,
-      Optional<DigitSequence> exampleNumber) {
+      ParserData parserData) {
     this.validityMatcher = validityMatcher;
     this.typeClassifiers = typeClassifiers;
     this.parserData = parserData;
-    this.exampleNumber = exampleNumber;
   }
 
   public MatcherFunction getValidityMatcher() {
@@ -104,9 +104,5 @@ final class CallingCodeClassifier {
 
   public ParserData getParserData() {
     return parserData;
-  }
-
-  public Optional<DigitSequence> getExampleNumber() {
-    return exampleNumber;
   }
 }

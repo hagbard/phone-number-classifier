@@ -78,10 +78,10 @@ public class MetadataJsonTest {
                 "  \"ccd\": [",
                 "    {",
                 "      \"c\": 44,", // calling code
-                "      \"r\": 0,", // validation matcher index (almost always 0 and omitted).
                 "      \"v\": 1,",
                 "      \"n\": [{\"v\": 3, \"f\": [{\"v\": 4, \"r\": [0, 1]}]}],",
-                "      \"m\": [{\"l\": 32, \"b\": \"ASNF\"}, {\"l\": 96, \"b\": \"Z4mrzQ\"}]",
+                "      \"m\": [{\"l\": 32, \"b\": \"ASNF\"}, {\"l\": 96, \"b\": \"Z4mrzQ\"}],",
+                "      \"p\": {\"r\": 0}",
                 "    }",
                 "  ],",
                 // The token list allows sharing of strings between country calling code data.
@@ -120,7 +120,7 @@ public class MetadataJsonTest {
 
     assertThat(toJson(ccd).toString())
         .isEqualTo(
-            "{\"c\":44,\"r\":0,\"v\":1,\"n\":[{\"v\":99,\"f\":[{\"v\":12}]}],\"m\":[{\"l\":32,\"b\":\"ASNF\"}]}");
+            "{\"c\":44,\"v\":1,\"n\":[{\"v\":99,\"f\":[{\"v\":12}]}],\"m\":[{\"l\":32,\"b\":\"ASNF\"}],\"p\":{\"r\":0}}");
   }
 
   @Test

@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import net.goui.phonenumber.PhoneNumbers.E164PhoneNumber;
 import net.goui.phonenumber.metadata.ClassifierLoader;
 import net.goui.phonenumber.metadata.RawClassifier;
 import net.goui.phonenumber.metadata.VersionInfo;
@@ -257,19 +256,6 @@ public abstract class AbstractPhoneNumberClassifier {
   }
 
   /**
-   * Returns an example phone number for the given calling code (if available).
-   *
-   * <p>It is not always possible to guarantee example numbers will exist for every metadata
-   * configuration, and it is unsafe to invent example numbers at random (since they might be
-   * accidentally callable, which can cause problems).
-   */
-  public Optional<PhoneNumber> getExampleNumber(DigitSequence callingCode) {
-    return rawClassifier
-        .getExampleNationalNumber(callingCode)
-        .map(nn -> E164PhoneNumber.of(callingCode, nn));
-  }
-
-  /**
    * Tests a phone number against the possible lengths of any number in its numbering plan. This
    * method is fast, but takes no account of the number type.
    *
@@ -331,7 +317,7 @@ public abstract class AbstractPhoneNumberClassifier {
     }
 
     /**
-     * Returns a simple (non partial matching) classifier, for which values are unique. This adds
+     * Returns a simple (non partial-matching) classifier, for which values are unique. This adds
      * the {@link SingleValuedClassifier#identify(PhoneNumber)} method for identifying unique values
      * more simply.
      *

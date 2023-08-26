@@ -96,6 +96,7 @@ export class PhoneNumberParser<T> {
 
   private readonly regionCodeMap: Map<string, ReadonlyArray<T>>;
   private readonly callingCodeMap: Map<string, DigitSequence>;
+  private readonly exampleNumberMap: Map<string, PhoneNumber>;
   private readonly nationalPrefixMap: Map<string, ReadonlyArray<DigitSequence>>;
   private readonly nationalPrefixOptional: Set<string>;
 
@@ -104,6 +105,7 @@ export class PhoneNumberParser<T> {
       private readonly converter: Converter<T>) {
     this.regionCodeMap = new Map();
     this.callingCodeMap = new Map();
+    this.exampleNumberMap = new Map();
     this.nationalPrefixMap = new Map();
     this.nationalPrefixOptional = new Set();
     for (let ccStr of rawClassifier.getSupportedCallingCodes()) {
@@ -123,7 +125,35 @@ export class PhoneNumberParser<T> {
         throw new Error(`Region 001 must never appear with other region codes: ${regions}`);
       }
       let ccString = cc.toString();
-      this.regionCodeMap.set(ccString, regions.map(s => this.converter.fromString(s)));
+      this.regionCodeMap.set(ccString, regions.map(r => this.converter.fromString(r)));
+
+      let exampleNationalNumbers = parserData.getExampleNationalNumbers();
+      if (exampleNationalNumbers.length > 0) {
+        if (exampleNationalNumbers.length !== regions.length) {
+          throw new Error(
+              `Invalid example numbers (should match available regions): ${exampleNationalNumbers}`);
+        }
+        // This gets a bit complicated due to the existence of the "world" region 001, for which
+        // multiple calling codes and multiple regions exist. To address this we store example
+        // numbers keyed by both calling code and region code (in string form). Luckily it's
+        // impossible for keys to overlap, so we can share the same map.
+        regions.forEach((r, i) => {
+          let nn = exampleNationalNumbers[i];
+          // Empty example numbers are possible and must just be ignored.
+          if (nn.length() > 0) {
+            let example = PhoneNumber.of(cc, nn);
+            if (i === 0) {
+              // The "main" region is also keyed by its calling code (this is how "world" region
+              // examples can be returned to the user).
+              this.exampleNumberMap.set(ccString, example);
+            }
+            if (r !== "001") {
+              // Non-world regions are keyed here.
+              this.exampleNumberMap.set(r, example);
+            }
+          }
+        });
+      }
 
       if (parserData.getNationalPrefixes().length > 0) {
         this.nationalPrefixMap.set(ccString, parserData.getNationalPrefixes());
@@ -156,6 +186,40 @@ export class PhoneNumberParser<T> {
   getCallingCode(regionCode: T): DigitSequence|null {
     let cc = this.callingCodeMap.get(this.converter.toString(regionCode));
     return cc ? cc : null;
+  }
+
+  /**
+   * Returns an example phone number for the given CLDR region code (if available).
+   *
+   * It is not always possible to guarantee example numbers will exist for every metadata
+   * configuration, and it is unsafe to invent example numbers at random (since they might be
+   * accidentally callable, which can cause problems).
+   *
+   * Note: The special "world" region "001" is associated with more than one example number,
+   * so it cannot be resolved by this method. Use `getExampleNumber(callingCode)` instead.
+   */
+  getExampleNumberForRegion(regionCode: T): PhoneNumber|null {
+    let key: string = this.converter.toString(regionCode);
+    return this.callingCodeMap.has(key) ? this.getExampleNumberImpl(key) : null;
+  }
+
+  /**
+   * Returns an example phone number for the given calling code (if available).
+   *
+   * It is not always possible to guarantee example numbers will exist for every metadata
+   * configuration, and it is unsafe to invent example numbers at random (since they might be
+   * accidentally callable, which can cause problems).
+   *
+   * Note: This method will return the example number of the main region of the calling code.
+   */
+  getExampleNumber(callingCode: DigitSequence): PhoneNumber|null {
+    let key: string = callingCode.toString();
+    return this.regionCodeMap.has(key) ? this.getExampleNumberImpl(key) : null;
+  }
+
+  private getExampleNumberImpl(key: string): PhoneNumber|null {
+    let ex = this.exampleNumberMap.get(key);
+    return ex ? ex : null;
   }
 
   parseLeniently(text: string, callingCode?: DigitSequence): PhoneNumber|null {
