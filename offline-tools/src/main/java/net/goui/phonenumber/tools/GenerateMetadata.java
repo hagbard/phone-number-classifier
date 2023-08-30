@@ -59,8 +59,13 @@ public class GenerateMetadata {
         description = "CSV separator for unzipped overlay files (single char)")
     private String csvSeparator = ",";
 
-    @Parameter(names = "--config_dir", description = "Config directory path (optional)")
+    @Parameter(names = "--config_dir", description = "Config directory path(s) (optional)")
     private String configDir = "";
+
+    @Parameter(
+        names = {"--recursive", "-R"},
+        description = "Whether to visit")
+    private boolean recursive = false;
 
     @Parameter(
         names = "--config",
@@ -70,11 +75,18 @@ public class GenerateMetadata {
     @Parameter(names = "--config_pattern", description = "Config text proto regex (in config_dir)")
     private String configPattern = "";
 
+    @Parameter(
+        names = "--config_exclude",
+        description = "Exclude pattern for config paths (optional)")
+    private String configExclude = "";
+
     @Parameter(names = "--out", description = "Output proto path (optional)")
     private String outPath = "";
 
-    @Parameter(names = "--out_type", description = "Output proto path (optional)")
-    private String outType = "PROTO";
+    @Parameter(
+        names = "--out_type",
+        description = "Output data format (overrides type specified in config)")
+    private String outType = "";
 
     @Parameter(names = "--log_level", description = "JDK log level name")
     private String logLevel = "INFO";
@@ -139,9 +151,16 @@ public class GenerateMetadata {
       writeMetadataForConfig(rawMetadata, configDir.map(d -> d.resolve(configPath)).orElse(configPath), flags);
     } else if (!flags.configPattern.isEmpty()) {
       Predicate<String> isConfig = Pattern.compile(flags.configPattern).asMatchPredicate();
+      Predicate<String> isExcluded =
+          !flags.configExclude.isEmpty()
+              ? Pattern.compile(flags.configExclude).asPredicate()
+              : s -> false;
+      Predicate<Path> shouldProcess =
+          p -> !isExcluded.test(p.toString()) && isConfig.test(p.getFileName().toString());
+
+      int maxDepth = flags.recursive ? Integer.MAX_VALUE : 1;
       try (Stream<Path> configs =
-          Files.list(configDir.orElse(Paths.get(".")))
-              .filter(f -> isConfig.test(f.getFileName().toString()))) {
+          Files.walk(configDir.orElse(Paths.get(".")), maxDepth).filter(shouldProcess)) {
         Iterator<Path> it = configs.iterator();
         while (it.hasNext()) {
           writeMetadataForConfig(rawMetadata, it.next(), flags);
@@ -150,8 +169,17 @@ public class GenerateMetadata {
     }
   }
 
-  private static void writeMetadataForConfig(Metadata rawMetadata, Path configPath, Flags flags) throws IOException {
+  private static void writeMetadataForConfig(Metadata rawMetadata, Path configPath, Flags flags)
+      throws IOException {
     MetadataConfig config = MetadataConfig.load(configPath);
+    Optional<OutType> defaultOutputType = config.getDefaultOutputType();
+    if (flags.outType.isEmpty() && defaultOutputType.isEmpty()) {
+      logger.atInfo().log("Skipping config (no output type specified): %s", configPath);
+      return;
+    }
+    OutType outType =
+        !flags.outType.isEmpty() ? OutType.valueOf(flags.outType) : defaultOutputType.get();
+
     Metadata transformedMetadata = rawMetadata.transform(config.getOutputTransformer());
 
     System.out.format("Calling Codes:\n  %s\n", transformedMetadata.getAvailableCallingCodes());
@@ -166,7 +194,6 @@ public class GenerateMetadata {
 
     MetadataProto outputProto = MetadataProtoBuilder.toMetadataProto(simplifiedMetadata, config);
     Path outPath = Paths.get(flags.outPath);
-    OutType outType = OutType.valueOf(flags.outType);
     if (flags.outPath.isEmpty()) {
       outPath = getDerivedOutputPath(configPath, outType.getExtension());
     }
