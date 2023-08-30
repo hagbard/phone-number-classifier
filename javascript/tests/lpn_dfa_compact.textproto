@@ -1,6 +1,8 @@
 # proto-file:
 # proto-message: MetadataConfigProto
 
+default_output_type: JSON
+
 # A configuration for classifiers which matches the semantics of libphonenumber's TYPE and
 # REGION information, with simplified (smaller) data.
 version {

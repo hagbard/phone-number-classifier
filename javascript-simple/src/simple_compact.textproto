@@ -1,6 +1,8 @@
 # proto-file:
 # proto-message: MetadataConfigProto
 
+default_output_type: JSON
+
 # A simple classifier which supports region information and formatting for a reduced set of
 # number ranges.
 #

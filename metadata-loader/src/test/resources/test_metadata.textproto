@@ -1,6 +1,8 @@
 # proto-file:
 # proto-message: MetadataConfigProto
 
+default_output_type: PROTO
+
 version {
   major_version: 1
   minor_version: 0

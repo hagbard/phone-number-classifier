@@ -1,6 +1,8 @@
 # proto-file:
 # proto-message: MetadataConfigProto
 
+default_output_type: PROTO
+
 # A minimal classifier which only supports validation, and aggressively simplifies number ranges.
 # This data will give a lot of false-positive matches (e.g. matching an invalid number), but will
 # never give false-negative matches (e.g. if a number is valid, it will be matched).
