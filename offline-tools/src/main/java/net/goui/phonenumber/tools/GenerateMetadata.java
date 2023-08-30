@@ -11,14 +11,11 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 package net.goui.phonenumber.tools;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.flogger.FluentLogger;
-import com.google.common.primitives.Bytes;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
 import java.io.IOException;
@@ -29,15 +26,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.goui.phonenumber.proto.Metadata.MetadataProto;
 
@@ -181,15 +175,9 @@ public class GenerateMetadata {
         !flags.outType.isEmpty() ? OutType.valueOf(flags.outType) : defaultOutputType.get();
 
     Metadata transformedMetadata = rawMetadata.transform(config.getOutputTransformer());
-
-    System.out.format("Calling Codes:\n  %s\n", transformedMetadata.getAvailableCallingCodes());
-    System.out.format(
-        "Calling Code Bitmask (UTF-16 string, little endian):\n  '%s'\n",
-        asLittleEndianUtf16Bitmask(transformedMetadata.getAvailableCallingCodes()));
-
     Metadata simplifiedMetadata = MetadataSimplifier.simplify(transformedMetadata, config);
     validateNoChangeToOriginalRanges(transformedMetadata, simplifiedMetadata);
-
+    // Do this *after* validation since we could be restricting the validation ranges.
     simplifiedMetadata = simplifiedMetadata.trimValidRanges(config.includeEmptyCallingCodes());
 
     MetadataProto outputProto = MetadataProtoBuilder.toMetadataProto(simplifiedMetadata, config);
@@ -201,21 +189,6 @@ public class GenerateMetadata {
     try (OutputStream os = Files.newOutputStream(outPath)) {
       outType.write(outputProto, os);
     }
-  }
-
-  private static String asLittleEndianUtf16Bitmask(ImmutableSet<DigitSequence> callingCodes) {
-    BitSet bits = new BitSet(1000);
-    callingCodes.stream().mapToInt(cc -> Integer.parseInt(cc.toString())).forEach(bits::set);
-    List<Byte> bytes = Bytes.asList(bits.toByteArray());
-    checkState(bytes.size() == 125);
-    int charLength = (bytes.size() + 1) / 2;
-    StringBuilder s = new StringBuilder(charLength);
-    for (int n = 0; n < 2 * charLength; n += 2) {
-      int lo = bytes.get(n) & 0xFF;
-      int hi = (n + 1) < bytes.size() ? bytes.get(n + 1) & 0xFF : 0;
-      s.append((char) (lo + (hi << 8)));
-    }
-    return s.chars().mapToObj(c -> String.format("\\u%04x", c)).collect(Collectors.joining());
   }
 
   private static Path getDerivedOutputPath(Path configPath, String extension) {
