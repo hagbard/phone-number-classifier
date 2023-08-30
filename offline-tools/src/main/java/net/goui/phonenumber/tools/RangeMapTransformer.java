@@ -193,6 +193,10 @@ final class RangeMapTransformer implements Function<RangeMap, RangeMap> {
       }
     }
 
+    /**
+     * Creates a synthetic "validity" classifier which is used to avoid overwriting invalid ranges
+     * during simplification. This is not present in the final classifier data.
+     */
     static final class Validity extends RangeTransformer {
       private final RangeExpression validityFn;
 

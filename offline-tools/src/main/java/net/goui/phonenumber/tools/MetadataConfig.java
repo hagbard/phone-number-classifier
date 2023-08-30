@@ -101,7 +101,8 @@ abstract class MetadataConfig {
     return new AutoValue_MetadataConfig(
         version,
         !configProto.getExcludeParserMetadata(),
-        !configProto.getExcludeExampleNumbers(),
+        configProto.getIncludeExampleNumbers(),
+        configProto.getIncludeEmptyCallingCodes(),
         RangeMapTransformer.from(configProto),
         ImmutableMap.copyOf(configMap),
         implicitDefault,
@@ -119,7 +120,8 @@ abstract class MetadataConfig {
     return new AutoValue_MetadataConfig(
         VersionInfo.getDefaultInstance(),
         /* includeParserInfo= */ true,
-        /* includeExampleNumbers= */ true,
+        /* includeExampleNumbers= */ false,
+        /* includeEmptyCallingCodes= */ false,
         RangeMapTransformer.identity(classifierTypes),
         ImmutableMap.of(),
         Optional.of(defaultConfig),
@@ -144,6 +146,8 @@ abstract class MetadataConfig {
   public abstract boolean includeParserInfo();
 
   public abstract boolean includeExampleNumbers();
+
+  public abstract boolean includeEmptyCallingCodes();
 
   /** Returns the transformer defined by the set of classifiers in the configuration */
   public abstract RangeMapTransformer getOutputTransformer();

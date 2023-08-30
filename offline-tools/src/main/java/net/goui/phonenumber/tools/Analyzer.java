@@ -137,13 +137,14 @@ public class Analyzer {
     Metadata transformedMetadata =
         Metadata.load(flags.zipPath, flags.dirPath, flags.csvSeparator)
             .transform(config.getOutputTransformer());
-    transformedMetadata = transformedMetadata.trimValidRanges();
+    transformedMetadata = transformedMetadata.trimValidRanges(/* includeEmptyCallingCodes= */ true);
     if (!flags.testDataPath.isEmpty()) {
       logger.atInfo().log("writing test data to: %s", flags.testDataPath);
       writeTestData(transformedMetadata, Paths.get(flags.testDataPath));
     }
     Metadata simplifiedMetadata =
-            MetadataSimplifier.simplify(transformedMetadata, config).trimValidRanges();
+        MetadataSimplifier.simplify(transformedMetadata, config)
+            .trimValidRanges(/* includeEmptyCallingCodes= */ true);
     printRegex(transformedMetadata, simplifiedMetadata);
   }
 

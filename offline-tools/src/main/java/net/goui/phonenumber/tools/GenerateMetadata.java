@@ -162,7 +162,7 @@ public class GenerateMetadata {
     Metadata simplifiedMetadata = MetadataSimplifier.simplify(transformedMetadata, config);
     validateNoChangeToOriginalRanges(transformedMetadata, simplifiedMetadata);
 
-    simplifiedMetadata = simplifiedMetadata.trimValidRanges();
+    simplifiedMetadata = simplifiedMetadata.trimValidRanges(config.includeEmptyCallingCodes());
 
     MetadataProto outputProto = MetadataProtoBuilder.toMetadataProto(simplifiedMetadata, config);
     Path outPath = Paths.get(flags.outPath);

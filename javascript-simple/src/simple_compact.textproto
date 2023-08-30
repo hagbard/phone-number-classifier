@@ -21,9 +21,10 @@ matcher_type: DIGIT_SEQUENCE_MATCHER
 # In this example we want phone numbers which we expect to a callable by a human, and which do
 # not have unexpected call costs.
 #
-# Note that by restricting the ranges we begin to risk losing access to example telephone numbers
-# for some calling codes/regions (in this case, calling code +808 and +979 no longer have any
-# remaining valid numbers, so there can be no possibility of having a valid example number).
+# Note that by restricting the ranges we begin to risk losing access certain calling codes. In this
+# case, calling codes +808 and +979 no longer have any remaining valid numbers, so they are not
+# included in the final metadata (setting `include_empty_calling_codes` would allow these to be
+# included and permit parsing of these numbers, but none are considered valid by this classifier).
 validation_ranges: "ALL:RANGES - (TYPE:PAGER + TARIFF:PREMIUM_RATE + TARIFF:SHARED_COST)"
 
 # Simplify data aggressively to reduce data size at the expense of false-positive matches.

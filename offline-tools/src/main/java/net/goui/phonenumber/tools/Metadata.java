@@ -264,13 +264,16 @@ abstract class Metadata {
    *       expanded range assignments in.
    * </ul>
    */
-  public final Metadata trimValidRanges() {
+  public final Metadata trimValidRanges(boolean includeEmptyCallingCodes) {
     if (!getTypes().contains(VALIDITY)) {
       return this;
     }
     Metadata.Builder trimmedMetadata = Metadata.builder(root());
     for (DigitSequence cc : getAvailableCallingCodes()) {
-      trimmedMetadata.put(cc, getRangeMap(cc).trimValidRanges());
+      RangeMap rangeMap = getRangeMap(cc).trimValidRanges();
+      if (!rangeMap.getAllRanges().isEmpty() || includeEmptyCallingCodes) {
+        trimmedMetadata.put(cc, rangeMap);
+      }
     }
     return trimmedMetadata.build();
   }
