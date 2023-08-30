@@ -1,6 +1,6 @@
 {
   "name": "phonenumbers_simple_example",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A simple example implementation of a phone number parser, validator and formatter using the PhoneNumbers library.",
   "keywords": [
     "phonenumber",
