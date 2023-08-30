@@ -11,6 +11,7 @@
 package net.goui.phonenumber.metadata;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.goui.phonenumber.DigitSequence;
 
@@ -20,9 +21,11 @@ public abstract class ParserData {
   /** Creates parser data for an associated calling code. */
   public static ParserData create(
       ImmutableSet<String> regions,
+      ImmutableList<DigitSequence> exampleNumbers,
       ImmutableSet<DigitSequence> nationalPrefixes,
       boolean isNationalPrefixOptional) {
-    return new AutoValue_ParserData(regions, nationalPrefixes, isNationalPrefixOptional);
+    return new AutoValue_ParserData(
+        regions, exampleNumbers, nationalPrefixes, isNationalPrefixOptional);
   }
 
   /**
@@ -30,6 +33,12 @@ public abstract class ParserData {
    * first element is the "main" region, and following regions are ordered alphabetically.
    */
   public abstract ImmutableSet<String> getRegions();
+
+  /**
+   * Returns a list of example numbers for specific regions, in the same order as the associated
+   * region code.
+   */
+  public abstract ImmutableList<DigitSequence> getExampleNationalNumbers();
 
   /**
    * Returns an ordered, possibly empty, list of national prefixes. The first element is the

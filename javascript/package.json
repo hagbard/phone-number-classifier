@@ -1,6 +1,6 @@
 {
   "name": "phonenumbers_js",
-  "version": "0.0.4",
+  "version": "0.0.11",
   "description": "Lightweight TypeScript/JavaScript client code for PhoneNumbers validation library.",
   "keywords": [
     "phonenumber",
@@ -30,11 +30,11 @@
   "types": "dist/index.d.js",
   "module": "dist/index.js",
   "files": [
-    "dist/src",
+    "dist",
     "README.md"
   ],
   "scripts": {
-    "tsc": "tsc -p tsconfig.json",
-    "prepublishOnly": "npm run tsc"
+    "tsc": "tsc -b src tests",
+    "prepublishOnly": "yarn tsc"
   }
 }

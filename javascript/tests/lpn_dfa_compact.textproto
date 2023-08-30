@@ -1,6 +1,8 @@
 # proto-file:
 # proto-message: MetadataConfigProto
 
+default_output_type: JSON
+
 # A configuration for classifiers which matches the semantics of libphonenumber's TYPE and
 # REGION information, with simplified (smaller) data.
 version {
@@ -29,6 +31,8 @@ calling_codes:
 matcher_type: DIGIT_SEQUENCE_MATCHER
 default_maximum_false_positive_percent: 100
 default_minimum_prefix_length: 3
+# Parsing support is enabled by default, but for tests we also want example numbers.
+include_example_numbers: true
 format: NATIONAL
 format: INTERNATIONAL
 classifier {

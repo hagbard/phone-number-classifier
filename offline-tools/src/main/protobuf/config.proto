@@ -37,7 +37,15 @@ option java_package = "net.goui.phonenumber.tools.proto";
 // '1' and '44', which is copied without simplification.
 //
 message MetadataConfigProto {
-  VersionInfo version = 1;
+  enum OutputType {
+    OUTPUT_TYPE_UNKNOWN = 0;
+    PROTO = 1;
+    JSON = 2;
+    JSON_DEBUG = 3;
+  }
+  OutputType default_output_type = 1;
+
+  VersionInfo version = 2;
   message VersionInfo {
     // Data structure major version, increased when incompatible changes are made to the protocol
     // buffer structure (e.g. removing fields). Code should test this version explicitly and reject
@@ -80,7 +88,7 @@ message MetadataConfigProto {
   // Available matcher types. A supplier may choose to provide matcher data in one or more of these
   // representations as specified by the data schema and version. Code using the data should only
   // to examine the set of matcher types if the schema allows more than one representation.
-  repeated MatcherType matcher_type = 2;
+  repeated MatcherType matcher_type = 3;
   enum MatcherType {
     MATCHER_TYPE_UNKNOWN = 0;
     DIGIT_SEQUENCE_MATCHER = 1;
@@ -93,13 +101,13 @@ message MetadataConfigProto {
   //
   // If no calling codes are specified, the value of `exclude_by_default` determines what will be
   // processed.
-  repeated uint32 calling_code = 3;
-  string calling_codes = 4;
+  repeated uint32 calling_code = 4;
+  string calling_codes = 5;
 
   // Used to determine the default behaviour when no calling codes are specified.
   // If false (default value) then all calling codes are processed.
   // If true, only calling codes in overrides are processed.
-  bool exclude_by_default = 5;
+  bool exclude_by_default = 6;
 
   // A range expression defining valid phone numbers based on the underlying metadata. See
   // CustomValueProto#ranges for a more detailed description of range expression syntax. If
@@ -128,7 +136,19 @@ message MetadataConfigProto {
   // tracks the "removed" ranges internally to ensure they are never reassigned, even after
   // simplification. The only downside to this is that it may result in slightly larger (but
   // arguably more correct) metadata.
-  string validation_ranges = 6;
+  string validation_ranges = 7;
+
+  // If true, any calling codes for which the validation range ends up empty will still be included
+  // in the metadata. By default, empty calling codes are not present in the metadata, since no
+  // number in that region can be considered valid by a classifier using this data. Including empty
+  // calling codes will include the parser data (if requested) which allows user input to be parsed
+  // for these calling codes, but this input would always be considered invalid by the classifier.
+  // As such, it is often better to simply not include empty calling codes in a user facing UI.
+  //
+  // Removal of empty regions can only occur if a `validation_ranges` expression exists which
+  // results in some calling codes no longer having any valid numbers (e.g. if a calling code has no
+  // mobile numbers, but the validation range is restricted to `TYPE:MOBILE`).
+  bool include_empty_calling_codes = 8;
 
   // Default maximum amount of false positive numbers to appear in simplified ranges. This value
   // allows a meaningful limit to be placed on the results of the simplification process.
@@ -137,7 +157,7 @@ message MetadataConfigProto {
   // (resulting in smaller data).
   //
   // If unspecified, no simplification will be performed (equivalent to setting a value of zero).
-  int32 default_maximum_false_positive_percent = 7;
+  int32 default_maximum_false_positive_percent = 9;
 
   // Default minimum prefix length for simplified ranges (greater than zero). Simplification will
   // never create prefixes with fewer than this number of digits (though they may already exist in
@@ -150,24 +170,26 @@ message MetadataConfigProto {
   //
   // If unspecified, a value of 1 is assumed (allowing the maximum degree of simplification up to
   // the "false positive" limit.
-  int32 default_minimum_prefix_length = 8;
+  int32 default_minimum_prefix_length = 10;
 
   // If true, additional information necessary to implement phone number parsing will not be added
   // to the metadata. This is included by default since it's a relatively small amount of data for
   // a commonly used feature, but it can be excluded in cases where metadata size is critical.
-  bool exclude_parser_metadata = 9;
+  bool exclude_parser_metadata = 11;
 
-  // If true, example numbers will not be added to the metadata. This is included by default since
-  // it's a relatively small amount of data for a commonly used feature, but it can be excluded in
-  // cases where metadata size is critical.
-  bool exclude_example_numbers = 10;
+  // If true, example numbers will be added to the parser metadata. This is not included by default
+  // since it's a non-trivial amount of data which some clients will not need.
+  //
+  // If `exclude_parser_metadata` is true, this option has no effect.
+  bool include_example_numbers = 12;
 
   // Available formats. A supplier may choose to provide matcher metadata with one or more of these
   // formats. Adding a single format is likely to increase metadata size noticeably, but adding a
   // second format is a minimal additional overhead.
   //
-  // Note that E.164 formatting is always available in the client API (e.g. "+441923123456").
-  repeated NumberFormat format = 11;
+  // Note that E.164 formatting is always available in the client API (e.g. "+441923123456") by
+  // using the `toString()` method of a `PhoneNumber` instance.
+  repeated NumberFormat format = 13;
   enum NumberFormat {
     NUMBER_FORMAT_UNKNOWN = 0;
     // Enables formatting phone numbers for international dialling from outside the region (e.g.
@@ -212,7 +234,7 @@ message MetadataConfigProto {
   // }
   // ----------------------------------------------------------------------------------------------
   //
-  repeated ClassifierConfigProto classifier = 12;
+  repeated ClassifierConfigProto classifier = 14;
   message ClassifierConfigProto {
     string type_name = 1;
     CustomClassifierProto custom = 2;
@@ -268,7 +290,7 @@ message MetadataConfigProto {
   }
 
   // Overrides for specific calling codes to control the simplification in a fine-grained manner.
-  repeated ConfigOverrideProto override = 13;
+  repeated ConfigOverrideProto override = 15;
   message ConfigOverrideProto {
     // A non-empty list of calling codes to which this overridden configuration should apply.
     repeated uint32 calling_code = 1;

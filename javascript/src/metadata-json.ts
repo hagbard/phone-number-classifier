@@ -145,16 +145,6 @@ export interface CallingCodeJson {
    * exclude_parser_metadata
    */
   p: ParserDataJson;
-
-  /*
-   * Optional example national number. This is derived from Libphonenumber, and is NOT arbitrary.
-   * Example numbers should not be callable, otherwise you risk causing problems for real people.
-   * The exact type of this number is not well defined, and can change over time. It is up to the
-   * person generating the metadata to configure the example number type appropriately.
-   *
-   * exclude_example_numbers
-   */
-  e?: string;
 }
 
 export interface ParserDataJson {
@@ -181,6 +171,26 @@ export interface ParserDataJson {
    * For brevity this is represented as '1' rather than 'true'.
    */
   o?: number;
+
+  /*
+   * Optional example national numbers aligned with the regions for this calling code.
+   *
+   * If present, this value contains one E.164 formatted example number for each region code in the
+   * same order as regions are defined.
+   *
+   * Note however that (depending on how metadata is configured) it is technically possible
+   * that even when example numbers are configured, not all regions will have them. In these
+   * cases, the corresponding entry will contain an empty string. In client code, you can
+   * fall back to the example number for the main region (if it exists), but you must be
+   * willing to accept that an example number may not always be available.
+   *
+   * These are derived from Libphonenumber, and are NOT random/arbitrary numbers.
+   *
+   * Example numbers should not be callable, otherwise you risk causing problems for real people.
+   * The exact type of these numbers is not well defined, and can change over time, but will favour
+   * commonly used types such as mobile or fixed line numbers.
+   */
+  e?: string[] | string;
 }
 
 /**

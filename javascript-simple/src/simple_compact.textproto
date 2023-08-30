@@ -1,0 +1,41 @@
+# proto-file:
+# proto-message: MetadataConfigProto
+
+default_output_type: JSON
+
+# A simple classifier which supports region information and formatting for a reduced set of
+# number ranges.
+#
+# Data size:
+# Json: 83kB (31kB zipped)
+version {
+  major_version: 1
+  minor_version: 0
+  data_schema_uri: "goui.net/phonenumbers/simple/validation_only"
+  data_schema_version: 1
+}
+
+# Encode metadata for use by the finite state "digit sequence matcher". This is smaller and
+# faster than using regular expressions, but may not be supported on all platforms.
+matcher_type: DIGIT_SEQUENCE_MATCHER
+
+# An example of a classifier which is restricted to a subset of phone number for validation.
+# In this example we want phone numbers which we expect to a callable by a human, and which do
+# not have unexpected call costs.
+#
+# Note that by restricting the ranges we begin to risk losing access certain calling codes. In this
+# case, calling codes +808 and +979 no longer have any remaining valid numbers, so they are not
+# included in the final metadata (setting `include_empty_calling_codes` would allow these to be
+# included and permit parsing of these numbers, but none are considered valid by this classifier).
+validation_ranges: "ALL:RANGES - (TYPE:PAGER + TARIFF:PREMIUM_RATE + TARIFF:SHARED_COST)"
+
+# Simplify data aggressively to reduce data size at the expense of false-positive matches.
+default_maximum_false_positive_percent: 100000
+default_minimum_prefix_length: 2
+
+# Parsing support is enabled by default, but for tests we also want example numbers.
+include_example_numbers: true
+
+# Support formatting and region information.
+format: NATIONAL
+format: INTERNATIONAL

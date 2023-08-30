@@ -15,9 +15,9 @@ import static net.goui.phonenumber.LengthResult.INVALID_LENGTH;
 import static net.goui.phonenumber.LengthResult.POSSIBLE;
 import static net.goui.phonenumber.LengthResult.TOO_LONG;
 import static net.goui.phonenumber.MatchResult.EXCESS_DIGITS;
-import static net.goui.phonenumber.MatchResult.INVALID;
 import static net.goui.phonenumber.MatchResult.MATCHED;
 import static net.goui.phonenumber.MatchResult.PARTIAL_MATCH;
+import static net.goui.phonenumber.MatchResult.POSSIBLE_LENGTH;
 
 import java.io.IOException;
 import net.goui.phonenumber.DigitSequence;
@@ -95,9 +95,9 @@ public class ProtoBasedNumberClassifierTest {
                 .matchValue(seq("65021234567"), "FIXED_LINE_OR_MOBILE"))
         .isEqualTo(EXCESS_DIGITS);
 
-    // Match for a different value.
+    // For a different value this has a possible length, but is not a match.
     assertThat(classifier.getValueMatcher(us, "TYPE").matchValue(seq("6502123456"), "FIXED_LINE"))
-        .isEqualTo(INVALID);
+        .isEqualTo(POSSIBLE_LENGTH);
 
     // Match for region(s) (this is multi-valued).
     assertThat(classifier.isSingleValued("REGION")).isFalse();

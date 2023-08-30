@@ -1,6 +1,8 @@
 # proto-file:
 # proto-message: MetadataConfigProto
 
+default_output_type: PROTO
+
 # A simple classifier which supports region information and formatting for a reduced set of
 # number ranges.
 #
@@ -37,6 +39,9 @@ validation_ranges: "ALL:RANGES - (TYPE:PAGER + TARIFF:PREMIUM_RATE + TARIFF:SHAR
 # Simplify data aggressively to reduce data size at the expense of false-positive matches.
 default_maximum_false_positive_percent: 100000
 default_minimum_prefix_length: 2
+
+# Parsing support is enabled by default, but for tests we also want example numbers.
+include_example_numbers: true
 
 # Support formatting and region information.
 format: NATIONAL

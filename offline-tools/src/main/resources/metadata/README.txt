@@ -18,11 +18,13 @@ metadata.csv:
 
 241/ (GA/Gabon):
 ----
-ranges.csv:
+ranges.csv
   * Remove 0 prefixed 8-digit ranges which were just a copy of the 7 digit ranges with national prefix.
   * Remove 7-digit ranges which have been migrated away from.
 formats.csv
-  * Remove all but the 2/2/2/2 format and remove comments/rename IDs.
+  * Remove all but the 2/2/2/2 format.
+examples.csv
+  * Replace example numbers.
 
 52/ (MX/Mexico):
 ----
@@ -30,7 +32,7 @@ ranges.csv
   * Remove 11-digit mobile numbers completely.
   * Change format ID names (no longer only "fixed").
 formats.csv
-  * Remove 11-digit formats and fix comments/IDs.
+  * Remove 11-digit formats.
 examples.csv
   * Remove 11-digit example number.
 

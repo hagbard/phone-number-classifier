@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "include": [
+    // Pathetically, '*' does NOT mean all files, even when JSON support is enabled.
+    "*", "*.json"
+  ],
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "../dist",
+    "composite": true
+  }
+}

@@ -11,14 +11,11 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 package net.goui.phonenumber.tools;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.flogger.FluentLogger;
-import com.google.common.primitives.Bytes;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
 import java.io.IOException;
@@ -29,15 +26,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.goui.phonenumber.proto.Metadata.MetadataProto;
 
@@ -59,8 +53,13 @@ public class GenerateMetadata {
         description = "CSV separator for unzipped overlay files (single char)")
     private String csvSeparator = ",";
 
-    @Parameter(names = "--config_dir", description = "Config directory path (optional)")
+    @Parameter(names = "--config_dir", description = "Config directory path(s) (optional)")
     private String configDir = "";
+
+    @Parameter(
+        names = {"--recursive", "-R"},
+        description = "Whether to visit")
+    private boolean recursive = false;
 
     @Parameter(
         names = "--config",
@@ -70,11 +69,18 @@ public class GenerateMetadata {
     @Parameter(names = "--config_pattern", description = "Config text proto regex (in config_dir)")
     private String configPattern = "";
 
+    @Parameter(
+        names = "--config_exclude",
+        description = "Exclude pattern for config paths (optional)")
+    private String configExclude = "";
+
     @Parameter(names = "--out", description = "Output proto path (optional)")
     private String outPath = "";
 
-    @Parameter(names = "--out_type", description = "Output proto path (optional)")
-    private String outType = "PROTO";
+    @Parameter(
+        names = "--out_type",
+        description = "Output data format (overrides type specified in config)")
+    private String outType = "";
 
     @Parameter(names = "--log_level", description = "JDK log level name")
     private String logLevel = "INFO";
@@ -139,9 +145,16 @@ public class GenerateMetadata {
       writeMetadataForConfig(rawMetadata, configDir.map(d -> d.resolve(configPath)).orElse(configPath), flags);
     } else if (!flags.configPattern.isEmpty()) {
       Predicate<String> isConfig = Pattern.compile(flags.configPattern).asMatchPredicate();
+      Predicate<String> isExcluded =
+          !flags.configExclude.isEmpty()
+              ? Pattern.compile(flags.configExclude).asPredicate()
+              : s -> false;
+      Predicate<Path> shouldProcess =
+          p -> !isExcluded.test(p.toString()) && isConfig.test(p.getFileName().toString());
+
+      int maxDepth = flags.recursive ? Integer.MAX_VALUE : 1;
       try (Stream<Path> configs =
-          Files.list(configDir.orElse(Paths.get(".")))
-              .filter(f -> isConfig.test(f.getFileName().toString()))) {
+          Files.walk(configDir.orElse(Paths.get(".")), maxDepth).filter(shouldProcess)) {
         Iterator<Path> it = configs.iterator();
         while (it.hasNext()) {
           writeMetadataForConfig(rawMetadata, it.next(), flags);
@@ -150,23 +163,25 @@ public class GenerateMetadata {
     }
   }
 
-  private static void writeMetadataForConfig(Metadata rawMetadata, Path configPath, Flags flags) throws IOException {
+  private static void writeMetadataForConfig(Metadata rawMetadata, Path configPath, Flags flags)
+      throws IOException {
     MetadataConfig config = MetadataConfig.load(configPath);
+    Optional<OutType> defaultOutputType = config.getDefaultOutputType();
+    if (flags.outType.isEmpty() && defaultOutputType.isEmpty()) {
+      logger.atInfo().log("Skipping config (no output type specified): %s", configPath);
+      return;
+    }
+    OutType outType =
+        !flags.outType.isEmpty() ? OutType.valueOf(flags.outType) : defaultOutputType.get();
+
     Metadata transformedMetadata = rawMetadata.transform(config.getOutputTransformer());
-
-    System.out.format("Calling Codes:\n  %s\n", transformedMetadata.getAvailableCallingCodes());
-    System.out.format(
-        "Calling Code Bitmask (UTF-16 string, little endian):\n  '%s'\n",
-        asLittleEndianUtf16Bitmask(transformedMetadata.getAvailableCallingCodes()));
-
     Metadata simplifiedMetadata = MetadataSimplifier.simplify(transformedMetadata, config);
     validateNoChangeToOriginalRanges(transformedMetadata, simplifiedMetadata);
-
-    simplifiedMetadata = simplifiedMetadata.trimValidRanges();
+    // Do this *after* validation since we could be restricting the validation ranges.
+    simplifiedMetadata = simplifiedMetadata.trimValidRanges(config.includeEmptyCallingCodes());
 
     MetadataProto outputProto = MetadataProtoBuilder.toMetadataProto(simplifiedMetadata, config);
     Path outPath = Paths.get(flags.outPath);
-    OutType outType = OutType.valueOf(flags.outType);
     if (flags.outPath.isEmpty()) {
       outPath = getDerivedOutputPath(configPath, outType.getExtension());
     }
@@ -174,21 +189,6 @@ public class GenerateMetadata {
     try (OutputStream os = Files.newOutputStream(outPath)) {
       outType.write(outputProto, os);
     }
-  }
-
-  private static String asLittleEndianUtf16Bitmask(ImmutableSet<DigitSequence> callingCodes) {
-    BitSet bits = new BitSet(1000);
-    callingCodes.stream().mapToInt(cc -> Integer.parseInt(cc.toString())).forEach(bits::set);
-    List<Byte> bytes = Bytes.asList(bits.toByteArray());
-    checkState(bytes.size() == 125);
-    int charLength = (bytes.size() + 1) / 2;
-    StringBuilder s = new StringBuilder(charLength);
-    for (int n = 0; n < 2 * charLength; n += 2) {
-      int lo = bytes.get(n) & 0xFF;
-      int hi = (n + 1) < bytes.size() ? bytes.get(n + 1) & 0xFF : 0;
-      s.append((char) (lo + (hi << 8)));
-    }
-    return s.chars().mapToObj(c -> String.format("\\u%04x", c)).collect(Collectors.joining());
   }
 
   private static Path getDerivedOutputPath(Path configPath, String extension) {

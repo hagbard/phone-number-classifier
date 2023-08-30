@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
@@ -100,11 +99,6 @@ final class ProtoBasedNumberClassifier implements RawClassifier {
   @Override
   public ParserData getParserData(DigitSequence callingCode) {
     return getClassifier(callingCode).getParserData();
-  }
-
-  @Override
-  public Optional<DigitSequence> getExampleNationalNumber(DigitSequence callingCode) {
-    return getClassifier(callingCode).getExampleNumber();
   }
 
   @Override

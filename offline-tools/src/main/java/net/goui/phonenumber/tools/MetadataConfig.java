@@ -30,9 +30,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import net.goui.phonenumber.proto.Metadata.MetadataProto.VersionInfo;
+import net.goui.phonenumber.tools.GenerateMetadata.OutType;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.ConfigOverrideProto;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.MatcherType;
+import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.OutputType;
 
 /** Encapsulation of a metadata configuration file. */
 @AutoValue
@@ -98,10 +100,18 @@ abstract class MetadataConfig {
       implicitDefault = Optional.of(defaultConfig);
     }
 
+    OutputType configOutputType = configProto.getDefaultOutputType();
+    Optional<OutType> defaultOutputType =
+        configOutputType != OutputType.OUTPUT_TYPE_UNKNOWN
+            ? Optional.of(OutType.valueOf(configOutputType.name()))
+            : Optional.empty();
+
     return new AutoValue_MetadataConfig(
+        defaultOutputType,
         version,
         !configProto.getExcludeParserMetadata(),
-        !configProto.getExcludeExampleNumbers(),
+        configProto.getIncludeExampleNumbers(),
+        configProto.getIncludeEmptyCallingCodes(),
         RangeMapTransformer.from(configProto),
         ImmutableMap.copyOf(configMap),
         implicitDefault,
@@ -117,9 +127,11 @@ abstract class MetadataConfig {
     CallingCodeConfig defaultConfig =
         CallingCodeConfig.of(maxFalsePositivePercent, minPrefixLength);
     return new AutoValue_MetadataConfig(
+        Optional.empty(),
         VersionInfo.getDefaultInstance(),
         /* includeParserInfo= */ true,
-        /* includeExampleNumbers= */ true,
+        /* includeExampleNumbers= */ false,
+        /* includeEmptyCallingCodes= */ false,
         RangeMapTransformer.identity(classifierTypes),
         ImmutableMap.of(),
         Optional.of(defaultConfig),
@@ -138,12 +150,16 @@ abstract class MetadataConfig {
     return ccs.map(DigitSequence::of).collect(toImmutableSet());
   }
 
+  public abstract Optional<OutType> getDefaultOutputType();
+
   /** Returns the schema version define in this configuration. */
   public abstract VersionInfo getVersion();
 
   public abstract boolean includeParserInfo();
 
   public abstract boolean includeExampleNumbers();
+
+  public abstract boolean includeEmptyCallingCodes();
 
   /** Returns the transformer defined by the set of classifiers in the configuration */
   public abstract RangeMapTransformer getOutputTransformer();

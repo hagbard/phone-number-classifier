@@ -39,8 +39,8 @@ export class RawClassifier {
   private static readonly MINOR_DATA_VERSION: number = 0;
 
   public static create(
-      jsonString: string, schema: SchemaVersion, ...rest: SchemaVersion[]): RawClassifier {
-    let json: MetadataJson = JSON.parse(jsonString) as MetadataJson;
+      rawJson: string|MetadataJson, schema: SchemaVersion, ...rest: SchemaVersion[]): RawClassifier {
+    let json: MetadataJson = typeof rawJson === "string" ? JSON.parse(rawJson) as MetadataJson : rawJson;
 
     let verStr = JSON.stringify(json.ver);
     if (!RawClassifier.dataVersionIsCompatible(json.ver)) {
@@ -137,17 +137,6 @@ export class RawClassifier {
    */
   getParserData(callingCode: DigitSequence): ParserData|null {
     return this.getCallingCodeClassifier(callingCode).getParserData();
-  }
-
-  /**
-   * Returns an example number for the given calling code. The returned number will be valid, but
-   * need not be of any specific number type (though common number types are likely). The returned
-   * number is deterministic, and should not be callable. This value is omitted in the unlikely
-   * event that no suitable example phone number was available (e.g. due to the classifier having
-   * a restricted validation range).
-   */
-  getExampleNationalNumber(callingCode: DigitSequence): DigitSequence|null {
-    return this.getCallingCodeClassifier(callingCode).getExampleNationalNumber();
   }
 
   /**
@@ -252,23 +241,16 @@ class CallingCodeClassifier {
         (json.n !== undefined)
             ? json.n.map(n => NationalNumberClassifier.create(n, decode, matcherFactory)) : [];
     let parserData = json.p ? ParserData.create(json.p, decode) : null;
-    let exampleNumber = json.e ? DigitSequence.parse(json.e) : null;
-    return new CallingCodeClassifier(
-        validityMatcher, typeClassifiers, parserData, exampleNumber);
+    return new CallingCodeClassifier(validityMatcher, typeClassifiers, parserData);
   }
 
   constructor(
       private readonly validityMatcher: MatcherFunction,
       private readonly typeClassifiers: NationalNumberClassifier[],
-      private readonly parserData: ParserData|null,
-      private readonly exampleNationalNumber: DigitSequence|null) {}
+      private readonly parserData: ParserData|null) {}
 
   getParserData(): ParserData|null {
     return this.parserData;
-  }
-
-  getExampleNationalNumber(): DigitSequence|null {
-    return this.exampleNationalNumber;
   }
 
   testLength(nationalNumber: DigitSequence): LengthResult {
@@ -296,19 +278,28 @@ export class ParserData {
     // Total number of regions (at least 1).
     let n: number = json.n ? json.n : 1;
     let regions: string[] = [...Array(n).keys()].map((i) => decode(r + i));
+    // JSON value is string[], string or undefined.
+    let exn: string[] = Array.isArray(json.e) ? json.e : json.e ? [json.e] : [];
+    let exampleNumbers: DigitSequence[] = exn.map(s => DigitSequence.parse(s));
+    // JSON value is number[], number or undefined.
     let npi: number[] = Array.isArray(json.p) ? json.p : json.p ? [json.p] : [];
     let nationalPrefixes: DigitSequence[] = npi.map(i => DigitSequence.parse(decode(i)));
     let nationalPrefixOptional: boolean = !!json.o;
-    return new ParserData(regions, nationalPrefixes, nationalPrefixOptional);
+    return new ParserData(regions, exampleNumbers, nationalPrefixes, nationalPrefixOptional);
   }
 
   constructor(
       private readonly regions: string[],
+      private readonly exampleNumbers: ReadonlyArray<DigitSequence>,
       private readonly nationalPrefixes: DigitSequence[],
       private readonly nationalPrefixOptional: boolean) {}
 
   getRegions(): ReadonlyArray<string> {
     return this.regions;
+  }
+
+  getExampleNationalNumbers(): ReadonlyArray<DigitSequence> {
+    return this.exampleNumbers;
   }
 
   getNationalPrefixes(): ReadonlyArray<DigitSequence> {

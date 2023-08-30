@@ -13,14 +13,18 @@ package net.goui.phonenumber.tools;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
+import static com.google.common.collect.ImmutableTable.toImmutableTable;
 import static net.goui.phonenumber.tools.ClassifierType.VALIDITY;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Table.Cell;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.i18n.phonenumbers.metadata.DigitSequence;
 import com.google.i18n.phonenumbers.metadata.RangeTree;
+import com.google.i18n.phonenumbers.metadata.i18n.PhoneRegion;
 import com.google.i18n.phonenumbers.metadata.proto.Types.ValidNumberType;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -40,7 +44,8 @@ abstract class RangeMap {
   static final class Builder {
     private final Map<ClassifierType, RangeClassifier> map = new LinkedHashMap<>();
     private boolean nationalPrefixOptional = false;
-    private ImmutableMap<ValidNumberType, DigitSequence> exampleNumbers = ImmutableMap.of();
+    private ImmutableTable<PhoneRegion, ValidNumberType, DigitSequence> exampleNumbers =
+        ImmutableTable.of();
 
     Builder() {}
 
@@ -58,7 +63,8 @@ abstract class RangeMap {
     }
 
     @CanIgnoreReturnValue
-    public Builder setExampleNumbers(ImmutableMap<ValidNumberType, DigitSequence> exampleNumbers) {
+    public Builder setExampleNumbers(
+        ImmutableTable<PhoneRegion, ValidNumberType, DigitSequence> exampleNumbers) {
       this.exampleNumbers = checkNotNull(exampleNumbers);
       return this;
     }
@@ -71,10 +77,10 @@ abstract class RangeMap {
           map.entrySet().stream()
               .collect(toImmutableMap(Map.Entry::getKey, e -> e.getValue().intersect(allRanges)));
       // Remove any example numbers not valid within the restricted range.
-      ImmutableMap<ValidNumberType, DigitSequence> filteredExamples =
-          exampleNumbers.entrySet().stream()
+      ImmutableTable<PhoneRegion, ValidNumberType, DigitSequence> filteredExamples =
+          exampleNumbers.cellSet().stream()
               .filter(e -> allRanges.contains(e.getValue()))
-              .collect(toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
+              .collect(toImmutableTable(Cell::getRowKey, Cell::getColumnKey, Cell::getValue));
       return new AutoValue_RangeMap(
           allRanges, trimmedMap, nationalPrefixOptional, filteredExamples);
     }
@@ -98,7 +104,7 @@ abstract class RangeMap {
 
   abstract boolean nationalPrefixOptional();
 
-  abstract ImmutableMap<ValidNumberType, DigitSequence> getExampleNumbers();
+  abstract ImmutableTable<PhoneRegion, ValidNumberType, DigitSequence> getExampleNumbers();
 
   /** Returns the classifiers in this range map. */
   public final ImmutableSet<ClassifierType> getTypes() {
