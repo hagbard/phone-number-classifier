@@ -1,14 +1,14 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
+  Copyright (c) 2023, David Beaumont (https://github.com/hagbard).
 
- This program and the accompanying materials are made available under the terms of the
- Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
- Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
+  This program and the accompanying materials are made available under the terms of the
+  Eclipse Public License v. 2.0 available at https://www.eclipse.org/legal/epl-2.0, or the
+  Apache License, Version 2.0 available at https://www.apache.org/licenses/LICENSE-2.0.
 
- SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
+  SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-package net.goui.phonenumber.service.proto;
+package net.goui.phonenumbers.service.proto;
 
 import static com.google.common.base.Preconditions.checkState;
 import static net.goui.phonenumber.LengthResult.INVALID_LENGTH;
@@ -33,8 +33,8 @@ import java.util.regex.Pattern;
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.LengthResult;
 import net.goui.phonenumber.MatchResult;
-import net.goui.phonenumbers.proto.Metadata.MatcherDataProto;
 import net.goui.phonenumber.shading.com.google.i18n.phonenumbers.metadata.finitestatematcher.DigitSequenceMatcher;
+import net.goui.phonenumbers.proto.Metadata.MatcherDataProto;
 
 /**
  * Encapsulation of a function to match digit sequences, either partially or completely.
