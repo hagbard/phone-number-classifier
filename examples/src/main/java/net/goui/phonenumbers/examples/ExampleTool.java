@@ -17,8 +17,8 @@ import net.goui.phonenumbers.PhoneNumbers;
  * Simple command line tool which can be given one or more E.164 numbers as arguments to be
  * classified.
  */
-public final class SimpleExample {
-  private static final SimpleClassifier CLASSIFIER = SimpleClassifier.getInstance();
+public final class ExampleTool {
+  private static final ExampleClassifier CLASSIFIER = ExampleClassifier.getInstance();
 
   public static void main(String[] args) {
     if (args.length == 0) {
@@ -46,5 +46,5 @@ public final class SimpleExample {
     System.out.println("---------------------------------------------");
   }
 
-  private SimpleExample() {}
+  private ExampleTool() {}
 }

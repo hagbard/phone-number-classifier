@@ -20,11 +20,10 @@
     </parent>
 
     <artifactId>client-api</artifactId>
-    <packaging>jar</packaging>
-
     <name>Phone Number Client API</name>
-    <!-- FIXME change it to the project's website -->
-    <url>http://www.example.com</url>
+    <version>0.1.0</version>
+    <packaging>jar</packaging>
+    <url>${base.url}/${project.artifactId}</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

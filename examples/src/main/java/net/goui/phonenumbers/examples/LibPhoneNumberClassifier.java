@@ -63,10 +63,6 @@ public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifie
     super(rawClassifier);
   }
 
-  RawClassifier rawClassifierForTesting() {
-    return rawClassifier();
-  }
-
   public SingleValuedMatcher<NumberType> forType() {
     return typeMatcher;
   }

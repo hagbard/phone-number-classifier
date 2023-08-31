@@ -16,7 +16,7 @@ import net.goui.phonenumbers.PhoneNumber;
 import net.goui.phonenumbers.PhoneNumbers;
 import net.goui.phonenumbers.examples.LibPhoneNumberClassifier.MetadataVariant;
 
-public class LibPhoneNumberExample {
+public class LibPhoneNumberTool {
 
   public static void main(String[] args) {
     if (args.length == 0) {

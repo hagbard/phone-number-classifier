@@ -20,16 +20,16 @@
     </parent>
 
     <artifactId>offline-tools</artifactId>
-
     <name>Offline Metadata Tools</name>
-    <!-- FIXME change it to the project's website -->
-    <url>http://www.example.com</url>
+    <version>0.1.0</version>
+    <packaging>jar</packaging>
+    <url>${base.url}/${project.artifactId}</url>
 
     <dependencies>
         <dependency>
             <groupId>net.goui.phone-numbers</groupId>
             <artifactId>metadata-proto</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${version.metadataProto}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber -->
         <dependency>

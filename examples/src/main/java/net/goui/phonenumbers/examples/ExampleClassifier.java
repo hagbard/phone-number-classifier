@@ -20,13 +20,13 @@ import net.goui.phonenumbers.PhoneNumberFormatter;
 import net.goui.phonenumbers.PhoneNumberParser;
 import net.goui.phonenumbers.metadata.RawClassifier;
 
-public final class SimpleClassifier extends AbstractPhoneNumberClassifier {
-  private static final SimpleClassifier INSTANCE =
-      new SimpleClassifier(
+public final class ExampleClassifier extends AbstractPhoneNumberClassifier {
+  private static final ExampleClassifier INSTANCE =
+      new ExampleClassifier(
           AbstractPhoneNumberClassifier.loadRawClassifier(
               SchemaVersion.of("goui.net/phonenumbers/examples/simple/dfa/minimal", 1)));
 
-  public static SimpleClassifier getInstance() {
+  public static ExampleClassifier getInstance() {
     return INSTANCE;
   }
 
@@ -34,7 +34,7 @@ public final class SimpleClassifier extends AbstractPhoneNumberClassifier {
   private final PhoneNumberFormatter internationalFormatter = createFormatter(INTERNATIONAL);
   private final PhoneNumberParser<String> parser = createParser(identity());
 
-  private SimpleClassifier(RawClassifier rawClassifier) {
+  private ExampleClassifier(RawClassifier rawClassifier) {
     super(rawClassifier);
   }
 

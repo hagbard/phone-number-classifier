@@ -36,10 +36,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class SimpleClassifierTest {
+public class ExampleClassifierTest {
   @Rule public final Expect expect = Expect.create();
 
-  private static final SimpleClassifier SIMPLE_CLASSIFIER = SimpleClassifier.getInstance();
+  private static final ExampleClassifier SIMPLE_CLASSIFIER = ExampleClassifier.getInstance();
 
   @Test
   public void testValidation() {
@@ -100,7 +100,7 @@ public class SimpleClassifierTest {
     try (Reader goldenData =
         new InputStreamReader(
             checkNotNull(
-                SimpleClassifierTest.class.getResourceAsStream("/simple_golden_data.json")),
+                ExampleClassifierTest.class.getResourceAsStream("/simple_golden_data.json")),
             UTF_8)) {
       regressionTester.assertGoldenData(CharStreams.toString(goldenData));
     }
