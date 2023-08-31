@@ -10,8 +10,8 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 
 package net.goui.phonenumbers.examples;
 
-import net.goui.phonenumber.PhoneNumber;
-import net.goui.phonenumber.PhoneNumbers;
+import net.goui.phonenumbers.PhoneNumber;
+import net.goui.phonenumbers.PhoneNumbers;
 
 /**
  * Simple command line tool which can be given one or more E.164 numbers as arguments to be

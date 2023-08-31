@@ -11,18 +11,18 @@
 package net.goui.phonenumbers.service.proto;
 
 import static com.google.common.truth.Truth.assertThat;
-import static net.goui.phonenumber.LengthResult.INVALID_LENGTH;
-import static net.goui.phonenumber.LengthResult.POSSIBLE;
-import static net.goui.phonenumber.LengthResult.TOO_LONG;
-import static net.goui.phonenumber.MatchResult.EXCESS_DIGITS;
-import static net.goui.phonenumber.MatchResult.MATCHED;
-import static net.goui.phonenumber.MatchResult.PARTIAL_MATCH;
-import static net.goui.phonenumber.MatchResult.POSSIBLE_LENGTH;
+import static net.goui.phonenumbers.LengthResult.INVALID_LENGTH;
+import static net.goui.phonenumbers.LengthResult.POSSIBLE;
+import static net.goui.phonenumbers.LengthResult.TOO_LONG;
+import static net.goui.phonenumbers.MatchResult.EXCESS_DIGITS;
+import static net.goui.phonenumbers.MatchResult.MATCHED;
+import static net.goui.phonenumbers.MatchResult.PARTIAL_MATCH;
+import static net.goui.phonenumbers.MatchResult.POSSIBLE_LENGTH;
 
 import java.io.IOException;
-import net.goui.phonenumber.DigitSequence;
-import net.goui.phonenumber.metadata.RawClassifier;
-import net.goui.phonenumber.metadata.VersionInfo;
+import net.goui.phonenumbers.DigitSequence;
+import net.goui.phonenumbers.metadata.RawClassifier;
+import net.goui.phonenumbers.metadata.VersionInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

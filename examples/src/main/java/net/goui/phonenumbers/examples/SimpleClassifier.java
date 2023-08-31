@@ -11,14 +11,14 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 package net.goui.phonenumbers.examples;
 
 import static java.util.function.Function.identity;
-import static net.goui.phonenumber.FormatType.INTERNATIONAL;
-import static net.goui.phonenumber.FormatType.NATIONAL;
+import static net.goui.phonenumbers.FormatType.INTERNATIONAL;
+import static net.goui.phonenumbers.FormatType.NATIONAL;
 
 import com.google.common.annotations.VisibleForTesting;
-import net.goui.phonenumber.AbstractPhoneNumberClassifier;
-import net.goui.phonenumber.PhoneNumberFormatter;
-import net.goui.phonenumber.PhoneNumberParser;
-import net.goui.phonenumber.metadata.RawClassifier;
+import net.goui.phonenumbers.AbstractPhoneNumberClassifier;
+import net.goui.phonenumbers.PhoneNumberFormatter;
+import net.goui.phonenumbers.PhoneNumberParser;
+import net.goui.phonenumbers.metadata.RawClassifier;
 
 public final class SimpleClassifier extends AbstractPhoneNumberClassifier {
   private static final SimpleClassifier INSTANCE =

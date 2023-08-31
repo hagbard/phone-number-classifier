@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
-import net.goui.phonenumber.DigitSequence;
-import net.goui.phonenumber.LengthResult;
-import net.goui.phonenumber.MatchResult;
-import net.goui.phonenumber.metadata.ParserData;
-import net.goui.phonenumber.metadata.RawClassifier;
-import net.goui.phonenumber.metadata.VersionInfo;
+import net.goui.phonenumbers.DigitSequence;
+import net.goui.phonenumbers.LengthResult;
+import net.goui.phonenumbers.MatchResult;
+import net.goui.phonenumbers.metadata.ParserData;
+import net.goui.phonenumbers.metadata.RawClassifier;
+import net.goui.phonenumbers.metadata.VersionInfo;
 import net.goui.phonenumbers.proto.Metadata;
 import net.goui.phonenumbers.proto.Metadata.MetadataProto;
 

@@ -14,9 +14,9 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 import java.io.InputStream;
-import net.goui.phonenumber.metadata.ClassifierService;
-import net.goui.phonenumber.metadata.RawClassifier;
-import net.goui.phonenumber.metadata.VersionInfo;
+import net.goui.phonenumbers.metadata.ClassifierService;
+import net.goui.phonenumbers.metadata.RawClassifier;
+import net.goui.phonenumbers.metadata.VersionInfo;
 import net.goui.phonenumbers.proto.Metadata.MetadataProto;
 
 /**

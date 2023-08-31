@@ -11,15 +11,15 @@
 package net.goui.phonenumbers.service.proto;
 
 import static com.google.common.base.Preconditions.checkState;
-import static net.goui.phonenumber.LengthResult.INVALID_LENGTH;
-import static net.goui.phonenumber.LengthResult.POSSIBLE;
-import static net.goui.phonenumber.LengthResult.TOO_LONG;
-import static net.goui.phonenumber.LengthResult.TOO_SHORT;
-import static net.goui.phonenumber.MatchResult.EXCESS_DIGITS;
-import static net.goui.phonenumber.MatchResult.INVALID;
-import static net.goui.phonenumber.MatchResult.MATCHED;
-import static net.goui.phonenumber.MatchResult.PARTIAL_MATCH;
-import static net.goui.phonenumber.MatchResult.POSSIBLE_LENGTH;
+import static net.goui.phonenumbers.LengthResult.INVALID_LENGTH;
+import static net.goui.phonenumbers.LengthResult.POSSIBLE;
+import static net.goui.phonenumbers.LengthResult.TOO_LONG;
+import static net.goui.phonenumbers.LengthResult.TOO_SHORT;
+import static net.goui.phonenumbers.MatchResult.EXCESS_DIGITS;
+import static net.goui.phonenumbers.MatchResult.INVALID;
+import static net.goui.phonenumbers.MatchResult.MATCHED;
+import static net.goui.phonenumbers.MatchResult.PARTIAL_MATCH;
+import static net.goui.phonenumbers.MatchResult.POSSIBLE_LENGTH;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -30,11 +30,11 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.goui.phonenumber.DigitSequence;
-import net.goui.phonenumber.LengthResult;
-import net.goui.phonenumber.MatchResult;
-import net.goui.phonenumber.shading.com.google.i18n.phonenumbers.metadata.finitestatematcher.DigitSequenceMatcher;
+import net.goui.phonenumbers.DigitSequence;
+import net.goui.phonenumbers.LengthResult;
+import net.goui.phonenumbers.MatchResult;
 import net.goui.phonenumbers.proto.Metadata.MatcherDataProto;
+import net.goui.phonenumbers.shading.com.google.i18n.phonenumbers.metadata.finitestatematcher.DigitSequenceMatcher;
 
 /**
  * Encapsulation of a function to match digit sequences, either partially or completely.

@@ -11,8 +11,8 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 package net.goui.phonenumbers.examples.service;
 
 import com.google.auto.service.AutoService;
-import net.goui.phonenumber.metadata.ClassifierService;
-import net.goui.phonenumber.metadata.VersionInfo;
+import net.goui.phonenumbers.metadata.ClassifierService;
+import net.goui.phonenumbers.metadata.VersionInfo;
 import net.goui.phonenumbers.service.proto.AbstractResourceClassifierService;
 
 @AutoService(ClassifierService.class)

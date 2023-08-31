@@ -12,8 +12,8 @@ package net.goui.phonenumbers.examples;
 
 import static java.util.Arrays.asList;
 
-import net.goui.phonenumber.PhoneNumber;
-import net.goui.phonenumber.PhoneNumbers;
+import net.goui.phonenumbers.PhoneNumber;
+import net.goui.phonenumbers.PhoneNumbers;
 import net.goui.phonenumbers.examples.LibPhoneNumberClassifier.MetadataVariant;
 
 public class LibPhoneNumberExample {

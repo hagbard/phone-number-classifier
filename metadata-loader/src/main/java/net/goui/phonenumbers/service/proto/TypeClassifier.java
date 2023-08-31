@@ -11,7 +11,7 @@
 package net.goui.phonenumbers.service.proto;
 
 import static com.google.common.base.Preconditions.checkState;
-import static net.goui.phonenumber.MatchResult.INVALID;
+import static net.goui.phonenumbers.MatchResult.INVALID;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -22,9 +22,9 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-import net.goui.phonenumber.DigitSequence;
-import net.goui.phonenumber.MatchResult;
-import net.goui.phonenumber.metadata.RawClassifier.ValueMatcher;
+import net.goui.phonenumbers.DigitSequence;
+import net.goui.phonenumbers.MatchResult;
+import net.goui.phonenumbers.metadata.RawClassifier.ValueMatcher;
 import net.goui.phonenumbers.proto.Metadata.MatcherFunctionProto;
 import net.goui.phonenumbers.proto.Metadata.NationalNumberDataProto;
 

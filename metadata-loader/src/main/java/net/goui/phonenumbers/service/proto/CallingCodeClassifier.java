@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
-import net.goui.phonenumber.DigitSequence;
-import net.goui.phonenumber.metadata.ParserData;
+import net.goui.phonenumbers.DigitSequence;
+import net.goui.phonenumbers.metadata.ParserData;
 import net.goui.phonenumbers.proto.Metadata.CallingCodeProto;
 import net.goui.phonenumbers.proto.Metadata.NationalNumberDataProto;
 
