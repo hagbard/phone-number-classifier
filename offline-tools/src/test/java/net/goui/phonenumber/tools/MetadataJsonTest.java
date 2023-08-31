@@ -12,18 +12,18 @@ package net.goui.phonenumber.tools;
 
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.Arrays.asList;
-import static net.goui.phonenumber.proto.Metadata.MetadataProto.MatcherType.DIGIT_SEQUENCE_MATCHER;
+import static net.goui.phonenumbers.proto.Metadata.MetadataProto.MatcherType.DIGIT_SEQUENCE_MATCHER;
 import static net.goui.phonenumber.tools.MetadataJson.toJson;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
-import net.goui.phonenumber.proto.Metadata.CallingCodeProto;
-import net.goui.phonenumber.proto.Metadata.MatcherDataProto;
-import net.goui.phonenumber.proto.Metadata.MatcherFunctionProto;
-import net.goui.phonenumber.proto.Metadata.MetadataProto;
-import net.goui.phonenumber.proto.Metadata.MetadataProto.VersionInfo;
-import net.goui.phonenumber.proto.Metadata.NationalNumberDataProto;
+import net.goui.phonenumbers.proto.Metadata.CallingCodeProto;
+import net.goui.phonenumbers.proto.Metadata.MatcherDataProto;
+import net.goui.phonenumbers.proto.Metadata.MatcherFunctionProto;
+import net.goui.phonenumbers.proto.Metadata.MetadataProto;
+import net.goui.phonenumbers.proto.Metadata.MetadataProto.VersionInfo;
+import net.goui.phonenumbers.proto.Metadata.NationalNumberDataProto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

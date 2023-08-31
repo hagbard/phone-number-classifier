@@ -25,8 +25,8 @@ import java.util.function.IntFunction;
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.MatchResult;
 import net.goui.phonenumber.metadata.RawClassifier.ValueMatcher;
-import net.goui.phonenumber.proto.Metadata.MatcherFunctionProto;
-import net.goui.phonenumber.proto.Metadata.NationalNumberDataProto;
+import net.goui.phonenumbers.proto.Metadata.MatcherFunctionProto;
+import net.goui.phonenumbers.proto.Metadata.NationalNumberDataProto;
 
 final class TypeClassifier implements ValueMatcher {
   public static TypeClassifier create(

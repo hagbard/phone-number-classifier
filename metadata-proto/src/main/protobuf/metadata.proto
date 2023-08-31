@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package net.goui.phonenumber.proto;
+package net.goui.phonenumbers.proto;
 
-option java_package = "net.goui.phonenumber.proto";
+option java_package = "net.goui.phonenumbers.proto";
 
 // This is a binary stable protocol buffer and must avoid backwards incompatible changes.
 message MetadataProto {

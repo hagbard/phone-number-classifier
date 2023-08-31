@@ -22,8 +22,8 @@ import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.metadata.ParserData;
-import net.goui.phonenumber.proto.Metadata.CallingCodeProto;
-import net.goui.phonenumber.proto.Metadata.NationalNumberDataProto;
+import net.goui.phonenumbers.proto.Metadata.CallingCodeProto;
+import net.goui.phonenumbers.proto.Metadata.NationalNumberDataProto;
 
 final class CallingCodeClassifier {
 

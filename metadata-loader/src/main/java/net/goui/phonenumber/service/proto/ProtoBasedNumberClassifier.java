@@ -29,8 +29,8 @@ import net.goui.phonenumber.MatchResult;
 import net.goui.phonenumber.metadata.ParserData;
 import net.goui.phonenumber.metadata.RawClassifier;
 import net.goui.phonenumber.metadata.VersionInfo;
-import net.goui.phonenumber.proto.Metadata;
-import net.goui.phonenumber.proto.Metadata.MetadataProto;
+import net.goui.phonenumbers.proto.Metadata;
+import net.goui.phonenumbers.proto.Metadata.MetadataProto;
 
 final class ProtoBasedNumberClassifier implements RawClassifier {
   private final VersionInfo version;

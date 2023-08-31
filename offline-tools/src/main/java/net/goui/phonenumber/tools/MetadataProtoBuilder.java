@@ -46,11 +46,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import net.goui.phonenumber.proto.Metadata.CallingCodeProto;
-import net.goui.phonenumber.proto.Metadata.MatcherDataProto;
-import net.goui.phonenumber.proto.Metadata.MatcherFunctionProto;
-import net.goui.phonenumber.proto.Metadata.MetadataProto;
-import net.goui.phonenumber.proto.Metadata.NationalNumberDataProto;
+import net.goui.phonenumbers.proto.Metadata.CallingCodeProto;
+import net.goui.phonenumbers.proto.Metadata.MatcherDataProto;
+import net.goui.phonenumbers.proto.Metadata.MatcherFunctionProto;
+import net.goui.phonenumbers.proto.Metadata.MetadataProto;
+import net.goui.phonenumbers.proto.Metadata.NationalNumberDataProto;
 
 final class MetadataProtoBuilder {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();

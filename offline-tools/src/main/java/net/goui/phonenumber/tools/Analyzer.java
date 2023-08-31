@@ -62,15 +62,15 @@ import java.util.Random;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.goui.phonenumbers.proto.Metadata.CallingCodeProto;
+import net.goui.phonenumbers.proto.Metadata.MetadataProto;
 import org.typemeta.funcj.json.algebra.JsonToDoc;
 import org.typemeta.funcj.json.model.JSAPI;
 import org.typemeta.funcj.json.model.JsArray;
 import org.typemeta.funcj.json.model.JsObject;
 import org.typemeta.funcj.json.model.JsValue;
 
-/**
- * Tool for writing test data and other auxiliary range analysis.
- */
+/** Tool for writing test data and other auxiliary range analysis. */
 public class Analyzer {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
   private static final PhoneNumberUtil PHONE_NUMBER_UTIL = PhoneNumberUtil.getInstance();
@@ -285,28 +285,21 @@ public class Analyzer {
   }
 
   static void debug(Metadata originalMetadata, Metadata simplifiedMetadata, MetadataConfig config) {
-    net.goui.phonenumber.proto.Metadata.MetadataProto oldProto =
-        MetadataProtoBuilder.toMetadataProto(originalMetadata, config);
-    net.goui.phonenumber.proto.Metadata.MetadataProto newProto =
-        MetadataProtoBuilder.toMetadataProto(simplifiedMetadata, config);
+    MetadataProto oldProto = MetadataProtoBuilder.toMetadataProto(originalMetadata, config);
+    MetadataProto newProto = MetadataProtoBuilder.toMetadataProto(simplifiedMetadata, config);
     System.out.println("==== ORIGINAL DATA ====");
     System.out.println(TextFormat.printer().printToString(oldProto));
     System.out.println("====== NEW DATA ======");
     System.out.println(TextFormat.printer().printToString(newProto));
     System.out.println("======================");
 
-    ImmutableMap<Integer, net.goui.phonenumber.proto.Metadata.CallingCodeProto> oldMap =
+    ImmutableMap<Integer, CallingCodeProto> oldMap =
         oldProto.getCallingCodeDataList().stream()
-            .collect(
-                toImmutableMap(
-                    net.goui.phonenumber.proto.Metadata.CallingCodeProto::getCallingCode,
-                    identity()));
+            .collect(toImmutableMap(CallingCodeProto::getCallingCode, identity()));
     int oldTotalBytes = 0;
     int newTotalBytes = 0;
-    for (net.goui.phonenumber.proto.Metadata.CallingCodeProto newData :
-        newProto.getCallingCodeDataList()) {
-      net.goui.phonenumber.proto.Metadata.CallingCodeProto oldData =
-          checkNotNull(oldMap.get(newData.getCallingCode()));
+    for (CallingCodeProto newData : newProto.getCallingCodeDataList()) {
+      CallingCodeProto oldData = checkNotNull(oldMap.get(newData.getCallingCode()));
 
       DigitSequence cc = DigitSequence.of(Integer.toString(newData.getCallingCode()));
       RangeTree beforeRanges = originalMetadata.getRangeMap(cc).getAllRanges();

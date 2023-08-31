@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import net.goui.phonenumber.proto.Metadata.MetadataProto;
+import net.goui.phonenumbers.proto.Metadata.MetadataProto;
 
 /**
  * The primary tool for generating client metadata for phone number classifiers.

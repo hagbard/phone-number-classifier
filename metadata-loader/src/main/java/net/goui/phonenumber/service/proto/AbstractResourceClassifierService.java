@@ -17,7 +17,7 @@ import java.io.InputStream;
 import net.goui.phonenumber.metadata.ClassifierService;
 import net.goui.phonenumber.metadata.RawClassifier;
 import net.goui.phonenumber.metadata.VersionInfo;
-import net.goui.phonenumber.proto.Metadata.MetadataProto;
+import net.goui.phonenumbers.proto.Metadata.MetadataProto;
 
 /**
  * Helper class to support easy loading of metadata from class resources. A subclass need only

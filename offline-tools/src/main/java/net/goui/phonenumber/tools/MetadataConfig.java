@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
-import net.goui.phonenumber.proto.Metadata.MetadataProto.VersionInfo;
+import net.goui.phonenumbers.proto.Metadata.MetadataProto.VersionInfo;
 import net.goui.phonenumber.tools.GenerateMetadata.OutType;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto;
 import net.goui.phonenumber.tools.proto.Config.MetadataConfigProto.ConfigOverrideProto;

@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.function.Function;
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.MatchResult;
-import net.goui.phonenumber.proto.Metadata;
+import net.goui.phonenumbers.proto.Metadata;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 import net.goui.phonenumber.DigitSequence;
 import net.goui.phonenumber.LengthResult;
 import net.goui.phonenumber.MatchResult;
-import net.goui.phonenumber.proto.Metadata.MatcherDataProto;
+import net.goui.phonenumbers.proto.Metadata.MatcherDataProto;
 import net.goui.phonenumber.shading.com.google.i18n.phonenumbers.metadata.finitestatematcher.DigitSequenceMatcher;
 
 /**
