@@ -55,7 +55,7 @@ import java.util.logging.Logger;
 /**
  *
  */
-public final class DiffManager {
+public final class DiffTool {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
   static final class Flags {
@@ -94,7 +94,7 @@ public final class DiffManager {
           "Removed calling codes: " + Sets.difference(root.getKeys(), resourcesRoot.getKeys()));
       ImmutableSet<DigitSequence> modifiedCallingCodes =
           resourcesRoot.getKeys().stream()
-              .filter(DiffManager::hasOverlayResource)
+              .filter(DiffTool::hasOverlayResource)
               .collect(toImmutableSet());
 
       CsvDataLoader zipLoader = new CsvDataLoader(loader, root);
@@ -186,7 +186,7 @@ public final class DiffManager {
   private static boolean hasOverlayResource(DigitSequence cc) {
     for (String name : TABLE_NAMES) {
       String resourcePath = String.format("/metadata/%s/%s.csv", cc, name);
-      try (InputStream is = DiffManager.class.getResourceAsStream(resourcePath)) {
+      try (InputStream is = DiffTool.class.getResourceAsStream(resourcePath)) {
         if (is != null) {
           return true;
         }

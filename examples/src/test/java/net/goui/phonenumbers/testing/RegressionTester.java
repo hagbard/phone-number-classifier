@@ -8,7 +8,7 @@
  SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-package net.goui.phonenumber.testing;
+package net.goui.phonenumbers.testing;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.function.Function.identity;

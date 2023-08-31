@@ -1,0 +1,66 @@
+# proto-file: config.proto
+# proto-message: MetadataConfigProto
+#
+# If using IntelliJ, configure "Languages & Frameworks" > "Protocol Buffers" to include a path
+# to offline-tools/src/main/protobuf in order to get syntax checking/highlighting etc.
+
+# Declare default the output format (can be overridden on the command line).
+# The DEBUG format produces "prettified" JSON which is easier to read.
+default_output_type: JSON_DEBUG
+
+# A configuration for classifiers which matches the semantics of Libphonenumber's TYPE and
+# REGION information, with simplified (smaller) data.
+version {
+  # The data version is tied to how the metadata is packaged. This will change as the metadata
+  # encoding changes, but that should be rare.
+  major_version: 1
+  minor_version: 0
+  # The schema version defines the semantics of the data. This is chosen by the data provider
+  # and must be explicitly understood by any library using it. Many alternative schema versions
+  # can exist any it is expected that anyone providing a new schema will also provide the client
+  # code to use it.
+  data_schema_uri: "goui.net/libphonenumber/example"
+  data_schema_version: 1
+}
+
+# When outputting JSON, we currently only support using digit-sequence-matcher data (which is
+# better than regular expressions in all cases anyway).
+matcher_type: DIGIT_SEQUENCE_MATCHER
+
+# Define how we will simplify the metadata. This reduces the data size at the cost of some false
+# positive matches. In general false positive matches are always possible however, so this should
+# not be a big problem.
+default_maximum_false_positive_percent: 100
+default_minimum_prefix_length: 3
+
+# Parsing support is enabled by default, but for tests we also want example numbers.
+include_example_numbers: true
+
+# Select the formats we support.
+format: NATIONAL
+format: INTERNATIONAL
+
+# In this example we generate a custom classifier to match Libphonenumber's semantics.
+# Note that the order of the values matters here (TARIFF takes priority over TYPE).
+classifier {
+  type_name: "LPN:TYPE"
+  custom {
+    is_single_valued: true
+    value { name: "PREMIUM_RATE" ranges: "TARIFF:PREMIUM_RATE" }
+    value { name: "TOLL_FREE" ranges: "TARIFF:TOLL_FREE" }
+    value { name: "SHARED_COST" ranges: "TARIFF:SHARED_COST" }
+    value { name: "FIXED_LINE" ranges: "TYPE:FIXED_LINE" }
+    value { name: "MOBILE" ranges: "TYPE:MOBILE" }
+    value { name: "FIXED_LINE_OR_MOBILE" ranges: "TYPE:FIXED_LINE_OR_MOBILE" }
+    value { name: "PAGER" ranges: "TYPE:PAGER" }
+    value { name: "PERSONAL_NUMBER" ranges: "TYPE:PERSONAL_NUMBER" }
+    value { name: "VOIP" ranges: "TYPE:VOIP" }
+    value { name: "UAN" ranges: "TYPE:UAN" }
+    value { name: "VOICEMAIL" ranges: "TYPE:VOICEMAIL" }
+  }
+}
+
+# Copy the region classifier data as-is.
+classifier {
+  type_name: "REGION"
+}

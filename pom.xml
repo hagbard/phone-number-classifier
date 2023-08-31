@@ -24,7 +24,6 @@
         <module>metadata-loader</module>
         <module>offline-tools</module>
         <module>examples</module>
-        <module>testing</module>
     </modules>
 
     <properties>

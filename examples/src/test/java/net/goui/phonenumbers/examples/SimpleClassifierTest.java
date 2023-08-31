@@ -29,7 +29,7 @@ import net.goui.phonenumber.MatchResult;
 import net.goui.phonenumber.PhoneNumber;
 import net.goui.phonenumber.PhoneNumberParser;
 import net.goui.phonenumber.PhoneNumbers;
-import net.goui.phonenumber.testing.RegressionTester;
+import net.goui.phonenumbers.testing.RegressionTester;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
