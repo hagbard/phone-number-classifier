@@ -1,8 +1,8 @@
 # Client API for Phone Number Classification
 
-This artifact contains basic classes required to build a specialized phone
-number classifier. If you are using this artifact directly then you may need
-to create your own API (alternatively you may be able to find an existing
+This artifact contains basic classes required to build a specialized Java phone
+number classifier. If you are using this artifact directly then you may need to
+create your own API (alternatively you may be able to find an existing
 classifier implementation which suits your needs).
 
 The PhoneNumbers library makes it easy to create a phone number classifier
@@ -36,19 +36,22 @@ A classifier can have the following functionality:
 
 ## Defining Your Metadata
 
-Once you have determined the API you want to expose, you need to write a metadata
-configuration file from which the metadata is generated.
+Once you have determined the API you want to expose, you need to write a
+metadata configuration file from which the metadata is generated.
 
 Metadata is generated using code in the `offline-tools` artifact, and requires a
 simple configuration file. The configuration file should:
 
 1. Enable any optional "base" metadata needed by you API.
-    * E.g. Enabling the `REGION` metadata if you wish to be able to classify
-      phone numbers according to their CLDR region code. 
-2. Enable any parsing or formatting data needed by your API.
+    * E.g. Enabling the `REGION` classifier, so you can determine the CLDR
+      region code for phone numbers. 
+2. Enable parsing or formatting data needed by your API.
 3. Define any custom classifier types for your API.
     * E.g. Defining custom types as combinations of existing base types.
     * This is how you can mimic the types present in Libphonenumber.
+4. Specify the degree to which metadata should be simplified.
+    * This increases false positive matches for numbers but can greatly
+      reduce metadata size.
 
 ## Building a Custom Classifier
 
@@ -74,7 +77,7 @@ application specific, phone number classifier can be created in a short time and
 with minimal effort:
 
 See the classes (in package `net.goui.phonenumbers.examples`):
-* `SimpleClassifier`: 14 lines of code.
+* `ExampleClassifier`: 14 lines of code.
 * `service.SimpleDfaMinimalData`: 3 lines of code.
 
 And the configuration file:

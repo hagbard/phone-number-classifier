@@ -23,6 +23,7 @@ import net.goui.phonenumbers.metadata.RawClassifier;
 public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifier {
 
   /** Duplicates of the number types defined in the configuration file. */
+  @SuppressWarnings("unused")
   public enum NumberType {
     PREMIUM_RATE,
     TOLL_FREE,
@@ -57,7 +58,7 @@ public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifie
       forType("REGION", Region.class, Region::getInstance, Object::toString).matcher();
   private final PhoneNumberFormatter nationalFormatter = createFormatter(NATIONAL);
   private final PhoneNumberFormatter internationalFormatter = createFormatter(INTERNATIONAL);
-  private final PhoneNumberParser<Region> regionInfo = createParser(Region::getInstance);
+  private final PhoneNumberParser<Region> parser = createParser(Region::getInstance);
 
   private LibPhoneNumberClassifier(RawClassifier rawClassifier) {
     super(rawClassifier);
@@ -79,7 +80,7 @@ public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifie
     return internationalFormatter;
   }
 
-  public PhoneNumberParser<Region> getRegionInfo() {
-    return regionInfo;
+  public PhoneNumberParser<Region> getParser() {
+    return parser;
   }
 }

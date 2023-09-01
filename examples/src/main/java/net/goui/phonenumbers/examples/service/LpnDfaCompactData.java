@@ -19,7 +19,7 @@ import net.goui.phonenumbers.service.proto.AbstractResourceClassifierService;
 public class LpnDfaCompactData extends AbstractResourceClassifierService {
   public LpnDfaCompactData() {
     super(
-        VersionInfo.of("goui.net/phonenumbers/examples/lpn/dfa/compact", 1, 1, 0),
+        VersionInfo.of("goui.net/libphonenumber/examples/lpn/dfa/compact", 1, 1, 0),
         "/lpn_dfa_compact.pb");
   }
 }

@@ -15,8 +15,8 @@ java_library(
 )
 
 java_binary(
-    name = "simple",
-    main_class = "net.goui.phonenumbers.examples.Simple",
+    name = "demo",
+    main_class = "net.goui.phonenumbers.examples.ClassifierDemo",
     runtime_deps = [":examples"],
 )
 
