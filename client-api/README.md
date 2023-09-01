@@ -1,13 +1,28 @@
-# Client API for Phone Number Classification
+# Java API for Phone Number Classification
 
 This artifact contains basic classes required to build a specialized Java phone
 number classifier. If you are using this artifact directly then you may need to
 create your own API (alternatively you may be able to find an existing
 classifier implementation which suits your needs).
 
-The PhoneNumbers library makes it easy to create a phone number classifier
-which suits your application needs and allows you to create significantly
-smaller (less detailed) metadata to suit your requirements.
+The PhoneNumbers library allows you to build fast, efficient client code to classify and validate
+phone numbers. By letting clients decide what data they need, and control how it is processed, it
+is possible to parse, validate and format phone numbers, for some or all regions in the world, in
+a fraction of the code/data required by Libphonenumber.
+
+Assuming a simple use case which requires parsing, validation and formatting for "normal" phone
+numbers, we can compare the required metadata size between Libphonenumber and this library
+
+| Library         | Protocol Buffer Metadata Size | JSON Metadata Size |
+|-----------------|-------------------------------|--------------------|
+| Libphonenumber  | 225kB (built in)              | 250kB (built in)   |
+| PhoneNumbers    | 39KB (23.5kB zipped)          | 69kB (26kB zipped) | 
+
+And for a completely minimal representation, with the maximally simplified metadata, and no parsing
+or formatting support, the metadata size (zipped) can be as small as 5Kb.
+
+See https://github.com/hagbard/phone-numbers/blob/main/examples/src/main/resources/README.md
+for more details.
 
 ## Deciding on Your Features
 
