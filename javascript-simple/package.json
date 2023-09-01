@@ -1,6 +1,6 @@
 {
   "name": "phonenumbers_simple_example",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A simple example implementation of a phone number parser, validator and formatter using the PhoneNumbers library.",
   "keywords": [
     "phonenumber",
@@ -14,7 +14,7 @@
   "author": "David Beaumont",
   "license": "(EPL-2.0 OR Apache-2.0)",
   "dependencies": {
-    "phonenumbers_js": "^0.0.11"
+    "phonenumbers_js": "^0.0.13"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.js",
