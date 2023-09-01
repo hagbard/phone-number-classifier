@@ -8,87 +8,13 @@
  SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-import {
-    SchemaVersion,
-    PhoneNumber,
-    AbstractPhoneNumberClassifier,
-    Matcher,
-    SingleValuedMatcher,
-    DigitSequence,
-    PhoneNumberFormatter,
-    FormatType,
-    PhoneNumberParser,
-    MatchResult } from "../dist/index.js";
-import { RawClassifier, Converter } from "../dist/internal.js";
-import goldenDataJson from "./lpn_golden_data.json"
+import { PhoneNumber, DigitSequence, MatchResult } from "../dist/index.js";
+import { RawClassifier } from "../dist/internal.js";
+import { ExampleClassifier, LpnType } from "./example-classifier.js";
+import goldenDataJson from "./lpn_golden_data.json";
 const fs = require("fs");
 
-enum LpnType {
-  PREMIUM_RATE,
-  TOLL_FREE,
-  SHARED_COST,
-  FIXED_LINE,
-  MOBILE,
-  FIXED_LINE_OR_MOBILE,
-  PAGER,
-  PERSONAL_NUMBER,
-  VOIP,
-  UAN,
-  VOICEMAIL,
-}
-
-class TestClassifier extends AbstractPhoneNumberClassifier {
-  private readonly typeMatcher: SingleValuedMatcher<LpnType>;
-  private readonly regionMatcher: Matcher<string>;
-  private readonly nationalFormatter: PhoneNumberFormatter;
-  private readonly internationalFormatter: PhoneNumberFormatter;
-  private readonly parser: PhoneNumberParser<string>;
-
-  constructor(path: string) {
-    super(
-        fs.readFileSync(path, { encoding: "utf8", flag: "r" }),
-        new SchemaVersion("goui.net/libphonenumber/dfa/compact", 1));
-    this.typeMatcher =
-        super.forValues("LPN:TYPE", super.ofNumericEnum(LpnType)).singleValuedMatcher();
-    // We don't have a region code enum to hand, so use strings directly.
-    this.regionMatcher = super.forStrings("REGION").matcher();
-    this.nationalFormatter = super.createFormatter(FormatType.National);
-    this.internationalFormatter = super.createFormatter(FormatType.International);
-    this.parser = super.createParser(Converter.identity());
-  }
-
-  rawClassifierForTests(): RawClassifier {
-    return super.getRawClassifier();
-  }
-
-  formatForTests(cc: DigitSequence, nn: DigitSequence, type: string): string {
-    let number: PhoneNumber = e164("+" + cc + nn);
-    switch (type) {
-      case "NATIONAL_FORMAT":
-        return this.nationalFormatter.format(number);
-      case "INTERNATIONAL_FORMAT":
-        return this.internationalFormatter.format(number);
-      default:
-        throw new Error(`unknown format type: ${type}`);
-    }
-  }
-
-  forType(): SingleValuedMatcher<LpnType> { return this.typeMatcher; }
-
-  forRegion(): Matcher<string> { return this.regionMatcher; }
-
-  formatNational(number: PhoneNumber): string {
-    return this.nationalFormatter.format(number);
-  }
-
-  formatInternational(number: PhoneNumber): string {
-    return this.internationalFormatter.format(number);
-  }
-
-  getParser(): PhoneNumberParser<string> {
-    return this.parser;
-  }
-}
+const pnc = new ExampleClassifier("tests/lpn_dfa_compact.json");
 
 function assertDigits(seq: DigitSequence, ...digits: number[]) {
   expect(seq.length()).toEqual(digits.length);
@@ -103,6 +29,18 @@ function seq(s: string): DigitSequence {
 
 function e164(s: string): PhoneNumber {
   return PhoneNumber.fromE164(s);
+}
+
+function format(pnc: ExampleClassifier, cc: DigitSequence, nn: DigitSequence, type: string): string {
+  let number: PhoneNumber = e164("+" + cc + nn);
+  switch (type) {
+    case "NATIONAL_FORMAT":
+      return pnc.formatNational(number);
+    case "INTERNATIONAL_FORMAT":
+      return pnc.formatInternational(number);
+    default:
+      throw new Error(`unknown format type: ${type}`);
+  }
 }
 
 describe("PhoneNumber", () => {
@@ -166,8 +104,6 @@ describe("PhoneNumber", () => {
     expect(number).not.toEqual(e164("+447471929999"));
   });
 });
-
-const pnc = new TestClassifier("tests/lpn_dfa_compact.json");
 
 describe("AbstractPhoneNumberClassifier", () => {
   test('testGetPossibleValues', () => {
@@ -279,7 +215,7 @@ describe("GoldenDataTest", () => {
         });
         // If a valid number is supported in the metadata it is parsed successfully from any format.
         gd.format.forEach(r => {
-          expect(pnc.formatForTests(cc, nn, r.type)).toEqual(r.value);
+          expect(format(pnc, cc, nn, r.type)).toEqual(r.value);
           let res = pnc.getParser().parseStrictly(r.value, cc);
           expect(res.getPhoneNumber()).toEqual(PhoneNumber.of(cc, nn));
           expect(res.getMatchResult()).toEqual(MatchResult.Matched);

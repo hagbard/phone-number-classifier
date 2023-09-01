@@ -14,6 +14,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <base.url>https://github.com/hagbard/phone-numbers/tree/main</base.url>
+        <version.clientApi>0.1.0</version.clientApi>
+        <version.examples>0.1.0</version.examples>
+        <version.metadateLoader>0.1.0</version.metadateLoader>
+        <version.metadataProto>0.1.0</version.metadataProto>
+        <version.tools>0.1.0</version.tools>
+    </properties>
+
     <groupId>net.goui.phone-numbers</groupId>
     <artifactId>phone-numbers</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -24,14 +36,7 @@
         <module>metadata-loader</module>
         <module>offline-tools</module>
         <module>examples</module>
-        <module>testing</module>
     </modules>
-
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <build>
         <resources>

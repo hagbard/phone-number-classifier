@@ -44,21 +44,21 @@ java_proto_library(
 java_binary(
     name = "generate",
     data = ["//:metadata.zip"],
-    main_class = "net.goui.phonenumber.tools.GenerateMetadata",
+    main_class = "net.goui.phonenumbers.tools.GenerateMetadata",
     runtime_deps = [":offline_tools"],
 )
 
 java_binary(
     name = "analyze",
     data = ["//:metadata.zip"],
-    main_class = "net.goui.phonenumber.tools.Analyzer",
+    main_class = "net.goui.phonenumbers.tools.Analyzer",
     runtime_deps = [":offline_tools"],
 )
 
 java_binary(
     name = "diff",
     data = ["//:metadata.zip"],
-    main_class = "net.goui.phonenumber.tools.DiffManager",
+    main_class = "net.goui.phonenumbers.tools.DiffTool",
     runtime_deps = [":offline_tools"],
 )
 

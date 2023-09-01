@@ -74,11 +74,12 @@ Data size:
 From the project root directory, run either:
 
 ```shell
-bazel run //offline-tools:generate -- \
-    --zip "$PWD/metadata.zip" \
-    --config_dir "$PWD/examples/src/main/resources" \
-    --config_pattern '.*\.textproto' \
-    --out_type PROTO
+$ bazel build //offline-tools:generate
+$ ./bazel-bin/offline-tools/generate \
+    --zip metadata.zip \
+    --config_dir offline-tools \
+    --config_dir examples/src/main/resources \
+    --config_pattern '.*\.textproto'
 ```
 
 or:

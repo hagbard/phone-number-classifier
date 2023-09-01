@@ -10,19 +10,20 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 
 package net.goui.phonenumbers.examples;
 
-import static net.goui.phonenumber.FormatType.INTERNATIONAL;
-import static net.goui.phonenumber.FormatType.NATIONAL;
+import static net.goui.phonenumbers.FormatType.INTERNATIONAL;
+import static net.goui.phonenumbers.FormatType.NATIONAL;
 
 import com.google.common.base.Ascii;
 import com.ibm.icu.util.Region;
-import net.goui.phonenumber.AbstractPhoneNumberClassifier;
-import net.goui.phonenumber.PhoneNumberFormatter;
-import net.goui.phonenumber.PhoneNumberParser;
-import net.goui.phonenumber.metadata.RawClassifier;
+import net.goui.phonenumbers.AbstractPhoneNumberClassifier;
+import net.goui.phonenumbers.PhoneNumberFormatter;
+import net.goui.phonenumbers.PhoneNumberParser;
+import net.goui.phonenumbers.metadata.RawClassifier;
 
 public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifier {
 
   /** Duplicates of the number types defined in the configuration file. */
+  @SuppressWarnings("unused")
   public enum NumberType {
     PREMIUM_RATE,
     TOLL_FREE,
@@ -57,14 +58,10 @@ public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifie
       forType("REGION", Region.class, Region::getInstance, Object::toString).matcher();
   private final PhoneNumberFormatter nationalFormatter = createFormatter(NATIONAL);
   private final PhoneNumberFormatter internationalFormatter = createFormatter(INTERNATIONAL);
-  private final PhoneNumberParser<Region> regionInfo = createParser(Region::getInstance);
+  private final PhoneNumberParser<Region> parser = createParser(Region::getInstance);
 
   private LibPhoneNumberClassifier(RawClassifier rawClassifier) {
     super(rawClassifier);
-  }
-
-  RawClassifier rawClassifierForTesting() {
-    return rawClassifier();
   }
 
   public SingleValuedMatcher<NumberType> forType() {
@@ -83,7 +80,7 @@ public final class LibPhoneNumberClassifier extends AbstractPhoneNumberClassifie
     return internationalFormatter;
   }
 
-  public PhoneNumberParser<Region> getRegionInfo() {
-    return regionInfo;
+  public PhoneNumberParser<Region> getParser() {
+    return parser;
   }
 }

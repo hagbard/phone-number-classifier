@@ -15,8 +15,8 @@ java_library(
 )
 
 java_binary(
-    name = "simple",
-    main_class = "net.goui.phonenumbers.examples.Simple",
+    name = "demo",
+    main_class = "net.goui.phonenumbers.examples.ClassifierDemo",
     runtime_deps = [":examples"],
 )
 
@@ -28,11 +28,11 @@ java_library(
     deps = [
         ":examples",
         "//client-api:phonenumbers",
-        "//testing",
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_truth_extensions_truth_java8_extension",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
+        "@maven//:org_typemeta_funcj_json",
     ],
 )
 

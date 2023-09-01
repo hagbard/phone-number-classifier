@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package net.goui.phonenumber.tools.proto;
+package net.goui.phonenumbers.tools.proto;
 
-option java_package = "net.goui.phonenumber.tools.proto";
+option java_package = "net.goui.phonenumbers.tools.proto";
 
 // Examples:
 //

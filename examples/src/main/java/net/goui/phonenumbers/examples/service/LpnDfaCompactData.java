@@ -11,15 +11,15 @@ SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 package net.goui.phonenumbers.examples.service;
 
 import com.google.auto.service.AutoService;
-import net.goui.phonenumber.metadata.ClassifierService;
-import net.goui.phonenumber.metadata.VersionInfo;
-import net.goui.phonenumber.service.proto.AbstractResourceClassifierService;
+import net.goui.phonenumbers.metadata.ClassifierService;
+import net.goui.phonenumbers.metadata.VersionInfo;
+import net.goui.phonenumbers.service.proto.AbstractResourceClassifierService;
 
 @AutoService(ClassifierService.class)
 public class LpnDfaCompactData extends AbstractResourceClassifierService {
   public LpnDfaCompactData() {
     super(
-        VersionInfo.of("goui.net/phonenumbers/examples/lpn/dfa/compact", 1, 1, 0),
+        VersionInfo.of("goui.net/libphonenumber/examples/lpn/dfa/compact", 1, 1, 0),
         "/lpn_dfa_compact.pb");
   }
 }

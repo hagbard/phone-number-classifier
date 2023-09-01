@@ -21,7 +21,7 @@ version {
   # and must be explicitly understood by any library using it. Many alternative schema versions
   # can exist any it is expected that anyone providing a fundamentally new schema will also
   # provide client code to handle it.
-  data_schema_uri: "goui.net/phonenumbers/examples/lpn/dfa/precise"
+  data_schema_uri: "goui.net/libphonenumber/examples/lpn/dfa/precise"
   data_schema_version: 1
 }
 
