@@ -1,6 +1,8 @@
-# Phone Number Classifier
+# Phone Numbers
 
-This is an in-development tool and should not be used by anyone yet.
+**Phone Numbers** is a fast, optimized library for validating and classifying national and international phone numbers in Java and JavaScript.
+
+Based on the data provided by Google's **libphonenumber** library, the provided tools let you generate metadata tuned to your needs. Create small data with lower accuracy for mobile applications, or high precision data for server side code. Easily exclude metadata you don't need and even create new classifications to suit your business logic.
 
 ## To build/install Java code (from `<root>/` directory):
 
